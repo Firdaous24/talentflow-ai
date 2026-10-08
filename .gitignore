@@ -1,0 +1,44 @@
+# Python environments and caches
+.venv/
+venv/
+env/
+ENV/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+.aws/
+
+# Uploaded CVs and local recruitment data
+uploads/
+uploaded_cvs/
+cv_uploads/
+data/cvs/
+
+# JavaScript dependencies and generated artifacts
+node_modules/
+dist/
+build/
+.next/
+coverage/
+*.egg-info/
+
+# Editor and operating-system files
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+*.log
