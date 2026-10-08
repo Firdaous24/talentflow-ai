@@ -1,0 +1,10 @@
+# Override backend itself, so test runs need neither a running API nor PostgreSQL.
+services:
+  backend:
+    image: talentflow-ai-backend-test:local
+    build:
+      target: test
+    command: ["python", "-m", "pytest", "-p", "no:cacheprovider"]
+    restart: "no"
+    healthcheck:
+      disable: true

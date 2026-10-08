@@ -1,0 +1,11 @@
+# Explicitly opt into source mounts and reload for local development.
+services:
+  backend:
+    command: ["python", "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload", "--reload-dir", "/app/app"]
+    volumes:
+      - type: bind
+        source: ./backend/app
+        target: /app/app
+        read_only: true
+        bind:
+          create_host_path: false

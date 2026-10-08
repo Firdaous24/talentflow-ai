@@ -1,0 +1,26 @@
+[
+  {
+    "scenario": "junior_python", "skills": ["Python", "FastAPI", "Git"],
+    "text": "Name: Avery Example\nEmail: avery@example.com\nPhone: +1 202 555 0101\nLinkedIn: https://linkedin.com/in/avery-example\nGitHub: https://github.com/avery-example\nTechnical Skills\nPython, FastAPI, Git\nEducation\nDegree: BSc\nInstitution: Fictional Computing College\nField of study: Computer Science\nStart date: 2020\nEnd date: 2024\nProjects\nProject: Practice API\nDescription: A fictional learning API.\nTechnologies: Python, FastAPI\nGitHub: https://github.com/avery-example/practice\nLanguages\nEnglish: Fluent\nCertifications\nName: Fictional Python Fundamentals\nIssuer: Example Training\nDate: 2024"
+  },
+  {
+    "scenario": "data_analyst", "skills": ["SQL", "pandas", "Power BI"],
+    "text": "Name: Rowan Sample\nEmail: rowan@example.org\nSkills\nSQL, pandas, Power BI\nProfessional Experience\nJob title: Data Analyst\nCompany: Fictional Analytics Lab\nStart date: 2022-01\nEnd date: 2024-06\nDescription: Built synthetic reporting dashboards.\nTechnologies: SQL, pandas\nLanguages\nFrench: Advanced"
+  },
+  {
+    "scenario": "ml_engineer", "skills": ["Python", "PyTorch", "scikit-learn", "Docker"],
+    "text": "Name: Quinn Demo\nEmail: quinn@example.net\nTechnical Skills\nPython, PyTorch, sklearn, Docker\nExperience\nJob title: Machine Learning Engineer\nCompany: Example Research Studio\nStart date: 2023\nEnd date: Present\nDescription: Tested classifiers on fictional datasets.\nEducation\nDegree: MSc\nInstitution: Example Science Academy\nField of study: Machine Learning"
+  },
+  {
+    "scenario": "backend_engineer", "skills": ["Python", "Django", "PostgreSQL", "Redis", "Docker"],
+    "text": "Name: Casey Fiction\nEmail: casey@example.com\nSkills\nPython, Django, PostgreSQL, Redis, Docker\nWork Experience\nJob title: Backend Engineer\nCompany: Example Software Workshop\nStart date: 2021\nEnd date: Present\nDescription: Implemented fictional service APIs.\nProjects\nName: Synthetic Task Queue\nDescription: Demonstration queue service.\nTechnologies: Python, Redis"
+  },
+  {
+    "scenario": "incomplete", "skills": ["Python"],
+    "text": "Technical Skills\nPython\nProjects\nAn unlabeled practice project with no reliable owner information."
+  },
+  {
+    "scenario": "different_layout", "skills": ["JavaScript", "React", "Git"],
+    "text": "Contact Information\nName: Taylor Placeholder\nEmail: taylor@example.org\nPERSONAL PROJECTS\nName: Fictional Portfolio\nDescription: A learning website.\nACADEMIC BACKGROUND\nDegree: Diploma\nInstitution: Example Design Institute\nSKILLS: JavaScript, React.js, Git\nSPOKEN LANGUAGES\nSpanish - Native\nCERTIFICATES\nName: Example Web Certificate\nIssuer: Fictional Academy"
+  }
+]
