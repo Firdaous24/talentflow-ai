@@ -1,0 +1,87 @@
+{
+  "dataset_size": 8,
+  "counts": {
+    "correct": 202,
+    "predicted": 202,
+    "expected": 202,
+    "unsupported": 0,
+    "skill_correct": 48,
+    "skill_predicted": 48,
+    "skill_expected": 48,
+    "exact_profiles": 8
+  },
+  "metrics": {
+    "field_precision": 1.0,
+    "field_recall": 1.0,
+    "exact_structured_profile_rate": 1.0,
+    "skill_precision": 1.0,
+    "skill_recall": 1.0,
+    "unsupported_field_rate": 0.0
+  },
+  "cases": [
+    {
+      "id": "french_engineering",
+      "correct": 35,
+      "predicted": 35,
+      "expected": 35,
+      "exact": true,
+      "differences": {}
+    },
+    {
+      "id": "english_developer",
+      "correct": 30,
+      "predicted": 30,
+      "expected": 30,
+      "exact": true,
+      "differences": {}
+    },
+    {
+      "id": "two_column",
+      "correct": 23,
+      "predicted": 23,
+      "expected": 23,
+      "exact": true,
+      "differences": {}
+    },
+    {
+      "id": "french_data_analyst",
+      "correct": 31,
+      "predicted": 31,
+      "expected": 31,
+      "exact": true,
+      "differences": {}
+    },
+    {
+      "id": "missing_information",
+      "correct": 2,
+      "predicted": 2,
+      "expected": 2,
+      "exact": true,
+      "differences": {}
+    },
+    {
+      "id": "unusual_section_order",
+      "correct": 29,
+      "predicted": 29,
+      "expected": 29,
+      "exact": true,
+      "differences": {}
+    },
+    {
+      "id": "french_dates",
+      "correct": 12,
+      "predicted": 12,
+      "expected": 12,
+      "exact": true,
+      "differences": {}
+    },
+    {
+      "id": "skills_multiple_columns",
+      "correct": 40,
+      "predicted": 40,
+      "expected": 40,
+      "exact": true,
+      "differences": {}
+    }
+  ]
+}

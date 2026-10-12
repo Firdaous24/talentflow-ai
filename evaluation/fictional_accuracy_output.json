@@ -1,0 +1,1279 @@
+{
+  "candidate": {
+    "full_name": "Alex Fictif",
+    "email": "alex@example.test",
+    "phone": null,
+    "linkedin_url": null,
+    "github_url": null,
+    "education": [
+      {
+        "degree": "Diplôme d'Ingénieur d'État en Informatique",
+        "institution": "Institut Atlas Fictif",
+        "field_of_study": "Informatique",
+        "start_date": "2023",
+        "end_date": "2026"
+      },
+      {
+        "degree": "Cycle Préparatoire Intégré",
+        "institution": "Institut Atlas Fictif",
+        "field_of_study": null,
+        "start_date": "2021",
+        "end_date": "2023"
+      },
+      {
+        "degree": "Baccalauréat – Sciences Physiques et Chimiques",
+        "institution": "Lycée des Sciences Fictif",
+        "field_of_study": "Sciences Physiques et Chimiques",
+        "start_date": "2020",
+        "end_date": "2021"
+      }
+    ],
+    "experience": [
+      {
+        "job_title": "Stagiaire PFE – Intelligence Artificielle & GraphRAG",
+        "company": "Atelier Horizon Fictif",
+        "location": "Maroc",
+        "start_date": "2026-02",
+        "end_date": "2026-08",
+        "description": "- Conception d'une plateforme GraphRAG fictive.\n- Pipelines avec Python, FastAPI, MongoDB et Neo4j.",
+        "technologies": [
+          "Python",
+          "FastAPI",
+          "MongoDB",
+          "Neo4j",
+          "GraphRAG"
+        ]
+      },
+      {
+        "job_title": "Stagiaire – Data Engineering",
+        "company": "Laboratoire Boréal Fictif",
+        "location": "Oujda, Maroc",
+        "start_date": "2025-07",
+        "end_date": "2025-09",
+        "description": "- Intégration de données avec Talend et SQL.",
+        "technologies": [
+          "SQL",
+          "Talend"
+        ]
+      },
+      {
+        "job_title": "Développeur – Applications Web",
+        "company": "Studio Aurore Fictif",
+        "location": null,
+        "start_date": "2024-12",
+        "end_date": "2025-01",
+        "description": "- Applications de démonstration avec HTML et CSS.",
+        "technologies": [
+          "HTML",
+          "CSS"
+        ]
+      }
+    ],
+    "technical_skills": [
+      {
+        "name": "Python",
+        "category": "programming_language"
+      },
+      {
+        "name": "SQL",
+        "category": "programming_language"
+      },
+      {
+        "name": "FastAPI",
+        "category": "framework"
+      },
+      {
+        "name": "Odoo",
+        "category": "framework"
+      },
+      {
+        "name": "Neo4j",
+        "category": "database"
+      },
+      {
+        "name": "LangGraph",
+        "category": "ai_ml"
+      },
+      {
+        "name": "RAG",
+        "category": "ai_ml"
+      },
+      {
+        "name": "Matplotlib",
+        "category": "ai_ml"
+      },
+      {
+        "name": "Prompt Engineering",
+        "category": "ai_ml"
+      },
+      {
+        "name": "AI Agents",
+        "category": "ai_ml"
+      },
+      {
+        "name": "Machine Learning",
+        "category": "ai_ml"
+      },
+      {
+        "name": "Docker",
+        "category": "cloud_devops"
+      },
+      {
+        "name": "Git",
+        "category": "tool"
+      },
+      {
+        "name": "Talend",
+        "category": "tool"
+      },
+      {
+        "name": "Salesforce",
+        "category": "tool"
+      },
+      {
+        "name": "REST APIs",
+        "category": "tool"
+      },
+      {
+        "name": "HTML",
+        "category": "web_technology"
+      },
+      {
+        "name": "CSS",
+        "category": "web_technology"
+      }
+    ],
+    "projects": [
+      {
+        "name": "SmartDoc Demo",
+        "description": "assistant documentaire basé sur les LLMs et le RAG.\nAnalyse de PDF avec Python et FastAPI.",
+        "technologies": [
+          "Python",
+          "FastAPI",
+          "RAG",
+          "LLMs"
+        ],
+        "github_url": null
+      },
+      {
+        "name": "Prévision des ventes – BI & Machine Learning",
+        "description": "analyse de données historiques.\nEntraînement avec scikit-learn et Matplotlib.",
+        "technologies": [
+          "scikit-learn",
+          "Matplotlib",
+          "Machine Learning"
+        ],
+        "github_url": null
+      },
+      {
+        "name": "Segmentation marketing – Data & BI",
+        "description": "clustering avec Python et K-Means.",
+        "technologies": [
+          "Python"
+        ],
+        "github_url": null
+      }
+    ],
+    "languages": [],
+    "certifications": []
+  },
+  "parsing_metadata": {
+    "status": "partial",
+    "page_count": 1,
+    "warnings": [
+      "Deterministic extraction is partial; unrecognized layouts and unlabeled fields may be omitted. Review all extracted information.",
+      "Candidate name inferred only from the CV header; confirm during review.",
+      "Education entry interpreted from source order; review field associations.",
+      "Experience entry interpreted from source order; review field associations.",
+      "Projects entry interpreted from source order; review field associations.",
+      "phone could not be reliably identified.",
+      "linkedin_url could not be reliably identified.",
+      "github_url could not be reliably identified.",
+      "languages could not be reliably identified.",
+      "certifications could not be reliably identified.",
+      "Skills are dictionary-matched mentions in the skills section; proficiency and unsupported technologies are not inferred."
+    ],
+    "engine": "deterministic-v2",
+    "evidence": [
+      {
+        "field": "full_name",
+        "quote": "Alex Fictif",
+        "source_id": "p1-b0-l0-g0",
+        "page": 1,
+        "bbox": [
+          41.0,
+          26.099998474121094,
+          136.58001708984375,
+          53.63999938964844
+        ],
+        "method": "header",
+        "uncertain": true
+      },
+      {
+        "field": "email",
+        "quote": "alex@example.test",
+        "source_id": "p1-b1-l0-g0",
+        "page": 1,
+        "bbox": [
+          41.0,
+          58.874996185302734,
+          113.40300750732422,
+          70.55399322509766
+        ],
+        "method": "layout",
+        "uncertain": true
+      },
+      {
+        "field": "education.0.degree",
+        "quote": "Diplôme d'Ingénieur d'État en Informatique",
+        "source_id": "p1-b16-l0-g0",
+        "page": 1,
+        "bbox": [
+          41.0,
+          333.9175109863281,
+          214.12799072265625,
+          345.62200927734375
+        ],
+        "method": "layout",
+        "uncertain": true
+      },
+      {
+        "field": "education.0.institution",
+        "quote": "Institut Atlas Fictif",
+        "source_id": "p1-b17-l0-g0",
+        "page": 1,
+        "bbox": [
+          41.0,
+          348.875,
+          107.60600280761719,
+          360.55401611328125
+        ],
+        "method": "layout",
+        "uncertain": true
+      },
+      {
+        "field": "education.0.field_of_study",
+        "quote": "Diplôme d'Ingénieur d'État en Informatique",
+        "source_id": "p1-b16-l0-g0",
+        "page": 1,
+        "bbox": [
+          41.0,
+          333.9175109863281,
+          214.12799072265625,
+          345.62200927734375
+        ],
+        "method": "layout",
+        "uncertain": true
+      },
+      {
+        "field": "education.0.start_date",
+        "quote": "2023–2026",
+        "source_id": "p1-b16-l1-g0",
+        "page": 1,
+        "bbox": [
+          416.0,
+          334.0,
+          456.0320129394531,
+          344.99200439453125
+        ],
+        "method": "layout",
+        "uncertain": true
+      },
+      {
+        "field": "education.0.end_date",
+        "quote": "2023–2026",
+        "source_id": "p1-b16-l1-g0",
+        "page": 1,
+        "bbox": [
+          416.0,
+          334.0,
+          456.0320129394531,
+          344.99200439453125
+        ],
+        "method": "layout",
+        "uncertain": true
+      },
+      {
+        "field": "education.1.degree",
+        "quote": "Cycle Préparatoire Intégré",
+        "source_id": "p1-b18-l0-g0",
+        "page": 1,
+        "bbox": [
+          41.0,
+          368.9175109863281,
+          146.81649780273438,
+          380.62200927734375
+        ],
+        "method": "layout",
+        "uncertain": true
+      },
+      {
+        "field": "education.1.institution",
+        "quote": "Institut Atlas Fictif",
+        "source_id": "p1-b19-l0-g0",
+        "page": 1,
+        "bbox": [
+          41.0,
+          383.875,
+          107.60600280761719,
+          395.55401611328125
+        ],
+        "method": "layout",
+        "uncertain": true
+      },
+      {
+        "field": "education.1.start_date",
+        "quote": "2021–2023",
+        "source_id": "p1-b18-l1-g0",
+        "page": 1,
+        "bbox": [
+          416.0,
+          369.0,
+          456.0320129394531,
+          379.99200439453125
+        ],
+        "method": "layout",
+        "uncertain": true
+      },
+      {
+        "field": "education.1.end_date",
+        "quote": "2021–2023",
+        "source_id": "p1-b18-l1-g0",
+        "page": 1,
+        "bbox": [
+          416.0,
+          369.0,
+          456.0320129394531,
+          379.99200439453125
+        ],
+        "method": "layout",
+        "uncertain": true
+      },
+      {
+        "field": "education.2.degree",
+        "quote": "Baccalauréat – Sciences Physiques et Chimiques",
+        "source_id": "p1-b20-l0-g0",
+        "page": 1,
+        "bbox": [
+          41.0,
+          403.9175109863281,
+          240.83499145507812,
+          415.62200927734375
+        ],
+        "method": "layout",
+        "uncertain": true
+      },
+      {
+        "field": "education.2.institution",
+        "quote": "Lycée des Sciences Fictif",
+        "source_id": "p1-b21-l0-g0",
+        "page": 1,
+        "bbox": [
+          41.0,
+          418.875,
+          136.89700317382812,
+          430.55401611328125
+        ],
+        "method": "layout",
+        "uncertain": true
+      },
+      {
+        "field": "education.2.field_of_study",
+        "quote": "Baccalauréat – Sciences Physiques et Chimiques",
+        "source_id": "p1-b20-l0-g0",
+        "page": 1,
+        "bbox": [
+          41.0,
+          403.9175109863281,
+          240.83499145507812,
+          415.62200927734375
+        ],
+        "method": "layout",
+        "uncertain": true
+      },
+      {
+        "field": "education.2.start_date",
+        "quote": "2020–2021",
+        "source_id": "p1-b20-l1-g0",
+        "page": 1,
+        "bbox": [
+          416.0,
+          404.0,
+          456.0320129394531,
+          414.99200439453125
+        ],
+        "method": "layout",
+        "uncertain": true
+      },
+      {
+        "field": "education.2.end_date",
+        "quote": "2020–2021",
+        "source_id": "p1-b20-l1-g0",
+        "page": 1,
+        "bbox": [
+          416.0,
+          404.0,
+          456.0320129394531,
+          414.99200439453125
+        ],
+        "method": "layout",
+        "uncertain": true
+      },
+      {
+        "field": "experience.0.job_title",
+        "quote": "Stagiaire PFE – Intelligence Artificielle & GraphRAG",
+        "source_id": "p1-b3-l0-g0",
+        "page": 1,
+        "bbox": [
+          41.0,
+          113.91749572753906,
+          250.26148986816406,
+          125.62199401855469
+        ],
+        "method": "layout",
+        "uncertain": true
+      },
+      {
+        "field": "experience.0.company",
+        "quote": "Atelier Horizon Fictif",
+        "source_id": "p1-b4-l0-g0",
+        "page": 1,
+        "bbox": [
+          41.0,
+          128.875,
+          117.04100799560547,
+          140.5540008544922
+        ],
+        "method": "layout",
+        "uncertain": true
+      },
+      {
+        "field": "experience.0.location",
+        "quote": "Maroc",
+        "source_id": "p1-b5-l0-g0",
+        "page": 1,
+        "bbox": [
+          41.0,
+          143.875,
+          64.61299896240234,
+          155.5540008544922
+        ],
+        "method": "layout",
+        "uncertain": true
+      },
+      {
+        "field": "experience.0.start_date",
+        "quote": "Fév. 2026 – Août 2026",
+        "source_id": "p1-b3-l1-g0",
+        "page": 1,
+        "bbox": [
+          416.0,
+          114.0,
+          496.9440002441406,
+          124.99199676513672
+        ],
+        "method": "layout",
+        "uncertain": true
+      },
+      {
+        "field": "experience.0.end_date",
+        "quote": "Fév. 2026 – Août 2026",
+        "source_id": "p1-b3-l1-g0",
+        "page": 1,
+        "bbox": [
+          416.0,
+          114.0,
+          496.9440002441406,
+          124.99199676513672
+        ],
+        "method": "layout",
+        "uncertain": true
+      },
+      {
+        "field": "experience.0.description",
+        "quote": "- Conception d'une plateforme GraphRAG fictive.",
+        "source_id": "p1-b6-l0-g0",
+        "page": 1,
+        "bbox": [
+          41.0,
+          158.875,
+          225.44998168945312,
+          170.5540008544922
+        ],
+        "method": "layout",
+        "uncertain": true
+      },
+      {
+        "field": "experience.0.description",
+        "quote": "- Pipelines avec Python, FastAPI, MongoDB et Neo4j.",
+        "source_id": "p1-b7-l0-g0",
+        "page": 1,
+        "bbox": [
+          41.0,
+          173.875,
+          243.67398071289062,
+          185.5540008544922
+        ],
+        "method": "layout",
+        "uncertain": true
+      },
+      {
+        "field": "experience.0.technologies.0",
+        "quote": "- Pipelines avec Python, FastAPI, MongoDB et Neo4j.",
+        "source_id": "p1-b7-l0-g0",
+        "page": 1,
+        "bbox": [
+          41.0,
+          173.875,
+          243.67398071289062,
+          185.5540008544922
+        ],
+        "method": "dictionary",
+        "uncertain": false
+      },
+      {
+        "field": "experience.0.technologies.1",
+        "quote": "- Pipelines avec Python, FastAPI, MongoDB et Neo4j.",
+        "source_id": "p1-b7-l0-g0",
+        "page": 1,
+        "bbox": [
+          41.0,
+          173.875,
+          243.67398071289062,
+          185.5540008544922
+        ],
+        "method": "dictionary",
+        "uncertain": false
+      },
+      {
+        "field": "experience.0.technologies.2",
+        "quote": "- Pipelines avec Python, FastAPI, MongoDB et Neo4j.",
+        "source_id": "p1-b7-l0-g0",
+        "page": 1,
+        "bbox": [
+          41.0,
+          173.875,
+          243.67398071289062,
+          185.5540008544922
+        ],
+        "method": "dictionary",
+        "uncertain": false
+      },
+      {
+        "field": "experience.0.technologies.3",
+        "quote": "- Pipelines avec Python, FastAPI, MongoDB et Neo4j.",
+        "source_id": "p1-b7-l0-g0",
+        "page": 1,
+        "bbox": [
+          41.0,
+          173.875,
+          243.67398071289062,
+          185.5540008544922
+        ],
+        "method": "dictionary",
+        "uncertain": false
+      },
+      {
+        "field": "experience.0.technologies.4",
+        "quote": "Stagiaire PFE – Intelligence Artificielle & GraphRAG",
+        "source_id": "p1-b3-l0-g0",
+        "page": 1,
+        "bbox": [
+          41.0,
+          113.91749572753906,
+          250.26148986816406,
+          125.62199401855469
+        ],
+        "method": "dictionary",
+        "uncertain": false
+      },
+      {
+        "field": "experience.1.job_title",
+        "quote": "Stagiaire – Data Engineering",
+        "source_id": "p1-b8-l0-g0",
+        "page": 1,
+        "bbox": [
+          41.0,
+          193.91749572753906,
+          156.25999450683594,
+          205.6219940185547
+        ],
+        "method": "layout",
+        "uncertain": true
+      },
+      {
+        "field": "experience.1.company",
+        "quote": "Laboratoire Boréal Fictif",
+        "source_id": "p1-b9-l0-g0",
+        "page": 1,
+        "bbox": [
+          41.0,
+          208.875,
+          131.22750854492188,
+          220.5540008544922
+        ],
+        "method": "layout",
+        "uncertain": true
+      },
+      {
+        "field": "experience.1.location",
+        "quote": "Oujda, Maroc",
+        "source_id": "p1-b10-l0-g0",
+        "page": 1,
+        "bbox": [
+          41.0,
+          223.875,
+          92.01701354980469,
+          235.5540008544922
+        ],
+        "method": "layout",
+        "uncertain": true
+      },
+      {
+        "field": "experience.1.start_date",
+        "quote": "Juil. 2025 – Sept. 2025",
+        "source_id": "p1-b8-l1-g0",
+        "page": 1,
+        "bbox": [
+          416.0,
+          194.0,
+          497.8320007324219,
+          204.99200439453125
+        ],
+        "method": "layout",
+        "uncertain": true
+      },
+      {
+        "field": "experience.1.end_date",
+        "quote": "Juil. 2025 – Sept. 2025",
+        "source_id": "p1-b8-l1-g0",
+        "page": 1,
+        "bbox": [
+          416.0,
+          194.0,
+          497.8320007324219,
+          204.99200439453125
+        ],
+        "method": "layout",
+        "uncertain": true
+      },
+      {
+        "field": "experience.1.description",
+        "quote": "- Intégration de données avec Talend et SQL.",
+        "source_id": "p1-b11-l0-g0",
+        "page": 1,
+        "bbox": [
+          41.0,
+          238.875,
+          212.989013671875,
+          250.5540008544922
+        ],
+        "method": "layout",
+        "uncertain": true
+      },
+      {
+        "field": "experience.1.technologies.0",
+        "quote": "- Intégration de données avec Talend et SQL.",
+        "source_id": "p1-b11-l0-g0",
+        "page": 1,
+        "bbox": [
+          41.0,
+          238.875,
+          212.989013671875,
+          250.5540008544922
+        ],
+        "method": "dictionary",
+        "uncertain": false
+      },
+      {
+        "field": "experience.1.technologies.1",
+        "quote": "- Intégration de données avec Talend et SQL.",
+        "source_id": "p1-b11-l0-g0",
+        "page": 1,
+        "bbox": [
+          41.0,
+          238.875,
+          212.989013671875,
+          250.5540008544922
+        ],
+        "method": "dictionary",
+        "uncertain": false
+      },
+      {
+        "field": "experience.2.job_title",
+        "quote": "Développeur – Applications Web",
+        "source_id": "p1-b12-l0-g0",
+        "page": 1,
+        "bbox": [
+          41.0,
+          258.9175109863281,
+          173.25148010253906,
+          270.62200927734375
+        ],
+        "method": "layout",
+        "uncertain": true
+      },
+      {
+        "field": "experience.2.company",
+        "quote": "Studio Aurore Fictif",
+        "source_id": "p1-b13-l0-g0",
+        "page": 1,
+        "bbox": [
+          41.0,
+          273.875,
+          113.2755126953125,
+          285.55401611328125
+        ],
+        "method": "layout",
+        "uncertain": true
+      },
+      {
+        "field": "experience.2.start_date",
+        "quote": "Déc. 2024 – Janv. 2025",
+        "source_id": "p1-b12-l1-g0",
+        "page": 1,
+        "bbox": [
+          416.0,
+          259.0,
+          500.4960021972656,
+          269.99200439453125
+        ],
+        "method": "layout",
+        "uncertain": true
+      },
+      {
+        "field": "experience.2.end_date",
+        "quote": "Déc. 2024 – Janv. 2025",
+        "source_id": "p1-b12-l1-g0",
+        "page": 1,
+        "bbox": [
+          416.0,
+          259.0,
+          500.4960021972656,
+          269.99200439453125
+        ],
+        "method": "layout",
+        "uncertain": true
+      },
+      {
+        "field": "experience.2.description",
+        "quote": "- Applications de démonstration avec HTML et CSS.",
+        "source_id": "p1-b14-l0-g0",
+        "page": 1,
+        "bbox": [
+          41.0,
+          288.875,
+          237.51998901367188,
+          300.55401611328125
+        ],
+        "method": "layout",
+        "uncertain": true
+      },
+      {
+        "field": "experience.2.technologies.0",
+        "quote": "- Applications de démonstration avec HTML et CSS.",
+        "source_id": "p1-b14-l0-g0",
+        "page": 1,
+        "bbox": [
+          41.0,
+          288.875,
+          237.51998901367188,
+          300.55401611328125
+        ],
+        "method": "dictionary",
+        "uncertain": false
+      },
+      {
+        "field": "experience.2.technologies.1",
+        "quote": "- Applications de démonstration avec HTML et CSS.",
+        "source_id": "p1-b14-l0-g0",
+        "page": 1,
+        "bbox": [
+          41.0,
+          288.875,
+          237.51998901367188,
+          300.55401611328125
+        ],
+        "method": "dictionary",
+        "uncertain": false
+      },
+      {
+        "field": "technical_skills.0.name",
+        "quote": "Python, FastAPI, SQL, Talend, Odoo",
+        "source_id": "p1-b29-l0-g0",
+        "page": 1,
+        "bbox": [
+          41.0,
+          578.875,
+          180.3829803466797,
+          590.5540161132812
+        ],
+        "method": "dictionary",
+        "uncertain": false
+      },
+      {
+        "field": "technical_skills.1.name",
+        "quote": "Python, FastAPI, SQL, Talend, Odoo",
+        "source_id": "p1-b29-l0-g0",
+        "page": 1,
+        "bbox": [
+          41.0,
+          578.875,
+          180.3829803466797,
+          590.5540161132812
+        ],
+        "method": "dictionary",
+        "uncertain": false
+      },
+      {
+        "field": "technical_skills.2.name",
+        "quote": "Python, FastAPI, SQL, Talend, Odoo",
+        "source_id": "p1-b29-l0-g0",
+        "page": 1,
+        "bbox": [
+          41.0,
+          578.875,
+          180.3829803466797,
+          590.5540161132812
+        ],
+        "method": "dictionary",
+        "uncertain": false
+      },
+      {
+        "field": "technical_skills.3.name",
+        "quote": "Python, FastAPI, SQL, Talend, Odoo",
+        "source_id": "p1-b29-l0-g0",
+        "page": 1,
+        "bbox": [
+          41.0,
+          578.875,
+          180.3829803466797,
+          590.5540161132812
+        ],
+        "method": "dictionary",
+        "uncertain": false
+      },
+      {
+        "field": "technical_skills.4.name",
+        "quote": "LangGraph, Neo4j",
+        "source_id": "p1-b31-l1-g0",
+        "page": 1,
+        "bbox": [
+          321.0,
+          608.875,
+          390.4534912109375,
+          620.5540161132812
+        ],
+        "method": "dictionary",
+        "uncertain": false
+      },
+      {
+        "field": "technical_skills.5.name",
+        "quote": "LangGraph, Neo4j",
+        "source_id": "p1-b31-l1-g0",
+        "page": 1,
+        "bbox": [
+          321.0,
+          608.875,
+          390.4534912109375,
+          620.5540161132812
+        ],
+        "method": "dictionary",
+        "uncertain": false
+      },
+      {
+        "field": "technical_skills.6.name",
+        "quote": "AI Agents, Machine Learning, RAG",
+        "source_id": "p1-b30-l1-g0",
+        "page": 1,
+        "bbox": [
+          321.0,
+          593.875,
+          453.2854919433594,
+          605.5540161132812
+        ],
+        "method": "dictionary",
+        "uncertain": false
+      },
+      {
+        "field": "technical_skills.7.name",
+        "quote": "Salesforce, HTML, CSS, Matplotlib",
+        "source_id": "p1-b29-l1-g0",
+        "page": 1,
+        "bbox": [
+          321.0,
+          578.875,
+          452.3164978027344,
+          590.5540161132812
+        ],
+        "method": "dictionary",
+        "uncertain": false
+      },
+      {
+        "field": "technical_skills.8.name",
+        "quote": "REST APIs, Prompt Engineering",
+        "source_id": "p1-b30-l0-g0",
+        "page": 1,
+        "bbox": [
+          41.0,
+          593.875,
+          163.8249969482422,
+          605.5540161132812
+        ],
+        "method": "dictionary",
+        "uncertain": false
+      },
+      {
+        "field": "technical_skills.9.name",
+        "quote": "AI Agents, Machine Learning, RAG",
+        "source_id": "p1-b30-l1-g0",
+        "page": 1,
+        "bbox": [
+          321.0,
+          593.875,
+          453.2854919433594,
+          605.5540161132812
+        ],
+        "method": "dictionary",
+        "uncertain": false
+      },
+      {
+        "field": "technical_skills.10.name",
+        "quote": "AI Agents, Machine Learning, RAG",
+        "source_id": "p1-b30-l1-g0",
+        "page": 1,
+        "bbox": [
+          321.0,
+          593.875,
+          453.2854919433594,
+          605.5540161132812
+        ],
+        "method": "dictionary",
+        "uncertain": false
+      },
+      {
+        "field": "technical_skills.11.name",
+        "quote": "Git, Docker",
+        "source_id": "p1-b31-l0-g0",
+        "page": 1,
+        "bbox": [
+          41.0,
+          608.875,
+          83.50850677490234,
+          620.5540161132812
+        ],
+        "method": "dictionary",
+        "uncertain": false
+      },
+      {
+        "field": "technical_skills.12.name",
+        "quote": "Git, Docker",
+        "source_id": "p1-b31-l0-g0",
+        "page": 1,
+        "bbox": [
+          41.0,
+          608.875,
+          83.50850677490234,
+          620.5540161132812
+        ],
+        "method": "dictionary",
+        "uncertain": false
+      },
+      {
+        "field": "technical_skills.13.name",
+        "quote": "Python, FastAPI, SQL, Talend, Odoo",
+        "source_id": "p1-b29-l0-g0",
+        "page": 1,
+        "bbox": [
+          41.0,
+          578.875,
+          180.3829803466797,
+          590.5540161132812
+        ],
+        "method": "dictionary",
+        "uncertain": false
+      },
+      {
+        "field": "technical_skills.14.name",
+        "quote": "Salesforce, HTML, CSS, Matplotlib",
+        "source_id": "p1-b29-l1-g0",
+        "page": 1,
+        "bbox": [
+          321.0,
+          578.875,
+          452.3164978027344,
+          590.5540161132812
+        ],
+        "method": "dictionary",
+        "uncertain": false
+      },
+      {
+        "field": "technical_skills.15.name",
+        "quote": "REST APIs, Prompt Engineering",
+        "source_id": "p1-b30-l0-g0",
+        "page": 1,
+        "bbox": [
+          41.0,
+          593.875,
+          163.8249969482422,
+          605.5540161132812
+        ],
+        "method": "dictionary",
+        "uncertain": false
+      },
+      {
+        "field": "technical_skills.16.name",
+        "quote": "Salesforce, HTML, CSS, Matplotlib",
+        "source_id": "p1-b29-l1-g0",
+        "page": 1,
+        "bbox": [
+          321.0,
+          578.875,
+          452.3164978027344,
+          590.5540161132812
+        ],
+        "method": "dictionary",
+        "uncertain": false
+      },
+      {
+        "field": "technical_skills.17.name",
+        "quote": "Salesforce, HTML, CSS, Matplotlib",
+        "source_id": "p1-b29-l1-g0",
+        "page": 1,
+        "bbox": [
+          321.0,
+          578.875,
+          452.3164978027344,
+          590.5540161132812
+        ],
+        "method": "dictionary",
+        "uncertain": false
+      },
+      {
+        "field": "projects.0.name",
+        "quote": "SmartDoc Demo : assistant documentaire basé sur les LLMs et le RAG.",
+        "source_id": "p1-b23-l0-g0",
+        "page": 1,
+        "bbox": [
+          41.0,
+          463.9175109863281,
+          328.66552734375,
+          475.62200927734375
+        ],
+        "method": "labeled",
+        "uncertain": false
+      },
+      {
+        "field": "projects.0.description",
+        "quote": "SmartDoc Demo : assistant documentaire basé sur les LLMs et le RAG.",
+        "source_id": "p1-b23-l0-g0",
+        "page": 1,
+        "bbox": [
+          41.0,
+          463.9175109863281,
+          328.66552734375,
+          475.62200927734375
+        ],
+        "method": "labeled",
+        "uncertain": false
+      },
+      {
+        "field": "projects.0.description",
+        "quote": "Analyse de PDF avec Python et FastAPI.",
+        "source_id": "p1-b24-l0-g0",
+        "page": 1,
+        "bbox": [
+          41.0,
+          478.875,
+          195.9635009765625,
+          490.55401611328125
+        ],
+        "method": "layout",
+        "uncertain": true
+      },
+      {
+        "field": "projects.0.technologies.0",
+        "quote": "Analyse de PDF avec Python et FastAPI.",
+        "source_id": "p1-b24-l0-g0",
+        "page": 1,
+        "bbox": [
+          41.0,
+          478.875,
+          195.9635009765625,
+          490.55401611328125
+        ],
+        "method": "dictionary",
+        "uncertain": false
+      },
+      {
+        "field": "projects.0.technologies.1",
+        "quote": "Analyse de PDF avec Python et FastAPI.",
+        "source_id": "p1-b24-l0-g0",
+        "page": 1,
+        "bbox": [
+          41.0,
+          478.875,
+          195.9635009765625,
+          490.55401611328125
+        ],
+        "method": "dictionary",
+        "uncertain": false
+      },
+      {
+        "field": "projects.0.technologies.2",
+        "quote": "SmartDoc Demo : assistant documentaire basé sur les LLMs et le RAG.",
+        "source_id": "p1-b23-l0-g0",
+        "page": 1,
+        "bbox": [
+          41.0,
+          463.9175109863281,
+          328.66552734375,
+          475.62200927734375
+        ],
+        "method": "dictionary",
+        "uncertain": false
+      },
+      {
+        "field": "projects.0.technologies.3",
+        "quote": "SmartDoc Demo : assistant documentaire basé sur les LLMs et le RAG.",
+        "source_id": "p1-b23-l0-g0",
+        "page": 1,
+        "bbox": [
+          41.0,
+          463.9175109863281,
+          328.66552734375,
+          475.62200927734375
+        ],
+        "method": "dictionary",
+        "uncertain": false
+      },
+      {
+        "field": "projects.1.name",
+        "quote": "Prévision des ventes – BI & Machine Learning : analyse de données historiques.",
+        "source_id": "p1-b25-l0-g0",
+        "page": 1,
+        "bbox": [
+          41.0,
+          498.9175109863281,
+          365.5301513671875,
+          510.62200927734375
+        ],
+        "method": "labeled",
+        "uncertain": false
+      },
+      {
+        "field": "projects.1.description",
+        "quote": "Prévision des ventes – BI & Machine Learning : analyse de données historiques.",
+        "source_id": "p1-b25-l0-g0",
+        "page": 1,
+        "bbox": [
+          41.0,
+          498.9175109863281,
+          365.5301513671875,
+          510.62200927734375
+        ],
+        "method": "labeled",
+        "uncertain": false
+      },
+      {
+        "field": "projects.1.description",
+        "quote": "Entraînement avec scikit-learn et Matplotlib.",
+        "source_id": "p1-b26-l0-g0",
+        "page": 1,
+        "bbox": [
+          41.0,
+          513.875,
+          205.86598205566406,
+          525.5540161132812
+        ],
+        "method": "layout",
+        "uncertain": true
+      },
+      {
+        "field": "projects.1.technologies.0",
+        "quote": "Entraînement avec scikit-learn et Matplotlib.",
+        "source_id": "p1-b26-l0-g0",
+        "page": 1,
+        "bbox": [
+          41.0,
+          513.875,
+          205.86598205566406,
+          525.5540161132812
+        ],
+        "method": "dictionary",
+        "uncertain": false
+      },
+      {
+        "field": "projects.1.technologies.1",
+        "quote": "Entraînement avec scikit-learn et Matplotlib.",
+        "source_id": "p1-b26-l0-g0",
+        "page": 1,
+        "bbox": [
+          41.0,
+          513.875,
+          205.86598205566406,
+          525.5540161132812
+        ],
+        "method": "dictionary",
+        "uncertain": false
+      },
+      {
+        "field": "projects.1.technologies.2",
+        "quote": "Prévision des ventes – BI & Machine Learning : analyse de données historiques.",
+        "source_id": "p1-b25-l0-g0",
+        "page": 1,
+        "bbox": [
+          41.0,
+          498.9175109863281,
+          365.5301513671875,
+          510.62200927734375
+        ],
+        "method": "dictionary",
+        "uncertain": false
+      },
+      {
+        "field": "projects.2.name",
+        "quote": "Segmentation marketing – Data & BI : clustering avec Python et K-Means.",
+        "source_id": "p1-b27-l0-g0",
+        "page": 1,
+        "bbox": [
+          41.0,
+          533.9175415039062,
+          338.1005859375,
+          545.6220092773438
+        ],
+        "method": "labeled",
+        "uncertain": false
+      },
+      {
+        "field": "projects.2.description",
+        "quote": "Segmentation marketing – Data & BI : clustering avec Python et K-Means.",
+        "source_id": "p1-b27-l0-g0",
+        "page": 1,
+        "bbox": [
+          41.0,
+          533.9175415039062,
+          338.1005859375,
+          545.6220092773438
+        ],
+        "method": "labeled",
+        "uncertain": false
+      },
+      {
+        "field": "projects.2.technologies.0",
+        "quote": "Segmentation marketing – Data & BI : clustering avec Python et K-Means.",
+        "source_id": "p1-b27-l0-g0",
+        "page": 1,
+        "bbox": [
+          41.0,
+          533.9175415039062,
+          338.1005859375,
+          545.6220092773438
+        ],
+        "method": "dictionary",
+        "uncertain": false
+      }
+    ],
+    "llm_status": "not_requested"
+  }
+}

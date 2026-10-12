@@ -1,10 +1,12 @@
 # Docker architecture
 
-Phase 2.5 packages the existing API and test suite and provisions a local PostgreSQL instance. It adds no application tables, ORM, agents, or frontend code.
+Phases 2.5 and 3 package the existing API and test suite, provision a local PostgreSQL instance, and serve a React frontend. Application tables, ORM, and agents remain planned.
 
 ```mermaid
 flowchart LR
-    Browser[Local browser] -->|127.0.0.1:8000| API[backend:8000 - non-root FastAPI]
+    Browser[Local browser] -->|localhost:5173| Frontend[frontend:8080 - non-root Nginx + React]
+    Frontend -->|/api reverse proxy| API[backend:8000 - non-root FastAPI]
+    Browser -->|127.0.0.1:8000/docs| API
     API -. Future persistence .-> DB[db:5432 - PostgreSQL]
     DB --> Volume[Named postgres_data volume]
     Tests[Backend test image] -->|In-process TestClient| App[Same application source]
@@ -35,6 +37,8 @@ The services share the project-scoped default Compose network. PostgreSQL can be
 
 ## Environment and persistence
 
+Phase 3.5 adds optional backend-only runtime variables `LLM_PROVIDER`, `LLM_BASE_URL`, `LLM_MODEL` and `LLM_API_KEY`, all empty by default. The root `.env.example` contains no provider/model/key defaults. Missing configuration does not affect startup, API health or local CV parsing. These variables are not build arguments and are never sent to the frontend. Actual text transmission additionally requires per-upload consent. The test stage copies `evaluate.py` alongside fictional fixtures for reproducible in-container evaluation; the runtime image still excludes tests/evaluation source. Base/development/test Compose workflows remain available. See [multilingual parsing](multilingual_cv_parsing.md).
+
 Copy the safe `.env.example` to `.env` for local development. `.env` is ignored by Git, excluded from build contexts, and not copied or mounted into an image. Only the database service receives the three database variables. Missing or empty variables fail Compose validation rather than silently falling back to embedded credentials.
 
 The example password is a public development placeholder, not a production secret. Replace it before shared use. Runtime environment variables are visible to users with Docker daemon access; do not print rendered Compose environment output or container inspection environments into public logs.
@@ -51,7 +55,7 @@ PostgreSQL initializes its database and user only when the data directory is emp
 
 Future LangGraph orchestration can execute within the backend or a separately justified worker service, with dependency and resource changes made explicitly. PostgreSQL persistence will require application configuration, a driver, migrations and readiness/retry handling when it becomes an actual dependency. None is added here.
 
-A future React service can use host port 5173 for local development and reach the API from the browser at `http://127.0.0.1:8000`. Existing CORS allows `http://localhost:5173`, so open the frontend with that origin. Internal service DNS such as `backend` is for containers, not the host browser. A production frontend and reverse proxy remain future design work.
+The React service publishes host loopback port 5173, serving its production bundle through non-root Nginx on container port 8080. Node 22 builds the bundle from `package-lock.json` with `npm ci`; a separate test target runs Vitest. Nginx proxies `/api/` to `backend:8000`, permits the backend's PDF upload size plus form overhead, disables response caching, and falls back to `index.html` for client routes. Startup depends on backend health; the frontend has its own HTTP healthcheck. The browser uses relative URLs and never sees internal Docker DNS. For optional direct requests, existing backend CORS allows `http://localhost:5173`. No database configuration or credentials enter the frontend image.
 
 ## Operational limits
 

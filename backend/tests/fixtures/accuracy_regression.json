@@ -1,0 +1,127 @@
+[
+  {
+    "id": "french_dense_records",
+    "rows": [
+      {"text":"Alex Fictif","y":30,"size":20,"bold":true},
+      {"text":"alex@example.test","y":60},
+      {"text":"Expériences professionnelles","y":95,"bold":true},
+      {"text":"Stagiaire PFE – Intelligence Artificielle & GraphRAG","y":115,"bold":true,"date":"Fév. 2026 – Août 2026"},
+      {"text":"Atelier Horizon Fictif","y":130},
+      {"text":"Maroc","y":145},
+      {"text":"- Conception d'une plateforme GraphRAG fictive.","y":160},
+      {"text":"- Pipelines avec Python, FastAPI, MongoDB et Neo4j.","y":175},
+      {"text":"Stagiaire – Data Engineering","y":195,"bold":true,"date":"Juil. 2025 – Sept. 2025"},
+      {"text":"Laboratoire Boréal Fictif","y":210},
+      {"text":"Oujda, Maroc","y":225},
+      {"text":"- Intégration de données avec Talend et SQL.","y":240},
+      {"text":"Développeur – Applications Web","y":260,"bold":true,"date":"Déc. 2024 – Janv. 2025"},
+      {"text":"Studio Aurore Fictif","y":275},
+      {"text":"- Applications de démonstration avec HTML et CSS.","y":290},
+      {"text":"Formation","y":315,"bold":true},
+      {"text":"Diplôme d'Ingénieur d'État en Informatique","y":335,"bold":true,"date":"2023–2026"},
+      {"text":"Institut Atlas Fictif","y":350},
+      {"text":"Cycle Préparatoire Intégré","y":370,"bold":true,"date":"2021–2023"},
+      {"text":"Institut Atlas Fictif","y":385},
+      {"text":"Baccalauréat – Sciences Physiques et Chimiques","y":405,"bold":true,"date":"2020–2021"},
+      {"text":"Lycée des Sciences Fictif","y":420},
+      {"text":"Projets sélectionnés","y":445,"bold":true},
+      {"text":"SmartDoc Demo : assistant documentaire basé sur les LLMs et le RAG.","y":465,"bold":true},
+      {"text":"Analyse de PDF avec Python et FastAPI.","y":480},
+      {"text":"Prévision des ventes – BI & Machine Learning : analyse de données historiques.","y":500,"bold":true},
+      {"text":"Entraînement avec scikit-learn et Matplotlib.","y":515},
+      {"text":"Segmentation marketing – Data & BI : clustering avec Python et K-Means.","y":535,"bold":true},
+      {"text":"Compétences techniques","y":560,"bold":true},
+      {"text":"Python, FastAPI, SQL, Talend, Odoo","y":580,"width":235},
+      {"text":"Salesforce, HTML, CSS, Matplotlib","y":580,"x":320,"width":235},
+      {"text":"REST APIs, Prompt Engineering","y":595,"width":235},
+      {"text":"AI Agents, Machine Learning, RAG","y":595,"x":320,"width":235},
+      {"text":"Git, Docker","y":610,"width":235},
+      {"text":"LangGraph, Neo4j","y":610,"x":320,"width":235}
+    ],
+    "ground_truth": {
+      "full_name":"Alex Fictif","email":"alex@example.test",
+      "experience":[
+        {"job_title":"Stagiaire PFE – Intelligence Artificielle & GraphRAG","company":"Atelier Horizon Fictif","location":"Maroc","start_date":"2026-02","end_date":"2026-08","description":"- Conception d'une plateforme GraphRAG fictive.\n- Pipelines avec Python, FastAPI, MongoDB et Neo4j.","technologies":["Python","FastAPI","MongoDB","Neo4j","GraphRAG"]},
+        {"job_title":"Stagiaire – Data Engineering","company":"Laboratoire Boréal Fictif","location":"Oujda, Maroc","start_date":"2025-07","end_date":"2025-09","description":"- Intégration de données avec Talend et SQL.","technologies":["SQL","Talend"]},
+        {"job_title":"Développeur – Applications Web","company":"Studio Aurore Fictif","start_date":"2024-12","end_date":"2025-01","description":"- Applications de démonstration avec HTML et CSS.","technologies":["HTML","CSS"]}
+      ],
+      "education":[
+        {"degree":"Diplôme d'Ingénieur d'État en Informatique","institution":"Institut Atlas Fictif","field_of_study":"Informatique","start_date":"2023","end_date":"2026"},
+        {"degree":"Cycle Préparatoire Intégré","institution":"Institut Atlas Fictif","start_date":"2021","end_date":"2023"},
+        {"degree":"Baccalauréat – Sciences Physiques et Chimiques","institution":"Lycée des Sciences Fictif","field_of_study":"Sciences Physiques et Chimiques","start_date":"2020","end_date":"2021"}
+      ],
+      "projects":[
+        {"name":"SmartDoc Demo","description":"assistant documentaire basé sur les LLMs et le RAG.\nAnalyse de PDF avec Python et FastAPI.","technologies":["Python","FastAPI","RAG","LLMs"]},
+        {"name":"Prévision des ventes – BI & Machine Learning","description":"analyse de données historiques.\nEntraînement avec scikit-learn et Matplotlib.","technologies":["scikit-learn","Matplotlib","Machine Learning"]},
+        {"name":"Segmentation marketing – Data & BI","description":"clustering avec Python et K-Means.","technologies":["Python"]}
+      ],
+      "technical_skills":[{"name":"Python","category":"programming_language"},{"name":"SQL","category":"programming_language"},{"name":"HTML","category":"web_technology"},{"name":"CSS","category":"web_technology"},{"name":"FastAPI","category":"framework"},{"name":"Odoo","category":"framework"},{"name":"Neo4j","category":"database"},{"name":"LangGraph","category":"ai_ml"},{"name":"RAG","category":"ai_ml"},{"name":"Matplotlib","category":"ai_ml"},{"name":"Prompt Engineering","category":"ai_ml"},{"name":"AI Agents","category":"ai_ml"},{"name":"Machine Learning","category":"ai_ml"},{"name":"Docker","category":"cloud_devops"},{"name":"Git","category":"tool"},{"name":"Talend","category":"tool"},{"name":"Salesforce","category":"tool"},{"name":"REST APIs","category":"tool"}]
+    }
+  },
+  {
+    "id":"english_dates_and_subtitles",
+    "rows":[
+      {"text":"Jordan Synthetic","y":30,"size":20,"bold":true},
+      {"text":"Professional Experience","y":90,"bold":true},
+      {"text":"Software Engineer – Platform APIs","y":110,"bold":true,"date":"Apr. 2024 – Aug. 2024","date_offset":-0.7},
+      {"text":"Fictional Delta Studio","y":126},
+      {"text":"Location: Canada","y":142},
+      {"text":"- Built REST APIs with Python.","y":158},
+      {"text":"Intern | Imaginary Research Lab","y":185,"bold":true,"date":"Jun. 2023 – Jul. 2023","date_offset":0.5},
+      {"text":"- Generated plots with Matplotlib.","y":201},
+      {"text":"Education","y":230,"bold":true},
+      {"text":"Integrated Preparatory Cycle","y":250,"bold":true,"date":"2020–2022"},
+      {"text":"Fictional Technical Institute","y":266},
+      {"text":"Selected Projects","y":295,"bold":true},
+      {"text":"Report API – Data & BI: A demonstration service with Flask.","y":315,"bold":true},
+      {"text":"GitHub: https://github.com/example/report-demo","y":331},
+      {"text":"Skills","y":360,"bold":true},
+      {"text":"Python, Matplotlib, REST API, Flask, Talend","y":380}
+    ],
+    "ground_truth":{
+      "full_name":"Jordan Synthetic",
+      "experience":[{"job_title":"Software Engineer – Platform APIs","company":"Fictional Delta Studio","location":"Canada","start_date":"2024-04","end_date":"2024-08","description":"- Built REST APIs with Python.","technologies":["Python","REST APIs"]},{"job_title":"Intern","company":"Imaginary Research Lab","start_date":"2023-06","end_date":"2023-07","description":"- Generated plots with Matplotlib.","technologies":["Matplotlib"]}],
+      "education":[{"degree":"Integrated Preparatory Cycle","institution":"Fictional Technical Institute","start_date":"2020","end_date":"2022"}],
+      "projects":[{"name":"Report API – Data & BI","description":"A demonstration service with Flask.","technologies":["Flask"],"github_url":"https://github.com/example/report-demo"}],
+      "technical_skills":[{"name":"Python","category":"programming_language"},{"name":"Flask","category":"framework"},{"name":"Matplotlib","category":"ai_ml"},{"name":"Talend","category":"tool"},{"name":"REST APIs","category":"tool"}]
+    }
+  },
+  {
+    "id":"bullet_and_wrapped_projects",
+    "rows":[
+      {"text":"Morgan Example","y":30,"size":20,"bold":true},
+      {"text":"Projets","y":90,"bold":true},
+      {"text":"- Portail Démo – CRM & Web : intégration de Salesforce et Odoo.","y":110},
+      {"text":"Interface HTML et CSS.","y":126},
+      {"text":"- Analyse Démo : prototype de Machine Learning.","y":150},
+      {"text":"Visualisations avec Matplotlib.","y":166},
+      {"text":"- Assistant Démo : Prompt Engineering pour des AI Agents.","y":190},
+      {"text":"Skills","y":220,"bold":true},
+      {"text":"HTML, CSS, Odoo, Salesforce, Matplotlib, Prompt Engineering, AI Agents, Machine Learning","y":240}
+    ],
+    "ground_truth":{
+      "full_name":"Morgan Example",
+      "projects":[{"name":"Portail Démo – CRM & Web","description":"intégration de Salesforce et Odoo.\nInterface HTML et CSS.","technologies":["HTML","CSS","Odoo","Salesforce"]},{"name":"Analyse Démo","description":"prototype de Machine Learning.\nVisualisations avec Matplotlib.","technologies":["Matplotlib","Machine Learning"]},{"name":"Assistant Démo","description":"Prompt Engineering pour des AI Agents.","technologies":["Prompt Engineering","AI Agents"]}],
+      "technical_skills":[{"name":"HTML","category":"web_technology"},{"name":"CSS","category":"web_technology"},{"name":"Odoo","category":"framework"},{"name":"Matplotlib","category":"ai_ml"},{"name":"Prompt Engineering","category":"ai_ml"},{"name":"AI Agents","category":"ai_ml"},{"name":"Machine Learning","category":"ai_ml"},{"name":"Salesforce","category":"tool"}]
+    }
+  },
+  {
+    "id":"conservative_metadata",
+    "rows":[
+      {"text":"Casey Fiction","y":30,"size":20,"bold":true},
+      {"text":"Experience","y":90,"bold":true},
+      {"text":"Developer – Research & APIs","y":110,"bold":true,"date":"Feb. 2025 – Present"},
+      {"text":"- Developed a fictional REST API.","y":130},
+      {"text":"Projects","y":165,"bold":true},
+      {"text":"Built a demo: it has no reliable project title.","y":185},
+      {"text":"Skills","y":220,"bold":true},
+      {"text":"Talend Talend Odoo Salesforce HTML CSS Matplotlib RESTful APIs","y":240},
+      {"text":"notHTML CSSology Salesforceish talendish","y":256}
+    ],
+    "ground_truth":{
+      "full_name":"Casey Fiction",
+      "experience":[{"job_title":"Developer – Research & APIs","start_date":"2025-02","end_date":"Present","description":"- Developed a fictional REST API.","technologies":["REST APIs"]}],
+      "technical_skills":[{"name":"HTML","category":"web_technology"},{"name":"CSS","category":"web_technology"},{"name":"Odoo","category":"framework"},{"name":"Matplotlib","category":"ai_ml"},{"name":"Talend","category":"tool"},{"name":"Salesforce","category":"tool"},{"name":"REST APIs","category":"tool"}]
+    }
+  }
+]

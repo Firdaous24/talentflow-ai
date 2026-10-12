@@ -32,6 +32,8 @@ dist/
 build/
 .next/
 coverage/
+*.tsbuildinfo
+.artifacts/
 *.egg-info/
 
 # Editor and operating-system files

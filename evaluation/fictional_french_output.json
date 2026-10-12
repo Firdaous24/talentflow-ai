@@ -1,0 +1,521 @@
+{
+  "candidate": {
+    "full_name": "Élodie Exemple",
+    "email": "elodie@example.com",
+    "phone": "+212 612 345 678",
+    "linkedin_url": null,
+    "github_url": null,
+    "education": [
+      {
+        "degree": "Master en informatique",
+        "institution": "Université Fictive",
+        "field_of_study": "informatique",
+        "start_date": "2021",
+        "end_date": "2023"
+      }
+    ],
+    "experience": [
+      {
+        "job_title": "Développeur backend",
+        "company": "Atelier Fictif",
+        "start_date": "2023-09",
+        "end_date": "Present",
+        "description": "API de démonstration en Python et FastAPI.",
+        "technologies": [
+          "Python",
+          "FastAPI"
+        ]
+      }
+    ],
+    "technical_skills": [
+      {
+        "name": "Python",
+        "category": "programming_language"
+      },
+      {
+        "name": "Java",
+        "category": "programming_language"
+      },
+      {
+        "name": "FastAPI",
+        "category": "framework"
+      },
+      {
+        "name": "Docker",
+        "category": "cloud_devops"
+      },
+      {
+        "name": "Git",
+        "category": "tool"
+      }
+    ],
+    "projects": [
+      {
+        "name": "Portail de démonstration",
+        "description": "Application fictive avec React et PostgreSQL.",
+        "technologies": [
+          "React",
+          "PostgreSQL"
+        ],
+        "github_url": null
+      }
+    ],
+    "languages": [
+      {
+        "name": "Arabe",
+        "proficiency": "langue maternelle"
+      },
+      {
+        "name": "Français",
+        "proficiency": "maîtrise professionnelle"
+      },
+      {
+        "name": "Anglais",
+        "proficiency": "niveau professionnel"
+      }
+    ],
+    "certifications": []
+  },
+  "parsing_metadata": {
+    "status": "partial",
+    "page_count": 1,
+    "warnings": [
+      "Deterministic extraction is partial; unrecognized layouts and unlabeled fields may be omitted. Review all extracted information.",
+      "Candidate name inferred only from the CV header; confirm during review.",
+      "Some education text was not mapped by the supported labeled-field rules.",
+      "Some experience text was not mapped by the supported labeled-field rules.",
+      "Some projects text was not mapped by the supported labeled-field rules.",
+      "Unlabeled education entry interpreted from section order; review its field associations.",
+      "Unlabeled experience entry interpreted from section order; review its field associations.",
+      "Unlabeled projects entry interpreted from section order; review its field associations.",
+      "linkedin_url could not be reliably identified.",
+      "github_url could not be reliably identified.",
+      "certifications could not be reliably identified.",
+      "Skills are dictionary-matched mentions in the skills section; proficiency and unsupported technologies are not inferred."
+    ],
+    "engine": "deterministic-v2",
+    "evidence": [
+      {
+        "field": "full_name",
+        "quote": "Élodie Exemple",
+        "source_id": "p1-b0-l0-g0",
+        "page": 1,
+        "bbox": [
+          40.0,
+          23.599998474121094,
+          187.83999633789062,
+          51.13999938964844
+        ],
+        "method": "header",
+        "uncertain": true
+      },
+      {
+        "field": "email",
+        "quote": "elodie@example.com",
+        "source_id": "p1-b1-l0-g0",
+        "page": 1,
+        "bbox": [
+          40.0,
+          59.25,
+          136.2899932861328,
+          72.98999786376953
+        ],
+        "method": "layout",
+        "uncertain": true
+      },
+      {
+        "field": "phone",
+        "quote": "+212 612 345 678",
+        "source_id": "p1-b1-l1-g0",
+        "page": 1,
+        "bbox": [
+          40.0,
+          74.25,
+          120.89997863769531,
+          87.98999786376953
+        ],
+        "method": "layout",
+        "uncertain": true
+      },
+      {
+        "field": "education.0.degree",
+        "quote": "Master en informatique | Université Fictive",
+        "source_id": "p1-b8-l0-g0",
+        "page": 1,
+        "bbox": [
+          40.0,
+          276.32501220703125,
+          207.88597106933594,
+          288.6910095214844
+        ],
+        "method": "layout",
+        "uncertain": true
+      },
+      {
+        "field": "education.0.institution",
+        "quote": "Master en informatique | Université Fictive",
+        "source_id": "p1-b8-l0-g0",
+        "page": 1,
+        "bbox": [
+          40.0,
+          276.32501220703125,
+          207.88597106933594,
+          288.6910095214844
+        ],
+        "method": "layout",
+        "uncertain": true
+      },
+      {
+        "field": "education.0.field_of_study",
+        "quote": "Master en informatique | Université Fictive",
+        "source_id": "p1-b8-l0-g0",
+        "page": 1,
+        "bbox": [
+          40.0,
+          276.32501220703125,
+          207.88597106933594,
+          288.6910095214844
+        ],
+        "method": "layout",
+        "uncertain": true
+      },
+      {
+        "field": "education.0.start_date",
+        "quote": "2021 - 2023",
+        "source_id": "p1-b9-l0-g0",
+        "page": 1,
+        "bbox": [
+          40.0,
+          291.32501220703125,
+          88.03299713134766,
+          303.6910095214844
+        ],
+        "method": "layout",
+        "uncertain": true
+      },
+      {
+        "field": "education.0.end_date",
+        "quote": "2021 - 2023",
+        "source_id": "p1-b9-l0-g0",
+        "page": 1,
+        "bbox": [
+          40.0,
+          291.32501220703125,
+          88.03299713134766,
+          303.6910095214844
+        ],
+        "method": "layout",
+        "uncertain": true
+      },
+      {
+        "field": "experience.0.job_title",
+        "quote": "Développeur backend | Atelier Fictif",
+        "source_id": "p1-b5-l0-g0",
+        "page": 1,
+        "bbox": [
+          40.0,
+          212.3249969482422,
+          181.8939666748047,
+          224.6909942626953
+        ],
+        "method": "layout",
+        "uncertain": true
+      },
+      {
+        "field": "experience.0.company",
+        "quote": "Développeur backend | Atelier Fictif",
+        "source_id": "p1-b5-l0-g0",
+        "page": 1,
+        "bbox": [
+          40.0,
+          212.3249969482422,
+          181.8939666748047,
+          224.6909942626953
+        ],
+        "method": "layout",
+        "uncertain": true
+      },
+      {
+        "field": "experience.0.start_date",
+        "quote": "septembre 2023 - aujourd'hui",
+        "source_id": "p1-b6-l0-g0",
+        "page": 1,
+        "bbox": [
+          40.0,
+          227.3249969482422,
+          156.77496337890625,
+          239.6909942626953
+        ],
+        "method": "layout",
+        "uncertain": true
+      },
+      {
+        "field": "experience.0.end_date",
+        "quote": "septembre 2023 - aujourd'hui",
+        "source_id": "p1-b6-l0-g0",
+        "page": 1,
+        "bbox": [
+          40.0,
+          227.3249969482422,
+          156.77496337890625,
+          239.6909942626953
+        ],
+        "method": "layout",
+        "uncertain": true
+      },
+      {
+        "field": "experience.0.description",
+        "quote": "API de démonstration en Python et FastAPI.",
+        "source_id": "p1-b7-l0-g0",
+        "page": 1,
+        "bbox": [
+          40.0,
+          242.3249969482422,
+          216.5979766845703,
+          254.6909942626953
+        ],
+        "method": "layout",
+        "uncertain": true
+      },
+      {
+        "field": "experience.0.technologies.0",
+        "quote": "API de démonstration en Python et FastAPI.",
+        "source_id": "p1-b7-l0-g0",
+        "page": 1,
+        "bbox": [
+          40.0,
+          242.3249969482422,
+          216.5979766845703,
+          254.6909942626953
+        ],
+        "method": "dictionary",
+        "uncertain": false
+      },
+      {
+        "field": "experience.0.technologies.1",
+        "quote": "API de démonstration en Python et FastAPI.",
+        "source_id": "p1-b7-l0-g0",
+        "page": 1,
+        "bbox": [
+          40.0,
+          242.3249969482422,
+          216.5979766845703,
+          254.6909942626953
+        ],
+        "method": "dictionary",
+        "uncertain": false
+      },
+      {
+        "field": "technical_skills.0.name",
+        "quote": "Python, Java, FastAPI, Docker, Git",
+        "source_id": "p1-b4-l0-g0",
+        "page": 1,
+        "bbox": [
+          40.0,
+          178.3249969482422,
+          179.05897521972656,
+          190.6909942626953
+        ],
+        "method": "dictionary",
+        "uncertain": false
+      },
+      {
+        "field": "technical_skills.1.name",
+        "quote": "Python, Java, FastAPI, Docker, Git",
+        "source_id": "p1-b4-l0-g0",
+        "page": 1,
+        "bbox": [
+          40.0,
+          178.3249969482422,
+          179.05897521972656,
+          190.6909942626953
+        ],
+        "method": "dictionary",
+        "uncertain": false
+      },
+      {
+        "field": "technical_skills.2.name",
+        "quote": "Python, Java, FastAPI, Docker, Git",
+        "source_id": "p1-b4-l0-g0",
+        "page": 1,
+        "bbox": [
+          40.0,
+          178.3249969482422,
+          179.05897521972656,
+          190.6909942626953
+        ],
+        "method": "dictionary",
+        "uncertain": false
+      },
+      {
+        "field": "technical_skills.3.name",
+        "quote": "Python, Java, FastAPI, Docker, Git",
+        "source_id": "p1-b4-l0-g0",
+        "page": 1,
+        "bbox": [
+          40.0,
+          178.3249969482422,
+          179.05897521972656,
+          190.6909942626953
+        ],
+        "method": "dictionary",
+        "uncertain": false
+      },
+      {
+        "field": "technical_skills.4.name",
+        "quote": "Python, Java, FastAPI, Docker, Git",
+        "source_id": "p1-b4-l0-g0",
+        "page": 1,
+        "bbox": [
+          40.0,
+          178.3249969482422,
+          179.05897521972656,
+          190.6909942626953
+        ],
+        "method": "dictionary",
+        "uncertain": false
+      },
+      {
+        "field": "projects.0.name",
+        "quote": "Portail de démonstration",
+        "source_id": "p1-b10-l0-g0",
+        "page": 1,
+        "bbox": [
+          40.0,
+          325.32501220703125,
+          137.5419921875,
+          337.6910095214844
+        ],
+        "method": "layout",
+        "uncertain": true
+      },
+      {
+        "field": "projects.0.description",
+        "quote": "Application fictive avec React et PostgreSQL.",
+        "source_id": "p1-b11-l0-g0",
+        "page": 1,
+        "bbox": [
+          40.0,
+          340.32501220703125,
+          221.07997131347656,
+          352.6910095214844
+        ],
+        "method": "layout",
+        "uncertain": true
+      },
+      {
+        "field": "projects.0.technologies.0",
+        "quote": "Application fictive avec React et PostgreSQL.",
+        "source_id": "p1-b11-l0-g0",
+        "page": 1,
+        "bbox": [
+          40.0,
+          340.32501220703125,
+          221.07997131347656,
+          352.6910095214844
+        ],
+        "method": "dictionary",
+        "uncertain": false
+      },
+      {
+        "field": "projects.0.technologies.1",
+        "quote": "Application fictive avec React et PostgreSQL.",
+        "source_id": "p1-b11-l0-g0",
+        "page": 1,
+        "bbox": [
+          40.0,
+          340.32501220703125,
+          221.07997131347656,
+          352.6910095214844
+        ],
+        "method": "dictionary",
+        "uncertain": false
+      },
+      {
+        "field": "languages.0.name",
+        "quote": "Arabe : langue maternelle",
+        "source_id": "p1-b12-l0-g0",
+        "page": 1,
+        "bbox": [
+          40.0,
+          374.32501220703125,
+          143.04998779296875,
+          386.6910095214844
+        ],
+        "method": "labeled",
+        "uncertain": false
+      },
+      {
+        "field": "languages.0.proficiency",
+        "quote": "Arabe : langue maternelle",
+        "source_id": "p1-b12-l0-g0",
+        "page": 1,
+        "bbox": [
+          40.0,
+          374.32501220703125,
+          143.04998779296875,
+          386.6910095214844
+        ],
+        "method": "labeled",
+        "uncertain": false
+      },
+      {
+        "field": "languages.1.name",
+        "quote": "Français : maîtrise professionnelle",
+        "source_id": "p1-b13-l0-g0",
+        "page": 1,
+        "bbox": [
+          40.0,
+          389.32501220703125,
+          177.04298400878906,
+          401.6910095214844
+        ],
+        "method": "labeled",
+        "uncertain": false
+      },
+      {
+        "field": "languages.1.proficiency",
+        "quote": "Français : maîtrise professionnelle",
+        "source_id": "p1-b13-l0-g0",
+        "page": 1,
+        "bbox": [
+          40.0,
+          389.32501220703125,
+          177.04298400878906,
+          401.6910095214844
+        ],
+        "method": "labeled",
+        "uncertain": false
+      },
+      {
+        "field": "languages.2.name",
+        "quote": "Anglais : niveau professionnel",
+        "source_id": "p1-b14-l0-g0",
+        "page": 1,
+        "bbox": [
+          40.0,
+          404.32501220703125,
+          159.55596923828125,
+          416.6910095214844
+        ],
+        "method": "labeled",
+        "uncertain": false
+      },
+      {
+        "field": "languages.2.proficiency",
+        "quote": "Anglais : niveau professionnel",
+        "source_id": "p1-b14-l0-g0",
+        "page": 1,
+        "bbox": [
+          40.0,
+          404.32501220703125,
+          159.55596923828125,
+          416.6910095214844
+        ],
+        "method": "labeled",
+        "uncertain": false
+      }
+    ],
+    "llm_status": "not_requested"
+  }
+}

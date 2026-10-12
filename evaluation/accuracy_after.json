@@ -1,0 +1,77 @@
+{
+  "dataset_size": 4,
+  "counts": {
+    "correct": 176,
+    "predicted": 176,
+    "expected": 176,
+    "unsupported": 0,
+    "skill_correct": 38,
+    "skill_predicted": 38,
+    "skill_expected": 38,
+    "exact_profiles": 4
+  },
+  "metrics": {
+    "field_precision": 1.0,
+    "field_recall": 1.0,
+    "exact_structured_profile_rate": 1.0,
+    "skill_precision": 1.0,
+    "skill_recall": 1.0,
+    "unsupported_field_rate": 0.0
+  },
+  "association_counts": {
+    "job_titles": {
+      "correct": 6,
+      "expected": 6
+    },
+    "employers": {
+      "correct": 5,
+      "expected": 5
+    },
+    "experience_dates": {
+      "correct": 12,
+      "expected": 12
+    },
+    "education_records": {
+      "correct": 4,
+      "expected": 4
+    },
+    "project_records": {
+      "correct": 7,
+      "expected": 7
+    }
+  },
+  "cases": [
+    {
+      "id": "french_dense_records",
+      "correct": 92,
+      "predicted": 92,
+      "expected": 92,
+      "exact": true,
+      "differences": {}
+    },
+    {
+      "id": "english_dates_and_subtitles",
+      "correct": 33,
+      "predicted": 33,
+      "expected": 33,
+      "exact": true,
+      "differences": {}
+    },
+    {
+      "id": "bullet_and_wrapped_projects",
+      "correct": 31,
+      "predicted": 31,
+      "expected": 31,
+      "exact": true,
+      "differences": {}
+    },
+    {
+      "id": "conservative_metadata",
+      "correct": 20,
+      "predicted": 20,
+      "expected": 20,
+      "exact": true,
+      "differences": {}
+    }
+  ]
+}

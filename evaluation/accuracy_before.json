@@ -1,0 +1,635 @@
+{
+  "dataset_size": 4,
+  "counts": {
+    "correct": 44,
+    "predicted": 64,
+    "expected": 176,
+    "unsupported": 20,
+    "skill_correct": 10,
+    "skill_predicted": 10,
+    "skill_expected": 38,
+    "exact_profiles": 0
+  },
+  "metrics": {
+    "field_precision": 0.6875,
+    "field_recall": 0.25,
+    "exact_structured_profile_rate": 0.0,
+    "skill_precision": 1.0,
+    "skill_recall": 0.2631578947368421,
+    "unsupported_field_rate": 0.3125
+  },
+  "association_counts": {
+    "job_titles": {
+      "correct": 1,
+      "expected": 6
+    },
+    "employers": {
+      "correct": 1,
+      "expected": 5
+    },
+    "experience_dates": {
+      "correct": 4,
+      "expected": 12
+    },
+    "education_records": {
+      "correct": 1,
+      "expected": 4
+    },
+    "project_records": {
+      "correct": 0,
+      "expected": 7
+    }
+  },
+  "cases": [
+    {
+      "id": "french_dense_records",
+      "correct": 31,
+      "predicted": 45,
+      "expected": 92,
+      "exact": false,
+      "differences": {
+        "education.1.degree": {
+          "expected": "Cycle Préparatoire Intégré",
+          "actual": "Baccalauréat"
+        },
+        "education.1.end_date": {
+          "expected": "2023",
+          "actual": "2021"
+        },
+        "education.1.institution": {
+          "expected": "Institut Atlas Fictif",
+          "actual": null
+        },
+        "education.1.start_date": {
+          "expected": "2021",
+          "actual": "2020"
+        },
+        "education.2.degree": {
+          "expected": "Baccalauréat – Sciences Physiques et Chimiques",
+          "actual": null
+        },
+        "education.2.end_date": {
+          "expected": "2021",
+          "actual": null
+        },
+        "education.2.field_of_study": {
+          "expected": "Sciences Physiques et Chimiques",
+          "actual": null
+        },
+        "education.2.institution": {
+          "expected": "Lycée des Sciences Fictif",
+          "actual": null
+        },
+        "education.2.start_date": {
+          "expected": "2020",
+          "actual": null
+        },
+        "experience.0.company": {
+          "expected": "Atelier Horizon Fictif",
+          "actual": "Intelligence Artiﬁcielle & GraphRAG"
+        },
+        "experience.0.description": {
+          "expected": "- Conception d'une plateforme GraphRAG fictive.\n- Pipelines avec Python, FastAPI, MongoDB et Neo4j.",
+          "actual": "Fév.\nAtelier Horizon Fictif\nMaroc\n- Conception d'une plateforme GraphRAG ﬁctive.\n- Pipelines avec Python, FastAPI, MongoDB et Neo4j."
+        },
+        "experience.0.job_title": {
+          "expected": "Stagiaire PFE – Intelligence Artificielle & GraphRAG",
+          "actual": "Stagiaire PFE"
+        },
+        "experience.0.location": {
+          "expected": "Maroc",
+          "actual": null
+        },
+        "experience.0.start_date": {
+          "expected": "2026-02",
+          "actual": "2026"
+        },
+        "experience.1.company": {
+          "expected": "Laboratoire Boréal Fictif",
+          "actual": "Data Engineering"
+        },
+        "experience.1.description": {
+          "expected": "- Intégration de données avec Talend et SQL.",
+          "actual": "Juil.\nLaboratoire Boréal Fictif\nOujda, Maroc\n- Intégration de données avec Talend et SQL."
+        },
+        "experience.1.job_title": {
+          "expected": "Stagiaire – Data Engineering",
+          "actual": "Stagiaire"
+        },
+        "experience.1.location": {
+          "expected": "Oujda, Maroc",
+          "actual": null
+        },
+        "experience.1.start_date": {
+          "expected": "2025-07",
+          "actual": "2025"
+        },
+        "experience.1.technologies.Talend": {
+          "expected": "Talend",
+          "actual": null
+        },
+        "experience.2.company": {
+          "expected": "Studio Aurore Fictif",
+          "actual": "Applications Web"
+        },
+        "experience.2.description": {
+          "expected": "- Applications de démonstration avec HTML et CSS.",
+          "actual": "Déc. 2024 – Janv. 2025\nStudio Aurore Fictif\n- Applications de démonstration avec HTML et CSS."
+        },
+        "experience.2.end_date": {
+          "expected": "2025-01",
+          "actual": null
+        },
+        "experience.2.job_title": {
+          "expected": "Développeur – Applications Web",
+          "actual": "Développeur"
+        },
+        "experience.2.start_date": {
+          "expected": "2024-12",
+          "actual": null
+        },
+        "experience.2.technologies.CSS": {
+          "expected": "CSS",
+          "actual": null
+        },
+        "experience.2.technologies.HTML": {
+          "expected": "HTML",
+          "actual": null
+        },
+        "projects.0.description": {
+          "expected": "assistant documentaire basé sur les LLMs et le RAG.\nAnalyse de PDF avec Python et FastAPI.",
+          "actual": null
+        },
+        "projects.0.name": {
+          "expected": "SmartDoc Demo",
+          "actual": null
+        },
+        "projects.0.technologies.FastAPI": {
+          "expected": "FastAPI",
+          "actual": null
+        },
+        "projects.0.technologies.LLMs": {
+          "expected": "LLMs",
+          "actual": null
+        },
+        "projects.0.technologies.Python": {
+          "expected": "Python",
+          "actual": null
+        },
+        "projects.0.technologies.RAG": {
+          "expected": "RAG",
+          "actual": null
+        },
+        "projects.1.description": {
+          "expected": "analyse de données historiques.\nEntraînement avec scikit-learn et Matplotlib.",
+          "actual": null
+        },
+        "projects.1.name": {
+          "expected": "Prévision des ventes – BI & Machine Learning",
+          "actual": null
+        },
+        "projects.1.technologies.Machine Learning": {
+          "expected": "Machine Learning",
+          "actual": null
+        },
+        "projects.1.technologies.Matplotlib": {
+          "expected": "Matplotlib",
+          "actual": null
+        },
+        "projects.1.technologies.scikit-learn": {
+          "expected": "scikit-learn",
+          "actual": null
+        },
+        "projects.2.description": {
+          "expected": "clustering avec Python et K-Means.",
+          "actual": null
+        },
+        "projects.2.name": {
+          "expected": "Segmentation marketing – Data & BI",
+          "actual": null
+        },
+        "projects.2.technologies.Python": {
+          "expected": "Python",
+          "actual": null
+        },
+        "technical_skills.AI Agents.category": {
+          "expected": "ai_ml",
+          "actual": null
+        },
+        "technical_skills.AI Agents.name": {
+          "expected": "AI Agents",
+          "actual": null
+        },
+        "technical_skills.CSS.category": {
+          "expected": "web_technology",
+          "actual": null
+        },
+        "technical_skills.CSS.name": {
+          "expected": "CSS",
+          "actual": null
+        },
+        "technical_skills.HTML.category": {
+          "expected": "web_technology",
+          "actual": null
+        },
+        "technical_skills.HTML.name": {
+          "expected": "HTML",
+          "actual": null
+        },
+        "technical_skills.Machine Learning.category": {
+          "expected": "ai_ml",
+          "actual": null
+        },
+        "technical_skills.Machine Learning.name": {
+          "expected": "Machine Learning",
+          "actual": null
+        },
+        "technical_skills.Matplotlib.category": {
+          "expected": "ai_ml",
+          "actual": null
+        },
+        "technical_skills.Matplotlib.name": {
+          "expected": "Matplotlib",
+          "actual": null
+        },
+        "technical_skills.Odoo.category": {
+          "expected": "framework",
+          "actual": null
+        },
+        "technical_skills.Odoo.name": {
+          "expected": "Odoo",
+          "actual": null
+        },
+        "technical_skills.Prompt Engineering.category": {
+          "expected": "ai_ml",
+          "actual": null
+        },
+        "technical_skills.Prompt Engineering.name": {
+          "expected": "Prompt Engineering",
+          "actual": null
+        },
+        "technical_skills.REST APIs.category": {
+          "expected": "tool",
+          "actual": null
+        },
+        "technical_skills.REST APIs.name": {
+          "expected": "REST APIs",
+          "actual": null
+        },
+        "technical_skills.Salesforce.category": {
+          "expected": "tool",
+          "actual": null
+        },
+        "technical_skills.Salesforce.name": {
+          "expected": "Salesforce",
+          "actual": null
+        },
+        "technical_skills.Talend.category": {
+          "expected": "tool",
+          "actual": null
+        },
+        "technical_skills.Talend.name": {
+          "expected": "Talend",
+          "actual": null
+        }
+      }
+    },
+    {
+      "id": "english_dates_and_subtitles",
+      "correct": 9,
+      "predicted": 13,
+      "expected": 33,
+      "exact": false,
+      "differences": {
+        "education.0.degree": {
+          "expected": "Integrated Preparatory Cycle",
+          "actual": null
+        },
+        "education.0.end_date": {
+          "expected": "2022",
+          "actual": null
+        },
+        "education.0.institution": {
+          "expected": "Fictional Technical Institute",
+          "actual": null
+        },
+        "education.0.start_date": {
+          "expected": "2020",
+          "actual": null
+        },
+        "experience.0.company": {
+          "expected": "Fictional Delta Studio",
+          "actual": "Platform APIs"
+        },
+        "experience.0.description": {
+          "expected": "- Built REST APIs with Python.",
+          "actual": "Fictional Delta Studio\nLocation: Canada\n- Built REST APIs with Python."
+        },
+        "experience.0.end_date": {
+          "expected": "2024-08",
+          "actual": null
+        },
+        "experience.0.job_title": {
+          "expected": "Software Engineer – Platform APIs",
+          "actual": "Software Engineer"
+        },
+        "experience.0.location": {
+          "expected": "Canada",
+          "actual": null
+        },
+        "experience.0.start_date": {
+          "expected": "2024-04",
+          "actual": null
+        },
+        "experience.0.technologies.REST APIs": {
+          "expected": "REST APIs",
+          "actual": null
+        },
+        "experience.1.end_date": {
+          "expected": "2023-07",
+          "actual": null
+        },
+        "experience.1.start_date": {
+          "expected": "2023-06",
+          "actual": null
+        },
+        "experience.1.technologies.Matplotlib": {
+          "expected": "Matplotlib",
+          "actual": null
+        },
+        "github_url": {
+          "expected": null,
+          "actual": "https://github.com/example/report-demo"
+        },
+        "projects.0.description": {
+          "expected": "A demonstration service with Flask.",
+          "actual": null
+        },
+        "projects.0.github_url": {
+          "expected": "https://github.com/example/report-demo",
+          "actual": null
+        },
+        "projects.0.name": {
+          "expected": "Report API – Data & BI",
+          "actual": null
+        },
+        "projects.0.technologies.Flask": {
+          "expected": "Flask",
+          "actual": null
+        },
+        "technical_skills.Matplotlib.category": {
+          "expected": "ai_ml",
+          "actual": null
+        },
+        "technical_skills.Matplotlib.name": {
+          "expected": "Matplotlib",
+          "actual": null
+        },
+        "technical_skills.REST APIs.category": {
+          "expected": "tool",
+          "actual": null
+        },
+        "technical_skills.REST APIs.name": {
+          "expected": "REST APIs",
+          "actual": null
+        },
+        "technical_skills.Talend.category": {
+          "expected": "tool",
+          "actual": null
+        },
+        "technical_skills.Talend.name": {
+          "expected": "Talend",
+          "actual": null
+        }
+      }
+    },
+    {
+      "id": "bullet_and_wrapped_projects",
+      "correct": 1,
+      "predicted": 1,
+      "expected": 31,
+      "exact": false,
+      "differences": {
+        "projects.0.description": {
+          "expected": "intégration de Salesforce et Odoo.\nInterface HTML et CSS.",
+          "actual": null
+        },
+        "projects.0.name": {
+          "expected": "Portail Démo – CRM & Web",
+          "actual": null
+        },
+        "projects.0.technologies.CSS": {
+          "expected": "CSS",
+          "actual": null
+        },
+        "projects.0.technologies.HTML": {
+          "expected": "HTML",
+          "actual": null
+        },
+        "projects.0.technologies.Odoo": {
+          "expected": "Odoo",
+          "actual": null
+        },
+        "projects.0.technologies.Salesforce": {
+          "expected": "Salesforce",
+          "actual": null
+        },
+        "projects.1.description": {
+          "expected": "prototype de Machine Learning.\nVisualisations avec Matplotlib.",
+          "actual": null
+        },
+        "projects.1.name": {
+          "expected": "Analyse Démo",
+          "actual": null
+        },
+        "projects.1.technologies.Machine Learning": {
+          "expected": "Machine Learning",
+          "actual": null
+        },
+        "projects.1.technologies.Matplotlib": {
+          "expected": "Matplotlib",
+          "actual": null
+        },
+        "projects.2.description": {
+          "expected": "Prompt Engineering pour des AI Agents.",
+          "actual": null
+        },
+        "projects.2.name": {
+          "expected": "Assistant Démo",
+          "actual": null
+        },
+        "projects.2.technologies.AI Agents": {
+          "expected": "AI Agents",
+          "actual": null
+        },
+        "projects.2.technologies.Prompt Engineering": {
+          "expected": "Prompt Engineering",
+          "actual": null
+        },
+        "technical_skills.AI Agents.category": {
+          "expected": "ai_ml",
+          "actual": null
+        },
+        "technical_skills.AI Agents.name": {
+          "expected": "AI Agents",
+          "actual": null
+        },
+        "technical_skills.CSS.category": {
+          "expected": "web_technology",
+          "actual": null
+        },
+        "technical_skills.CSS.name": {
+          "expected": "CSS",
+          "actual": null
+        },
+        "technical_skills.HTML.category": {
+          "expected": "web_technology",
+          "actual": null
+        },
+        "technical_skills.HTML.name": {
+          "expected": "HTML",
+          "actual": null
+        },
+        "technical_skills.Machine Learning.category": {
+          "expected": "ai_ml",
+          "actual": null
+        },
+        "technical_skills.Machine Learning.name": {
+          "expected": "Machine Learning",
+          "actual": null
+        },
+        "technical_skills.Matplotlib.category": {
+          "expected": "ai_ml",
+          "actual": null
+        },
+        "technical_skills.Matplotlib.name": {
+          "expected": "Matplotlib",
+          "actual": null
+        },
+        "technical_skills.Odoo.category": {
+          "expected": "framework",
+          "actual": null
+        },
+        "technical_skills.Odoo.name": {
+          "expected": "Odoo",
+          "actual": null
+        },
+        "technical_skills.Prompt Engineering.category": {
+          "expected": "ai_ml",
+          "actual": null
+        },
+        "technical_skills.Prompt Engineering.name": {
+          "expected": "Prompt Engineering",
+          "actual": null
+        },
+        "technical_skills.Salesforce.category": {
+          "expected": "tool",
+          "actual": null
+        },
+        "technical_skills.Salesforce.name": {
+          "expected": "Salesforce",
+          "actual": null
+        }
+      }
+    },
+    {
+      "id": "conservative_metadata",
+      "correct": 3,
+      "predicted": 5,
+      "expected": 20,
+      "exact": false,
+      "differences": {
+        "experience.0.company": {
+          "expected": null,
+          "actual": "Research & APIs"
+        },
+        "experience.0.description": {
+          "expected": "- Developed a fictional REST API.",
+          "actual": null
+        },
+        "experience.0.job_title": {
+          "expected": "Developer – Research & APIs",
+          "actual": "Developer"
+        },
+        "experience.0.technologies.REST APIs": {
+          "expected": "REST APIs",
+          "actual": null
+        },
+        "technical_skills.CSS.category": {
+          "expected": "web_technology",
+          "actual": null
+        },
+        "technical_skills.CSS.name": {
+          "expected": "CSS",
+          "actual": null
+        },
+        "technical_skills.HTML.category": {
+          "expected": "web_technology",
+          "actual": null
+        },
+        "technical_skills.HTML.name": {
+          "expected": "HTML",
+          "actual": null
+        },
+        "technical_skills.Matplotlib.category": {
+          "expected": "ai_ml",
+          "actual": null
+        },
+        "technical_skills.Matplotlib.name": {
+          "expected": "Matplotlib",
+          "actual": null
+        },
+        "technical_skills.Odoo.category": {
+          "expected": "framework",
+          "actual": null
+        },
+        "technical_skills.Odoo.name": {
+          "expected": "Odoo",
+          "actual": null
+        },
+        "technical_skills.REST APIs.category": {
+          "expected": "tool",
+          "actual": null
+        },
+        "technical_skills.REST APIs.name": {
+          "expected": "REST APIs",
+          "actual": null
+        },
+        "technical_skills.Salesforce.category": {
+          "expected": "tool",
+          "actual": null
+        },
+        "technical_skills.Salesforce.name": {
+          "expected": "Salesforce",
+          "actual": null
+        },
+        "technical_skills.Talend.category": {
+          "expected": "tool",
+          "actual": null
+        },
+        "technical_skills.Talend.name": {
+          "expected": "Talend",
+          "actual": null
+        }
+      }
+    }
+  ],
+  "parser_snapshot_sha256": {
+    "app\\main.py": "945fd6b3b09999c404783f45f9179e938b2a9e095796df5c8603e9c05b4b4a17",
+    "app\\__init__.py": "c7ec0bad880f3e191bac503c69a5d06232a4e768aa096e63390ebf136388707a",
+    "app\\api\\upload_limits.py": "c3c72ae3a2fd0665345f81465d8399421ae78a5388f99bb23c61219a8d0a805f",
+    "app\\api\\__init__.py": "c5e79b75137811726e30acef2fa5cfc649514fce1c86da771535b368f43238c0",
+    "app\\api\\routes\\candidates.py": "7369305bef0c613db2942ef518a3223be30c4d74aa28cf28a992ebaef7c6761b",
+    "app\\api\\routes\\health.py": "75dc67f6abee7087ee9f238c5311deda6537e8e285d44de38f90b118bf6b788f",
+    "app\\api\\routes\\__init__.py": "51bf83470168d705beb38744164cc071189699478cdb8ceebd28fd927f332148",
+    "app\\models\\candidate.py": "04903334d4560e77a3a2238782c7d43693b3dfd3946455978a0b526fec1c9ff4",
+    "app\\models\\__init__.py": "67e2d12442c40eebabe5ec1fd4bf971810be0be5f859de8a4d228a5caf38bec1",
+    "app\\services\\extraction.py": "74e187b338d793397849cbb8d85b1b246e1c6f134d1396f6e056fd66f58c6f30",
+    "app\\services\\layout.py": "62a9b0f89ac085c974e460827f580b35d7088ea7acdad3010cabdeb78d8bc08d",
+    "app\\services\\llm.py": "ba0088975ceef360de817b2e6adbf55e813ba28331d9568d15cafaf0f4c0315d",
+    "app\\services\\multilingual.py": "7fe3eb5c9fc3575283ece75a625462ede548d83d3b8c3801fff62cc5087731ce",
+    "app\\services\\pdf.py": "57bd5bd25ad190c95fea34dec3457a196abddcdede35b0bdad7239725f700fd6",
+    "app\\services\\sections.py": "b7008c7d053d285f80daa495d06428c3d3779c18ba5931def50c054d026e9b30",
+    "app\\services\\__init__.py": "367e04f028652db23a2cfe61a0d5793f400a79635862c97c1f40df97a024819a"
+  }
+}

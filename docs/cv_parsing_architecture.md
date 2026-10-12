@@ -1,67 +1,63 @@
 # CV parsing architecture
 
-Phase 2 extends the Phase 1 backend without a database, frontend, LLM, OCR, or permanent CV storage.
-
-## Pipeline
+Phases 3.5 and 3.6 preserve the original API and PDF safety boundaries while adding layout-aware French/English rules, entry-local field evidence, an optional consent-gated provider strategy and temporary human review. See [multilingual CV parsing](multilingual_cv_parsing.md) and [accuracy/profile refinement](cv_accuracy_refinement.md) for algorithms, measured before/after evaluation and provider limits.
 
 ```mermaid
 flowchart LR
-    A[Multipart request] --> B[Bound total request bytes]
-    B --> C[Read bounded upload]
-    C --> D[Validate PDF structure and limits]
-    D --> E[Extract and normalize text]
-    E --> F[CandidateExtractor interface]
-    F --> G[Deterministic rules]
-    G --> H[Pydantic candidate and metadata]
-    H --> I[JSON response with warnings]
+  A[Multipart file + optional consent flags] --> B[Bound total request bytes]
+  B --> C[Validate PDF structure / limits]
+  C --> D[Structured spans / regions / reading order]
+  D --> E[CandidateExtractor]
+  E --> F[Local deterministic rules]
+  E --> G[Optional consent-gated provider]
+  G --> H[Schema + evidence checks]
+  H -->|Rejected / unavailable| F
+  F --> I[Validated candidate + partial metadata]
+  H -->|Accepted| I
+  I --> J[Frontend review / corrections / confirmation]
 ```
 
 ## Responsibilities
 
 | Module | Responsibility |
 | --- | --- |
-| `app/api/upload_limits.py` | Bound request bytes before multipart parsing, including chunked requests without Content-Length |
-| `app/api/routes/candidates.py` | Accept `file`, resolve extractor dependency, close upload, translate domain exceptions |
-| `app/services/pdf.py` | Check document structure, encryption, repair state, page count and text limits; normalize text |
-| `app/services/extraction.py` | Detect sections, map supported labels, match controlled dictionaries, report omissions |
-| `app/models/candidate.py` | Validate contact, education, experience, skills, projects, languages, certifications, and response metadata |
+| `app/api/upload_limits.py` | Existing bounded request buffering, including chunked requests |
+| `app/api/routes/candidates.py` | File closure, consent gate, extractor seam, public configuration and domain errors |
+| `app/services/pdf.py` | Structural/encryption/corruption/page/text checks and synchronized native PDF access |
+| `app/services/layout.py` | Blocks/lines/spans, fonts/coordinates, header/column regions and reading order |
+| `app/services/sections.py` | Exact multilingual heading aliases with normalized case/accents/punctuation |
+| `app/services/extraction.py` | Existing labeled rules, expanded vocabulary and multilingual integration |
+| `app/services/multilingual.py` | Header identity, natural entries, date normalization and field-source attribution |
+| `app/services/records.py` | Entry anchors, complete titles, employer/location separation, wrapped/colon projects and entry-bound source references |
+| `app/services/llm.py` | Provider protocol, optional compatible adapter, strict outputs, evidence rejection and fallback |
+| `app/models/candidate.py` | Existing candidate shape, validated fields and additive evidence/provider metadata |
 
-The endpoint uses `response_model=CVParsingResponse`. `CandidateProfile` inherits the contact fields so the public JSON remains flat, matching the API example. All collection defaults are independently allocated. Additional fields are rejected. Email uses a conservative syntax check, not mailbox verification; phone validation checks syntax and digit count, not reachability. Contact profile URLs enforce their expected GitHub or LinkedIn host. Date labels validate calendar values while preserving precision. Date chronology and claim truthfulness are not inferred or verified.
+## Contracts and privacy
 
-## PDF policy and resource handling
+`POST /api/v1/candidates/parse` still accepts multipart `file` and returns `CVParsingResponse`. Unknown candidate values remain null/empty, collections have independent defaults, extra fields are rejected, dates validate calendar precision, phones validate syntax/digit count and profile URLs enforce expected hosts. Metadata reports `partial` for both strategies; no confidence percentages are generated.
 
-- File limit: 5 MiB (5 × 1024 × 1024 bytes), inclusive.
-- Total multipart request limit: file limit plus 64 KiB overhead, inclusive. Actual received bytes are counted.
-- Page limit: 10, inclusive. Zero-page PDFs are rejected.
-- Extracted text limit: 200,000 characters, checked after extracting each page.
-- PDF header plus PyMuPDF document structure checks; client filenames and MIME declarations are not evidence of file type.
-- Encrypted PDFs, including encryption with an empty user password, are rejected; no password authentication is attempted.
-- Damaged/repaired documents and incomplete EOF markers are rejected conservatively.
-- No-text documents, including image-only CVs, are rejected. Mixed text/blank documents return a warning.
-- Text normalization preserves lines, blank sections, Unicode accents, and explicit page boundaries. No OCR or destructive paragraph flattening.
+Normal requests make no external call. Optional `use_llm=true` requires `external_consent=true`; absent consent is rejected. A model call additionally requires valid backend runtime configuration. `GET /api/v1/candidates/extraction-config` exposes public availability/destination/model with connectivity explicitly unchecked, never credentials. Model HTTP/errors/invalid output retain local results with a fallback warning. Source occurrence cannot verify semantic correctness, so review is mandatory.
 
-The ASGI middleware buffers a bounded request before multipart parsing. The upload read is independently capped at the file limit plus one byte. Processing is performed off the async event loop. A process-local lock serializes PyMuPDF access because the library does not support concurrent use in threads. Every document and upload is closed; framework-managed temporary multipart spool files may exist during the request. No permanent upload directory, candidate text logging, or raw-text response is introduced. MuPDF diagnostic printing is disabled during service processing to avoid leaking document content.
+Candidate JSON remains flat at the root. Additive evidence includes dotted field path, quote, source ID, page, optional bounding box, method and uncertainty. It returns relevant source quotations rather than the entire extracted document. No candidate text is logged or persisted; frontend originals/corrections/confirmation remain in React memory. Only explicitly consented optional requests transmit extracted text to the configured provider. The original PDF is not uploaded to a model service.
 
-Byte, page, and extracted-text limits reduce resource exposure, but decompression and extraction occur before the text cap can be applied. They do not guarantee a CPU deadline or strict native-memory ceiling. Before a public deployment, isolate document processing in bounded workers with enforceable deadlines and resource limits; add authentication and rate limiting. CORS remains restricted to the local frontend origin and is not authorization.
+## Preserved ingestion policy
 
-## Extraction rules and uncertainty
+- Inclusive 5 MiB upload limit and inclusive 10-page maximum.
+- Total multipart limit of file bytes plus 64 KiB overhead, based on actual received bytes.
+- Inclusive 200,000 extracted-character limit after each page.
+- Valid PDF header/structure required; filename/MIME are not trusted server-side evidence.
+- Zero-page, encrypted (including empty-password encryption), damaged/repaired/incomplete PDFs are rejected.
+- Textless PDFs are rejected because OCR is not implemented. Mixed blank/text pages produce a warning.
+- Unicode accents, line/page/region boundaries and source geometry are retained.
 
-The `CandidateExtractor` protocol takes `PDFText` and returns `CVParsingResponse`. `get_extractor` supplies the deterministic implementation through a FastAPI dependency, allowing test or future implementations to replace it without changing PDF ingestion or the response contract.
+The ASGI middleware buffers a bounded request before multipart parsing, and the upload read is capped independently. Native extraction runs off the async event loop and under a process-local PyMuPDF lock. Documents/uploads and temporary framework-managed spool resources are closed after processing. MuPDF diagnostics are disabled to avoid candidate content in logs. No permanent upload directory is introduced.
 
-Section aliases support education/academic background, professional/work experience, technical skills, projects/personal projects, certifications/certificates, and languages/spoken languages. Contact information is taken only from the header/contact section to avoid attributing project owners or references to the candidate. Names and phones require labels; email and profile URLs may also be recognized as unique header matches. Ambiguous contact matches emit warnings.
+Decompression/native extraction occur before the text cap can be applied. These limits do not enforce a hard CPU deadline or native-memory ceiling. Public deployment still needs worker isolation, authentication and rate limiting. Existing CORS is a browser policy, not authorization; database health is independent of API liveness.
 
-Structured records use explicit labels. Blank lines or repeated identifying labels separate records. Unsupported prose is omitted with section warnings. Invalid optional fields are removed individually; records missing required fields are omitted. Technologies are normalized using token-boundary-aware aliases and a small dictionary. Global technical skills come only from the skills section. Mentioned technologies establish neither proficiency nor seniority. Languages use a small controlled vocabulary; certifications require a labeled title.
+## Rules and tests
 
-All unknown values stay null or empty arrays. Every response reports `status: partial` and `engine: deterministic-v1`, even if many fields were found: the rules cannot certify complete semantic extraction. Warnings report missing fields, unsupported layouts, invalid field syntax, and dictionary limitations without reproducing candidate values. No confidence percentages are fabricated.
+Phase 3.6 recognizes abbreviated French/English months, preparatory-cycle education, full role/degree subtitles and consecutive title/description projects. Geometry only orders co-baseline fragments within regions and supports clearly wrapped title spans. Employer/location/dates are separated from responsibility bullets; dates inside project titles or responsibilities remain content. Unknown dates and ambiguous metadata are omitted with warnings. PDF ligatures normalize without losing accents. Evidence is bound to each record, preventing repeated dates/institutions from referencing another entry. Optional `experience.location` and the `web_technology` skill category are additive schema extensions; the provider schema is generated from these same models. The frontend summarizes expandable grouped warnings and gives profile sections natural heights, retaining review and in-memory corrections.
 
-## Error contract
+Contact fields stay confined to header/contact regions, with ambiguity warnings. Section aliases support French and English and never use sentence substring matching. Labeled records remain supported; conservative role/degree/project anchors and local dates/order supplement them. Global skills come only from skills sections; experience/project technologies come from their own entries and establish no proficiency. Proficiency wording is retained in recognized language records. Unsupported dates/records remain incomplete rather than receiving inferred facts.
 
-Known document errors return `detail.code` and `detail.message`: 413 for byte limits, 415 for non-PDF content, 422 for invalid/empty/encrypted/corrupted/textless documents and excessive page count. FastAPI retains its native validation response for malformed request fields. Unexpected programming errors are not disguised as successful parsing or arbitrary client mistakes.
-
-## Tests and future work
-
-`backend/tests/fixtures/cvs.json` contains six entirely fictional scenarios: junior Python developer, data analyst, machine learning engineer, backend engineer, incomplete CV, and alternate section layout. Tests generate PDF bytes with PyMuPDF, including encrypted, blank, over-page-limit and truncated documents. Service, schema, streamed-request-limit and API tests run offline after dependency installation; Phase 1 tests remain intact.
-
-Future work should establish job requirement contracts and extraction evaluation metrics before adding an optional LLM extractor. Require evidence/provenance for generated fields and keep the same validation and warnings contract. LangGraph can later coordinate extraction, job matching, and review. OCR, PostgreSQL, React, authentication and deployment controls are intentionally outside this implementation.
-
-PyMuPDF API behavior was checked against its [official Document reference](https://pymupdf.readthedocs.io/en/latest/document.html).
+The unchanged 60 original backend tests are retained. New tests cover fictional multilingual PDFs/API contracts, columns and right-aligned dates, field evidence, missing/ambiguous identity, aliases, French date expressions, mixed labels, source isolation, optional consent, credentials privacy, schema/evidence rejection and provider failures. The separate evaluation script compares eight in-memory fictional PDFs with authored ground truth. Frontend/browser tests validate correction, removal, confirmation and session clearing. No live external model was used in validation; any configured model/provider still needs separate fictional-data verification.

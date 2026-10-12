@@ -1,12 +1,41 @@
 name: talentflow-ai
 
 services:
+  frontend:
+    image: talentflow-ai-frontend:local
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: runtime
+      args:
+        VITE_API_BASE_URL: ""
+    ports:
+      - "127.0.0.1:5173:8080"
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
   backend:
     image: talentflow-ai-backend:local
     build:
       context: ./backend
       dockerfile: Dockerfile
       target: runtime
+    environment:
+      LLM_PROVIDER: ${LLM_PROVIDER:-}
+      LLM_BASE_URL: ${LLM_BASE_URL:-}
+      LLM_MODEL: ${LLM_MODEL:-}
+      LLM_API_KEY: ${LLM_API_KEY:-}
     ports:
       - "127.0.0.1:8000:8000"
     restart: unless-stopped

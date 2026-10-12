@@ -15,7 +15,7 @@ def validate_date_label(value: str) -> str:
 
 
 DateLabel = Annotated[str, Field(pattern=r"^(?:\d{4}(?:-(?:0[1-9]|1[0-2])(?:-(?:0[1-9]|[12]\d|3[01]))?)?|Present)$"), AfterValidator(validate_date_label)]
-SkillCategory = Literal["programming_language", "framework", "database", "ai_ml", "cloud_devops", "tool"]
+SkillCategory = Literal["programming_language", "framework", "database", "ai_ml", "cloud_devops", "tool", "web_technology"]
 
 
 class Schema(BaseModel):
@@ -48,6 +48,7 @@ class ContactInformation(Schema):
 class WorkExperience(Schema):
     job_title: Text | None = None
     company: Text | None = None
+    location: Text | None = None
     start_date: DateLabel | None = None
     end_date: DateLabel | None = None
     description: Text | None = None
@@ -94,11 +95,23 @@ class CandidateProfile(ContactInformation):
     certifications: list[Certification] = Field(default_factory=list)
 
 
+class FieldEvidence(Schema):
+    field: str
+    quote: Text
+    source_id: str
+    page: int = Field(ge=1, le=10)
+    bbox: tuple[float, float, float, float] | None = None
+    method: Literal['labeled', 'header', 'layout', 'dictionary', 'llm']
+    uncertain: bool = True
+
+
 class ParsingMetadata(Schema):
     status: Literal["partial"] = "partial"
     page_count: int = Field(ge=1, le=10)
     warnings: list[str] = Field(default_factory=list)
-    engine: Literal["deterministic-v1"] = "deterministic-v1"
+    engine: Literal["deterministic-v1", "deterministic-v2", "llm"] = "deterministic-v2"
+    evidence: list[FieldEvidence] = Field(default_factory=list)
+    llm_status: Literal['not_requested', 'succeeded', 'fallback'] = 'not_requested'
 
 
 class CVParsingResponse(Schema):

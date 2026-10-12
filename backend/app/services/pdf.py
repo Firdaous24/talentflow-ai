@@ -6,6 +6,7 @@ from threading import Lock
 import unicodedata
 
 import pymupdf
+from app.services.layout import LayoutLine, page_lines, reading_order, layout_text
 
 MAX_UPLOAD_BYTES = 5 * 1024 * 1024
 MAX_PAGES = 10
@@ -26,11 +27,12 @@ class PDFText:
     text: str
     page_count: int
     warnings: tuple[str, ...] = ()
+    lines: tuple[LayoutLine, ...] = ()
 
 
 def normalize_text(text: str) -> str:
     """Normalize horizontal whitespace without erasing lines or page boundaries."""
-    text = unicodedata.normalize("NFC", text).replace("\r\n", "\n").replace("\r", "\n")
+    text = unicodedata.normalize("NFKC", text).replace("\r\n", "\n").replace("\r", "\n")
     text = "".join(char for char in text if char in "\n\t\f" or unicodedata.category(char) != "Cc")
     return "\n".join(re.sub(r"[^\S\n\f]+", " ", line).strip() for line in text.split("\n")).strip()
 
@@ -59,9 +61,15 @@ def extract_pdf(data: bytes) -> PDFText:
                 if document.page_count == 0:
                     raise CVParsingError("empty_pdf", "PDF contains no pages.")
                 pages: list[str] = []
+                structured: list[LayoutLine] = []
+                layout_warnings: list[str] = []
                 total = 0
                 for page in document:
-                    text = normalize_text(page.get_text("text", sort=True))
+                    lines, notices = page_lines(page, normalize_text)
+                    lines, order_notices = reading_order(lines, page.rect.width)
+                    text = layout_text(lines)
+                    structured.extend(lines)
+                    layout_warnings.extend([*notices, *order_notices])
                     total += len(text)
                     if total > MAX_TEXT_CHARACTERS:
                         raise CVParsingError("text_limit_exceeded", "Extracted text exceeds the processing limit.")
@@ -69,7 +77,7 @@ def extract_pdf(data: bytes) -> PDFText:
                 if not any(pages):
                     raise CVParsingError("no_extractable_text", "PDF contains no extractable text; OCR is not supported.")
                 warnings = ("Some pages contain no extractable text; OCR is not supported.",) if not all(pages) else ()
-                return PDFText("\n\f\n".join(pages), document.page_count, warnings)
+                return PDFText("\n\f\n".join(pages), document.page_count, tuple(dict.fromkeys([*warnings, *layout_warnings])), tuple(structured))
         except CVParsingError:
             raise
         except (RuntimeError, ValueError, pymupdf.FileDataError) as error:
