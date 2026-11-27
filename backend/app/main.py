@@ -39,7 +39,7 @@ async def lifespan(application: FastAPI):
 
 app = FastAPI(
     title="TalentFlow AI",
-    version="0.6.0",
+    version="0.7.0",
     description="AI-powered recruitment intelligence platform API.",
     docs_url="/docs",
     lifespan=lifespan,
