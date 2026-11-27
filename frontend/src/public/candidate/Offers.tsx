@@ -9,6 +9,7 @@ import type { RequirementCategory, RequirementClassification, ReviewedRequiremen
 import { Notice, useDocumentTitle } from "../shared";
 import { candidateApi } from "./api";
 import type { CoverageReport, Gap, TargetDetail, TargetSummary } from "./api";
+import { PublicOffers } from "./Applications";
 import { CoverageView, GapsView } from "./Coverage";
 import { formatDate, useCandidateError } from "./shared";
 import type { Failure } from "./shared";
@@ -86,11 +87,13 @@ export function OffersPage() {
           )}
         </section>
       </div>
+      <PublicOffers />
     </div>
   );
 }
 
-function Criteria({ target, onChange }: { target: TargetDetail; onChange: (next: TargetDetail) => void }) {
+/** Criteria review, shared with the recruiter space: `api` saves and confirms for the right owner. */
+export function Criteria<T extends TargetDetail>({ target, onChange, api }: { target: T; onChange: (next: T) => void; api?: { save: (id: string, requirements: ReviewedRequirement[]) => Promise<T>; confirm: (id: string) => Promise<T> } }) {
   const { t, i18n } = useTranslation();
   const toFailure = useCandidateError();
   const [draft, setDraft] = useState<ReviewedRequirement[]>(target.requirements);
@@ -110,7 +113,9 @@ function Criteria({ target, onChange }: { target: TargetDetail; onChange: (next:
     setFailure(null);
     setMessage(null);
     try {
-      const next = action === "save" ? await candidateApi.saveRequirements(target.id, draft) : await candidateApi.confirmRequirements(target.id);
+      const save = api?.save ?? (candidateApi.saveRequirements as unknown as (id: string, requirements: ReviewedRequirement[]) => Promise<T>);
+      const confirm = api?.confirm ?? (candidateApi.confirmRequirements as unknown as (id: string) => Promise<T>);
+      const next = action === "save" ? await save(target.id, draft) : await confirm(target.id);
       setDraft(next.requirements);
       setDirty(false);
       if (action === "save") setMessage("saved");

@@ -50,7 +50,8 @@ function CvSide({ evidence }: { evidence: CandidateRequirementEvidence }) {
 
 const STATUS_ICON = { documented: Check, needs_review: CircleHelp, not_documented: Minus };
 
-function Criterion({ item, source }: { item: RequirementComparison; source: string }) {
+/** One criterion with the job clause and the CV excerpt side by side. `cvLabel` names the CV column (own CV, or an anonymous one). */
+export function Criterion({ item, source, cvLabel }: { item: RequirementComparison; source: string; cvLabel?: string }) {
   const { t } = useTranslation();
   const Icon = STATUS_ICON[item.status];
   return (
@@ -66,7 +67,7 @@ function Criterion({ item, source }: { item: RequirementComparison; source: stri
         </div>
         <div className="evidence-bridge" aria-hidden="true"><span className={`evidence-bridge-mark ${item.status}`}><Icon size={14} /></span></div>
         <div className="evidence-column">
-          <h5>{t("candidate.coverage.cvSide")}</h5>
+          <h5>{cvLabel ?? t("candidate.coverage.cvSide")}</h5>
           {item.candidate_evidence.length ? (
             item.candidate_evidence.map((evidence, index) => <CvSide key={index} evidence={evidence} />)
           ) : (

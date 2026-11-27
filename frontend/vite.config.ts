@@ -4,6 +4,17 @@ import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  build: {
+    rollupOptions: {
+      output: {
+        // Third-party libraries change rarely: separate chunks keep the application chunk small and cacheable.
+        manualChunks: {
+          react: ["react", "react-dom", "react-router-dom"],
+          i18n: ["i18next", "react-i18next"],
+        },
+      },
+    },
+  },
   server: {
     port: 5173,
     strictPort: true,

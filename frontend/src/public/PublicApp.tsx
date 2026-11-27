@@ -5,6 +5,7 @@ import { AuthProvider, useAuth } from "../auth/AuthContext";
 import { ThemeToggle } from "../components/ThemeToggle";
 import { LANGUAGES, currentLanguage, setLanguage } from "../i18n";
 import { AccountSpace } from "./AccountSpace";
+import { Claim } from "./Claim";
 import { ForgotPassword, ResetPassword } from "./Password";
 import { Legal } from "./Legal";
 import { Login } from "./Login";
@@ -14,7 +15,7 @@ import { Welcome } from "./Welcome";
 import "./public.css";
 
 /** Paths served by the public shell; every other path stays in the demo workbench. */
-export const PUBLIC_PATHS = ["/welcome", "/register", "/login", "/verify-email", "/forgot-password", "/reset-password", "/account", "/legal"];
+export const PUBLIC_PATHS = ["/welcome", "/register", "/login", "/verify-email", "/forgot-password", "/reset-password", "/account", "/legal", "/claim"];
 
 export function isPublicPath(pathname: string) {
   return PUBLIC_PATHS.some((path) => pathname === path || pathname.startsWith(`${path}/`));
@@ -82,6 +83,7 @@ function Shell() {
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/account/*" element={<AccountSpace />} />
           <Route path="/legal/:page" element={<Legal />} />
+          <Route path="/claim" element={<Claim />} />
         </Routes>
       </main>
       <footer className="public-footer">

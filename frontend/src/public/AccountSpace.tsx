@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect, useState } from "react";
 import type { FormEvent } from "react";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, NavLink, Route, Routes } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Building2, LogOut, ShieldCheck, Trash2, UsersRound } from "lucide-react";
 import { AuthApiError, authApi } from "../auth/api";
@@ -18,6 +18,18 @@ type Failure = { text: string; tone: "warning" | "error" } | null;
 const CvPage = lazy(() => import("./candidate/CvPage").then((module) => ({ default: module.CvPage })));
 const OffersPage = lazy(() => import("./candidate/Offers").then((module) => ({ default: module.OffersPage })));
 const OfferPage = lazy(() => import("./candidate/Offers").then((module) => ({ default: module.OfferPage })));
+const JobsPage = lazy(() => import("./recruiter/Jobs").then((module) => ({ default: module.JobsPage })));
+const JobPage = lazy(() => import("./recruiter/Jobs").then((module) => ({ default: module.JobPage })));
+
+function RecruiterNav() {
+  const { t } = useTranslation();
+  return (
+    <nav className="candidate-nav" aria-label={t("recruiter.nav.label")}>
+      <NavLink to="/account" end>{t("recruiter.nav.overview")}</NavLink>
+      <NavLink to="/account/jobs">{t("recruiter.nav.jobs")}</NavLink>
+    </nav>
+  );
+}
 
 function formatDate(value: string, language: string) {
   return new Intl.DateTimeFormat(language, { dateStyle: "medium" }).format(new Date(value));
@@ -63,7 +75,7 @@ function CandidatePanel({ consents, onConsents }: { consents: Consents | null; o
   );
 }
 
-function RecruiterPanel() {
+function RecruiterPanel({ onCreated }: { onCreated: () => void }) {
   const { t } = useTranslation();
   const errorText = useErrorText();
   const [organizations, setOrganizations] = useState<Organization[] | null>(null);
@@ -88,6 +100,7 @@ function RecruiterPanel() {
       const created = await authApi.createOrganization(name.trim());
       setOrganizations((current) => [...(current ?? []), created]);
       setName("");
+      onCreated();
     } catch (error) {
       setFailure(errorText(error));
     } finally {
@@ -276,6 +289,7 @@ export function AccountSpace() {
       </div>
       {failure && <Notice tone={failure.tone}>{failure.text}</Notice>}
       {account.role === "candidate" && <CandidateNav />}
+      {account.role === "recruiter" && <RecruiterNav />}
       <Suspense fallback={<div className="card account-card skeleton-stack" aria-busy="true"><Skeleton width="40%" height={24} /><Skeleton width="75%" /></div>}>
       <Routes>
         <Route
@@ -283,7 +297,7 @@ export function AccountSpace() {
           element={
             <div className="account-grid">
               {account.role === "candidate" && <CandidatePanel consents={consents} onConsents={setConsents} />}
-              {account.role === "recruiter" && <RecruiterPanel />}
+              {account.role === "recruiter" && <RecruiterPanel onCreated={() => void authApi.me().then(setAccount).catch(() => undefined)} />}
               <ConsentsPanel consents={consents} onConsents={setConsents} />
               <PreferencesPanel account={account} onAccount={setAccount} />
               <DataPanel />
@@ -296,6 +310,12 @@ export function AccountSpace() {
             <Route path="cv" element={<CvPage />} />
             <Route path="offers" element={<OffersPage />} />
             <Route path="offers/:id" element={<OfferPage />} />
+          </>
+        )}
+        {account.role === "recruiter" && (
+          <>
+            <Route path="jobs" element={<JobsPage org={account.organizations[0]?.id ?? null} />} />
+            <Route path="jobs/:id" element={<JobPage org={account.organizations[0]?.id ?? null} />} />
           </>
         )}
         <Route path="*" element={<Navigate to="/account" replace />} />
