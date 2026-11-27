@@ -23,6 +23,8 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { ConnectionBadge } from "./components/ConnectionBadge";
+import { ThemeToggle } from "./components/ThemeToggle";
+import { WorkflowStepper } from "./components/WorkflowStepper";
 import { SessionProvider } from "./session";
 import { Parser } from "./pages/Parser";
 import { JobAnalysis } from "./pages/JobAnalysis";
@@ -136,7 +138,8 @@ function Layout() {
         </div>
       </aside>
       <div className="main-shell">
-        <header className="topbar">
+        <header className="app-header">
+        <div className="topbar">
           <div className="breadcrumb">
             <button
               className="icon-button mobile-menu"
@@ -152,11 +155,15 @@ function Layout() {
           </div>
           <div className="topbar-right">
             <ConnectionBadge />
+            <ThemeToggle />
             <span className="topbar-divider" />
             <span className="avatar small">TF</span>
           </div>
+        </div>
+        <WorkflowStepper />
         </header>
         <main id="main" className="main-content">
+          <div className="page-transition" key={location.pathname}>
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/parser" element={<Parser />} />
@@ -167,6 +174,7 @@ function Layout() {
             <Route path="/settings" element={<Settings />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
+          </div>
           <footer className="content-footer">
             <span>TalentFlow AI</span>
             <span>Built for thoughtful recruitment.</span>

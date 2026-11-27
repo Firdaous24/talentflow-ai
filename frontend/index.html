@@ -3,7 +3,19 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#6d4aff" />
+    <meta name="theme-color" content="#f6f3ec" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0e1116" media="(prefers-color-scheme: dark)" />
+    <meta name="color-scheme" content="light dark" />
+    <script>
+      // Apply the stored or system theme before first paint (no flash).
+      (function () {
+        var theme = null;
+        try { theme = localStorage.getItem("talentflow-theme"); } catch (error) { theme = null; }
+        if (theme !== "light" && theme !== "dark")
+          theme = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        document.documentElement.dataset.theme = theme;
+      })();
+    </script>
     <meta
       name="description"
       content="TalentFlow AI recruitment workspace. Parse PDF CVs and review structured candidate profiles."

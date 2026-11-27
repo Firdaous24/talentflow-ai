@@ -1,0 +1,194 @@
+/*
+ * TalentFlow AI design tokens — the only file that defines raw values.
+ * Concept: an editorial "evidence dossier". Warm paper in light mode,
+ * deep slate in dark mode, thin rules instead of heavy shadows.
+ *
+ * Semantic status colours:
+ *   documented      quiet teal
+ *   needs_review    amber
+ *   not_documented  neutral grey (an absence of a mention, never an error)
+ *   environment     soft violet (technical context, not a requirement)
+ *   danger          reserved for system errors only, never for candidates
+ *
+ * The theme is chosen by [data-theme] on <html>, set before first paint by
+ * index.html from localStorage or prefers-color-scheme.
+ */
+
+:root {
+  color-scheme: light;
+
+  /* Typography */
+  --font-display: "Instrument Serif", "Iowan Old Style", Georgia, serif;
+  --font-sans: "Inter Variable", "Inter", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --text-2xs: 11px;
+  --text-xs: 12px;
+  --text-sm: 13px;
+  --text-base: 14px;
+  --text-md: 15px;
+  --text-lg: 18px;
+  --text-xl: 22px;
+  --text-2xl: 30px;
+  --text-display: clamp(34px, 3.6vw, 48px);
+  --leading-tight: 1.15;
+  --leading-snug: 1.4;
+  --leading-body: 1.6;
+  --tracking-caps: 0.12em;
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+
+  /* Spacing (4px grid) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 32px;
+  --space-8: 40px;
+  --space-9: 48px;
+  --space-10: 64px;
+
+  /* Shape */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-pill: 999px;
+  --rule: 1px;
+
+  /* Layout */
+  --sidebar-width: 264px;
+  --topbar-height: 64px;
+  --content-max: 1180px;
+
+  /* Motion */
+  --duration-fast: 120ms;
+  --duration-base: 200ms;
+  --duration-slow: 320ms;
+  --duration-pulse: 2400ms;
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* Surfaces and text */
+  --bg: #f6f3ec;
+  --surface: #fffdf8;
+  --surface-raised: #ffffff;
+  --surface-sunken: #efebe2;
+  --surface-muted: #e8e3d8;
+  --line: #e2dccf;
+  --line-strong: #cbc3b2;
+  --text: #1b1c20;
+  --text-muted: #45484f;
+  --text-subtle: #5a5d65;
+  --text-faint: #5f6269;
+
+  /* Brand: ink blue, the colour of annotation */
+  --accent: #2b3fc4;
+  --accent-hover: #2233a6;
+  --accent-text: #2b3fc4;
+  --accent-soft: #e9ecfb;
+  --accent-soft-strong: #d9def8;
+  --accent-line: #b9c2f0;
+  --on-accent: #ffffff;
+  --focus-ring: #2b3fc4;
+
+  /* Evidence statuses */
+  --documented: #0c6457;
+  --documented-solid: #12806f;
+  --documented-bg: #e2f1ec;
+  --documented-line: #a7d4c8;
+  --review: #7f5100;
+  --review-solid: #c08a1c;
+  --review-bg: #fbf0d8;
+  --review-line: #e8cd92;
+  --absent: #55585f;
+  --absent-solid: #8d9097;
+  --absent-bg: #eeebe4;
+  --absent-line: #d5d0c5;
+  --environment: #5b44a3;
+  --environment-solid: #7b66c4;
+  --environment-bg: #efebfa;
+  --environment-line: #cdc3ee;
+  --danger: #a3302a;
+  --danger-bg: #fbeae7;
+  --danger-line: #eec2bb;
+
+  /* Evidence highlight (exact source span) */
+  --highlight-bg: #dce2fb;
+  --highlight-line: #2b3fc4;
+
+  /* Depth */
+  --shadow-ink: #2a2316;
+  --shadow-sm: 0 1px 2px color-mix(in srgb, var(--shadow-ink) 6%, transparent);
+  --shadow-md: 0 10px 30px -18px color-mix(in srgb, var(--shadow-ink) 28%, transparent),
+    0 1px 2px color-mix(in srgb, var(--shadow-ink) 5%, transparent);
+  --shadow-lg: 0 24px 60px -28px color-mix(in srgb, var(--shadow-ink) 35%, transparent);
+  --overlay: color-mix(in srgb, #14161a 42%, transparent);
+  --grain-opacity: 0.035;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg: #0e1116;
+  --surface: #141920;
+  --surface-raised: #1a2029;
+  --surface-sunken: #0b0e12;
+  --surface-muted: #1f2630;
+  --line: #252d37;
+  --line-strong: #36404c;
+  --text: #ece9e2;
+  --text-muted: #c0c3ca;
+  --text-subtle: #a3a8b1;
+  --text-faint: #8f95a0;
+
+  --accent: #8b9cff;
+  --accent-hover: #a9b5ff;
+  --accent-text: #a5b2ff;
+  --accent-soft: #1a2042;
+  --accent-soft-strong: #232b58;
+  --accent-line: #3c4892;
+  --on-accent: #0b0e1a;
+  --focus-ring: #a5b2ff;
+
+  --documented: #6fd6c4;
+  --documented-solid: #3fb6a2;
+  --documented-bg: #0f2a27;
+  --documented-line: #1f5048;
+  --review: #f1c36a;
+  --review-solid: #dca53c;
+  --review-bg: #2d230f;
+  --review-line: #5a4416;
+  --absent: #b0b4bc;
+  --absent-solid: #7f858f;
+  --absent-bg: #1c2129;
+  --absent-line: #343b46;
+  --environment: #c0b1f7;
+  --environment-solid: #9c88e6;
+  --environment-bg: #221c39;
+  --environment-line: #43386f;
+  --danger: #f39a90;
+  --danger-bg: #331815;
+  --danger-line: #6a2b25;
+
+  --highlight-bg: #27306a;
+  --highlight-line: #a5b2ff;
+
+  --shadow-ink: #000000;
+  --shadow-sm: 0 1px 2px color-mix(in srgb, var(--shadow-ink) 30%, transparent);
+  --shadow-md: 0 12px 32px -18px color-mix(in srgb, var(--shadow-ink) 70%, transparent);
+  --shadow-lg: 0 24px 60px -24px color-mix(in srgb, var(--shadow-ink) 80%, transparent);
+  --overlay: color-mix(in srgb, #000000 60%, transparent);
+  --grain-opacity: 0.05;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0ms;
+    --duration-base: 0ms;
+    --duration-slow: 0ms;
+  }
+}

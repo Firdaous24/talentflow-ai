@@ -22,15 +22,15 @@
 .comparison-full-field summary,
 .comparison-evidence-notes summary {
   cursor: pointer;
-  color: #725492;
+  color: var(--text-muted);
   font-size: 11px;
   line-height: 1.7;
 }
 .comparison-full-field [data-full-source] {
-  border-left: 2px solid #e6deef;
+  border-left: 2px solid var(--accent-line);
   padding: 10px;
   line-height: 1.7;
-  color: #665775;
+  color: var(--text-muted);
 }
 .comparison-evidence-notes > summary {
   font-weight: 600;
@@ -40,13 +40,13 @@
 }
 .comparison-overview,
 .comparison-technical-overview {
-  border: 1px solid #e6deef;
+  border: 1px solid var(--accent-line);
   border-radius: 10px;
   padding: 20px;
   min-width: 0;
 }
 .comparison-overview {
-  background: linear-gradient(135deg, #faf7ff, #fff);
+  background: linear-gradient(135deg, var(--surface), var(--surface));
 }
 .comparison-section-heading {
   display: flex;
@@ -58,16 +58,16 @@
 .comparison-results h3 {
   font-size: 14px;
   line-height: 1.6;
-  color: #514362;
+  color: var(--text-muted);
 }
 .comparison-section-heading p {
   margin-top: 5px;
   line-height: 1.7;
-  color: #81738f;
+  color: var(--text-subtle);
 }
 .comparison-results .comparison-eyebrow {
   margin: 0 0 4px;
-  color: #8e6bc0;
+  color: var(--accent-text);
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.09em;
@@ -75,8 +75,8 @@
 }
 .comparison-total {
   border-radius: 6px;
-  background: #eee6fa;
-  color: #7b55a9;
+  background: var(--accent-soft);
+  color: var(--accent-text);
   padding: 6px 9px;
   font-size: 10px;
   white-space: nowrap;
@@ -94,16 +94,16 @@
   row-gap: 6px;
   min-width: 0;
   padding: 14px;
-  border: 1px solid #e9e2f2;
+  border: 1px solid var(--accent-line);
   border-radius: 8px;
-  background: #fff;
+  background: var(--surface);
 }
 .comparison-summary-item svg {
-  color: #8a6bb1;
+  color: var(--accent-text);
 }
 .comparison-summary-item > strong {
   font-size: 24px;
-  color: #5b427a;
+  color: var(--text-muted);
   line-height: 1.1;
 }
 .comparison-summary-item > h4,
@@ -113,20 +113,20 @@
 .comparison-summary-item > h4 {
   font-size: 11px;
   font-weight: 600;
-  color: #665376;
+  color: var(--text-muted);
   line-height: 1.6;
 }
 .comparison-summary-item > p {
-  color: #8b7d98;
+  color: var(--text-subtle);
   font-size: 10px;
   line-height: 1.7;
 }
 .comparison-results .comparison-environment-notice {
   margin-top: 15px;
   padding: 11px 13px;
-  background: #f0f2fa;
+  background: var(--accent-soft);
   border-radius: 7px;
-  color: #61718a;
+  color: var(--text-muted);
   font-size: 11px;
   line-height: 1.8;
 }
@@ -139,7 +139,7 @@
   gap: 6px;
   cursor: pointer;
   font-size: 11px;
-  color: #8b759f;
+  color: var(--text-subtle);
   list-style: none;
 }
 .comparison-review-boundary > summary::after {
@@ -151,7 +151,7 @@
 }
 .comparison-review-boundary > p {
   margin-top: 8px;
-  color: #8a7c96;
+  color: var(--text-subtle);
   font-size: 11px;
   line-height: 1.8;
 }
@@ -165,7 +165,7 @@
   align-items: center;
   gap: 8px;
   font-size: 12px;
-  color: #695677;
+  color: var(--text-muted);
   line-height: 1.7;
 }
 .comparison-technical-group .count,
@@ -180,9 +180,9 @@
   margin-top: 10px;
 }
 .comparison-technology {
-  border: 1px solid #e7dcf5;
+  border: 1px solid var(--accent-line);
   border-radius: 7px;
-  background: #faf7fe;
+  background: var(--surface);
   min-width: 0;
   max-width: 100%;
 }
@@ -193,7 +193,7 @@
   flex-wrap: wrap;
   cursor: pointer;
   padding: 8px 10px;
-  color: #7c559e;
+  color: var(--accent-text);
   font-size: 11px;
   list-style: none;
 }
@@ -206,8 +206,8 @@
   overflow-wrap: anywhere;
 }
 .comparison-interpretation-flag {
-  color: #8a714f;
-  background: #f5efdf;
+  color: var(--text-muted);
+  background: var(--review-bg);
   font-size: 9px;
   padding: 1px 5px;
   border-radius: 4px;
@@ -217,11 +217,11 @@
   align-items: center;
   gap: 3px;
   font-size: 10px;
-  color: #7d638f;
+  color: var(--text-subtle);
 }
 .comparison-technology[open] {
   width: 100%;
-  background: #fff;
+  background: var(--surface);
 }
 .comparison-technology[open] .comparison-source-toggle svg {
   transform: rotate(180deg);
@@ -230,7 +230,7 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 14px;
-  border-top: 1px solid #eee7f5;
+  border-top: 1px solid var(--accent-line);
   padding: 13px;
 }
 .comparison-technology-sources > div {
@@ -238,7 +238,7 @@
 }
 .comparison-technology-sources h5,
 .comparison-expanded-evidence h5 {
-  color: #83708f;
+  color: var(--text-subtle);
   font-size: 11px;
   line-height: 1.7;
   margin: 0 0 7px;
@@ -246,10 +246,10 @@
 .comparison-technology-sources blockquote {
   margin: 8px 0 0;
   padding: 10px;
-  background: #f8f5fc;
-  border-left: 2px solid #d9c9ef;
+  background: var(--accent-soft);
+  border-left: 2px solid var(--accent-line);
   border-radius: 4px;
-  color: #71627f;
+  color: var(--text-muted);
   font-size: 11px;
   line-height: 1.8;
   white-space: pre-wrap;
@@ -259,39 +259,39 @@
   display: block;
   margin-top: 6px;
   font-size: 10px;
-  color: #9785a5;
+  color: var(--text-subtle);
   overflow-wrap: anywhere;
 }
 .comparison-technology-sources mark {
-  background: #e8dbff;
+  background: var(--accent-soft-strong);
   border-radius: 3px;
   padding: 1px 3px;
-  color: #634282;
+  color: var(--accent-text);
 }
 .comparison-source-reference + .comparison-source-reference {
   margin-top: 13px;
 }
 .comparison-results .comparison-source-label {
   font-size: 10px;
-  color: #8d7c9e;
+  color: var(--text-subtle);
   line-height: 1.7;
   overflow-wrap: anywhere;
 }
 .comparison-results .comparison-empty-evidence {
   margin-top: 9px;
-  color: #8c7f98;
+  color: var(--text-subtle);
   font-size: 11px;
   line-height: 1.8;
   overflow-wrap: anywhere;
 }
 .comparison-interpretation-section {
-  border-top: 1px solid #eee7f5;
+  border-top: 1px solid var(--accent-line);
   padding-top: 15px;
   margin-top: 18px;
 }
 .comparison-interpretation-section > p {
   margin-top: 7px;
-  color: #8a7b96;
+  color: var(--text-subtle);
   font-size: 11px;
   line-height: 1.8;
 }
@@ -311,7 +311,7 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
   font-size: 11px;
-  color: #806493;
+  color: var(--text-subtle);
   line-height: 1.7;
   overflow-wrap: anywhere;
   text-decoration: none;
@@ -320,7 +320,7 @@
   text-decoration: underline;
 }
 .comparison-interpretation-section a span {
-  color: #a18cb0;
+  color: var(--text-faint);
   margin-right: 4px;
   font-size: 10px;
 }
@@ -338,18 +338,18 @@
 }
 .comparison-filters button {
   padding: 7px 10px;
-  border: 1px solid #e5deef;
+  border: 1px solid var(--accent-line);
   border-radius: 7px;
-  background: #fff;
-  color: #897892;
+  background: var(--surface);
+  color: var(--text-subtle);
   font: inherit;
   font-size: 11px;
   cursor: pointer;
 }
 .comparison-filters button[aria-pressed="true"] {
-  color: #7951a6;
-  background: #efe6fb;
-  border-color: #d5c3ee;
+  color: var(--accent-text);
+  background: var(--accent-soft);
+  border-color: var(--accent-line);
 }
 .comparison-expansion-controls {
   display: flex;
@@ -361,17 +361,17 @@
   padding: 5px 0;
   font: inherit;
   font-size: 10px;
-  color: #8b6ca0;
+  color: var(--text-subtle);
   cursor: pointer;
 }
 .comparison-expansion-controls button:disabled {
-  color: #b3a8bd;
+  color: var(--text-faint);
   cursor: default;
 }
 .comparison-results .comparison-visible-count {
   margin-top: 12px;
   font-size: 10px;
-  color: #9a8ba6;
+  color: var(--text-subtle);
 }
 .comparison-card-list {
   display: grid;
@@ -379,11 +379,11 @@
   margin-top: 12px;
 }
 .comparison-evidence-card {
-  border: 1px solid #e6deee;
+  border: 1px solid var(--accent-line);
   border-radius: 8px;
   padding: 15px;
   min-width: 0;
-  background: #fff;
+  background: var(--surface);
   scroll-margin-top: 24px;
 }
 .comparison-card-header {
@@ -401,7 +401,7 @@
   min-width: 0;
 }
 .comparison-clause-id {
-  color: #a28cae;
+  color: var(--text-faint);
   font-size: 10px;
   flex-shrink: 0;
 }
@@ -412,31 +412,31 @@
   overflow: hidden;
   font-size: 12px;
   line-height: 1.7;
-  color: #655074;
+  color: var(--text-muted);
   overflow-wrap: anywhere;
 }
 .comparison-status {
-  color: #7b6291;
-  background: #f3eef9;
+  color: var(--text-subtle);
+  background: var(--accent-soft);
   border-radius: 5px;
   padding: 4px 7px;
   font-size: 10px;
   line-height: 1.6;
 }
 .comparison-status.not_documented {
-  color: #7e7489;
-  background: #f2f0f5;
+  color: var(--text-subtle);
+  background: var(--surface-sunken);
 }
 .comparison-status.needs_review {
-  color: #8c754c;
-  background: #f7f2e7;
+  color: var(--text-muted);
+  background: var(--review-bg);
 }
 .comparison-card-meta {
   display: flex;
   flex-wrap: wrap;
   gap: 5px 10px;
   margin-top: 7px;
-  color: #9a87a5;
+  color: var(--text-subtle);
   font-size: 10px;
 }
 .comparison-tech-chips {
@@ -446,8 +446,8 @@
   margin-top: 10px;
 }
 .comparison-tech-chips span {
-  color: #8a6ba0;
-  background: #f5f0fc;
+  color: var(--text-subtle);
+  background: var(--accent-soft);
   border-radius: 4px;
   padding: 3px 7px;
   font-size: 10px;
@@ -461,7 +461,7 @@
   margin-top: 10px;
 }
 .comparison-card-footer > p {
-  color: #8b7c97;
+  color: var(--text-subtle);
   font-size: 11px;
   line-height: 1.7;
 }
@@ -473,9 +473,9 @@
   flex-shrink: 0;
   border: 0;
   border-radius: 5px;
-  background: #f5effc;
+  background: var(--accent-soft);
   padding: 7px 8px;
-  color: #87659f;
+  color: var(--text-subtle);
   font: inherit;
   font-size: 10px;
   cursor: pointer;
@@ -486,15 +486,15 @@
 .comparison-results button:focus-visible,
 .comparison-results summary:focus-visible,
 .comparison-results a:focus-visible {
-  outline: 3px solid #b299e8;
+  outline: 3px solid var(--accent);
   outline-offset: 3px;
 }
 .comparison-evidence-card:focus-visible {
-  outline: 3px solid #b299e8;
+  outline: 3px solid var(--accent);
   outline-offset: 3px;
 }
 .comparison-expanded-evidence {
-  border-top: 1px solid #eee7f5;
+  border-top: 1px solid var(--accent-line);
   margin-top: 14px;
   padding-top: 14px;
   scroll-margin-top: 24px;
@@ -507,7 +507,7 @@
   margin-top: 0;
 }
 .comparison-detail-section > p {
-  color: #7b6989;
+  color: var(--text-subtle);
   font-size: 11px;
   line-height: 1.8;
   overflow-wrap: anywhere;
@@ -523,11 +523,11 @@
 }
 .comparison-provenance dt {
   font-size: 10px;
-  color: #a18fae;
+  color: var(--text-faint);
 }
 .comparison-provenance dd {
   font-size: 11px;
-  color: #796585;
+  color: var(--text-muted);
   margin: 4px 0 0;
   line-height: 1.8;
   overflow-wrap: anywhere;
@@ -535,15 +535,15 @@
 .comparison-empty-state {
   padding: 22px 15px;
   margin-top: 12px;
-  background: #faf7fe;
-  border: 1px dashed #dfd3ec;
+  background: var(--surface);
+  border: 1px dashed var(--accent-line);
   border-radius: 8px;
-  color: #93829f;
+  color: var(--text-subtle);
   font-size: 12px;
   line-height: 1.8;
 }
 .comparison-result-notes {
-  color: #9279a5;
+  color: var(--text-subtle);
   font-size: 11px;
 }
 .comparison-result-notes summary {

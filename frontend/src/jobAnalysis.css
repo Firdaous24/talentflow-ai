@@ -23,19 +23,19 @@
   display: block;
   font-size: 12px;
   font-weight: 600;
-  color: #514362;
+  color: var(--text-muted);
   margin-bottom: 8px;
 }
 .job-workflow select,
 .job-workflow textarea,
 .job-workflow input[type="text"] {
   width: 100%;
-  border: 1px solid #dcd5e9;
+  border: 1px solid var(--accent-line);
   border-radius: 8px;
-  background: #fff;
+  background: var(--surface);
   padding: 11px 12px;
   font: inherit;
-  color: #514362;
+  color: var(--text-muted);
 }
 .job-workflow textarea {
   resize: vertical;
@@ -43,7 +43,7 @@
 }
 .job-workflow textarea:focus-visible,
 .job-workflow select:focus-visible {
-  outline: 3px solid #9b85ff;
+  outline: 3px solid var(--accent);
   outline-offset: 3px;
 }
 .job-input-grid {
@@ -67,7 +67,7 @@
 .job-awaiting-review {
   margin-top: 22px;
   padding-top: 18px;
-  border-top: 1px solid #eae3f3;
+  border-top: 1px solid var(--accent-line);
 }
 .job-awaiting-review > h3 {
   display: flex;
@@ -84,9 +84,9 @@
   gap: 12px;
   margin-top: 14px;
   padding: 14px;
-  border: 1px solid #e9e2f2;
+  border: 1px solid var(--accent-line);
   border-radius: 8px;
-  background: #fcfaff;
+  background: var(--surface);
 }
 .job-awaiting-candidate > div {
   min-width: 0;
@@ -111,7 +111,7 @@
   gap: 12px;
   margin-top: 9px;
   font-size: 11px;
-  color: #8d839d;
+  color: var(--text-subtle);
 }
 .job-form-actions {
   display: flex;
@@ -132,14 +132,14 @@
   align-items: center;
   gap: 8px;
   font-size: 11px;
-  color: #8e839f;
+  color: var(--text-subtle);
   padding: 8px 12px;
-  background: #f3effa;
+  background: var(--accent-soft);
   border-radius: 7px;
 }
 .job-steps li[aria-current="step"] {
-  color: #7851bd;
-  background: #eee5fc;
+  color: var(--accent-text);
+  background: var(--accent-soft);
 }
 .job-steps span {
   font-weight: 700;
@@ -151,13 +151,13 @@
   margin: 18px 0;
 }
 .job-summary dt {
-  color: #968da4;
+  color: var(--text-subtle);
   font-size: 11px;
 }
 .job-summary dd {
   margin: 5px 0 0;
   font-size: 13px;
-  color: #514362;
+  color: var(--text-muted);
   overflow-wrap: anywhere;
 }
 .job-metadata-source {
@@ -169,7 +169,7 @@
 }
 .job-analysis-status {
   margin-top: 16px;
-  color: #71627f;
+  color: var(--text-muted);
   line-height: 1.8;
   overflow-wrap: anywhere;
 }
@@ -181,19 +181,19 @@
   line-height: 1.8;
 }
 .job-environment-group .job-requirement {
-  background: #f8f9fc;
-  border-color: #dde3ed;
+  background: var(--surface);
+  border-color: var(--accent-line);
 }
 .job-environment-explanation {
   margin-top: 10px;
-  color: #63728c;
+  color: var(--text-muted);
   line-height: 1.8;
   overflow-wrap: anywhere;
 }
 .job-warning-list {
   margin: 10px 0 0;
   padding-left: 18px;
-  color: #9a7a43;
+  color: var(--review);
   font-size: 12px;
   line-height: 1.8;
 }
@@ -201,21 +201,21 @@
   display: flex;
   flex-wrap: wrap;
   gap: 7px;
-  border-bottom: 1px solid #eae3f3;
+  border-bottom: 1px solid var(--accent-line);
   padding-bottom: 13px;
 }
 .job-tabs button {
-  border: 1px solid #e5deef;
+  border: 1px solid var(--accent-line);
   border-radius: 7px;
   padding: 8px 12px;
-  background: #fff;
+  background: var(--surface);
   font-size: 12px;
-  color: #82748f;
+  color: var(--text-subtle);
 }
 .job-tabs button[aria-pressed="true"] {
-  background: #f0e8fd;
-  border-color: #d9c9f4;
-  color: #744bab;
+  background: var(--accent-soft);
+  border-color: var(--accent-line);
+  color: var(--accent-text);
 }
 .job-requirement-group {
   margin-top: 23px;
@@ -229,9 +229,9 @@
 .job-requirement {
   margin-top: 13px;
   padding: 18px;
-  border: 1px solid #e9e2f2;
+  border: 1px solid var(--accent-line);
   border-radius: 9px;
-  background: #fcfaff;
+  background: var(--surface);
   min-width: 0;
 }
 .job-requirement-header {
@@ -263,31 +263,31 @@
 }
 .job-source summary {
   font-size: 11px;
-  color: #88759f;
+  color: var(--text-subtle);
   cursor: pointer;
 }
 .job-source blockquote,
 .job-source-text {
   margin: 10px 0 0;
   padding: 13px;
-  background: #f4f0fa;
-  border-left: 3px solid #d6c7eb;
+  background: var(--accent-soft);
+  border-left: 3px solid var(--accent-line);
   border-radius: 4px;
   font-size: 12px;
-  color: #71627f;
+  color: var(--text-muted);
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
 .job-source small {
   display: block;
   margin-top: 7px;
-  color: #9a8da8;
+  color: var(--text-faint);
   font-size: 10px;
 }
 .job-review-changes {
   font-size: 11px !important;
   margin: 10px 0 0;
-  color: #826598;
+  color: var(--text-subtle);
 }
 .job-workflow label.job-confirm-label {
   display: flex;
@@ -300,13 +300,13 @@
 .job-confirm-label input {
   width: 17px;
   height: 17px;
-  accent-color: #7752eb;
+  accent-color: var(--accent);
   margin-top: 3px;
   flex-shrink: 0;
 }
 .job-review-footer {
   margin-top: 22px;
-  border-top: 1px solid #eae3f3;
+  border-top: 1px solid var(--accent-line);
   padding-top: 17px;
 }
 .job-results-header {
@@ -333,10 +333,10 @@
   margin-top: 7px;
 }
 .job-result-group > h3 svg {
-  color: #9a80bf;
+  color: var(--accent-text);
 }
 .job-comparison-card {
-  border: 1px solid #e9e3f1;
+  border: 1px solid var(--accent-line);
   border-radius: 9px;
   padding: 19px;
   margin-top: 13px;
@@ -357,7 +357,7 @@
 }
 .job-evidence-grid h5 {
   font-size: 11px;
-  color: #8d7c9e;
+  color: var(--text-subtle);
   margin: 0 0 7px;
 }
 .job-evidence-grid blockquote {
@@ -365,17 +365,17 @@
   font-size: 12px;
   line-height: 1.7;
   padding: 11px;
-  background: #f8f5fc;
+  background: var(--accent-soft);
   border-radius: 6px;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
-  color: #71627f;
+  color: var(--text-muted);
 }
 .job-evidence-grid small {
   display: block;
   margin-top: 6px;
   font-size: 10px;
-  color: #9e92aa;
+  color: var(--text-faint);
   overflow-wrap: anywhere;
 }
 .job-empty {
@@ -383,7 +383,7 @@
   padding: 33px 12px;
 }
 .job-empty > svg {
-  color: #a58dc7;
+  color: var(--accent-text);
   margin-bottom: 15px;
 }
 .job-empty h3 {
@@ -397,11 +397,11 @@
   align-items: center;
   gap: 5px;
   margin-top: 13px;
-  color: #895abd;
+  color: var(--accent-text);
   font-size: 12px;
 }
 .job-boundary {
-  color: #897d96;
+  color: var(--text-subtle);
   font-size: 11px !important;
 }
 .job-loading {
@@ -412,15 +412,15 @@
 }
 .job-no-items {
   padding: 15px 0 0;
-  color: #a194ac;
+  color: var(--text-faint);
   font-size: 11px;
 }
 .job-comparison-availability {
   margin-top: 20px;
   padding: 16px;
-  border: 1px solid #e5deef;
+  border: 1px solid var(--accent-line);
   border-radius: 8px;
-  background: #f8f5fc;
+  background: var(--accent-soft);
   overflow-wrap: anywhere;
 }
 .job-comparison-availability h3 {
