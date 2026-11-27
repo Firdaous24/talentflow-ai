@@ -15,3 +15,7 @@ ignore = [
 [lint.per-file-ignores]
 # `l` is the PyMuPDF line index next to `b` (block index); renaming adds churn without benefit.
 "app/services/layout.py" = ["E741"]
+
+[lint.flake8-bugbear]
+# FastAPI dependency markers are evaluated once at import time by design.
+extend-immutable-calls = ["fastapi.Depends", "fastapi.Path", "fastapi.Query"]

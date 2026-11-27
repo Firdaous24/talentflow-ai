@@ -1,12 +1,17 @@
 """Shared in-process API client and fictional, programmatically generated PDFs."""
 
 import json
+import os
 from collections.abc import Iterator
 from pathlib import Path
 
 import pymupdf
 import pytest
+from alembic import command
+from alembic.config import Config
 from fastapi.testclient import TestClient
+from sqlalchemy import create_engine
+from sqlalchemy import text as sql_text
 
 from app.main import app
 
@@ -29,4 +34,83 @@ def make_pdf(text: str = "", pages: int = 1, encrypted: bool = False, user_passw
 def client() -> Iterator[TestClient]:
     # Requests use the local host the runtime allow-list accepts (no "testserver").
     with TestClient(app, base_url="http://localhost") as test_client:
+        yield test_client
+
+
+# ---------------------------------------------------------------------------
+# /api/v2 (accounts). Tests that need PostgreSQL use TEST_DATABASE_URL, a
+# disposable database that the fixtures migrate and truncate. Without it they
+# are skipped locally; CI sets REQUIRE_DATABASE_TESTS=1 so they can never be
+# skipped silently there.
+# ---------------------------------------------------------------------------
+
+TEST_SECRET = "pytest-only-secret-key-0123456789-abcdefghijklmnop"
+BACKEND_DIR = Path(__file__).resolve().parents[1]
+V2_TABLES = ("audit_log", "consents", "email_tokens", "memberships", "sessions", "organizations", "users")
+
+
+def alembic_config() -> Config:
+    config = Config(str(BACKEND_DIR / "alembic.ini"))
+    config.set_main_option("script_location", str(BACKEND_DIR / "migrations"))
+    config.attributes["configure_logger"] = False
+    return config
+
+
+@pytest.fixture(scope="session")
+def database_url() -> str:
+    url = os.environ.get("TEST_DATABASE_URL", "")
+    if not url:
+        if os.environ.get("REQUIRE_DATABASE_TESTS") == "1":
+            pytest.fail("TEST_DATABASE_URL is required when REQUIRE_DATABASE_TESTS=1.")
+        pytest.skip("Set TEST_DATABASE_URL to a disposable PostgreSQL database to run /api/v2 database tests.")
+    return url
+
+
+@pytest.fixture(scope="session")
+def migrated_database(database_url: str) -> Iterator[str]:
+    previous = os.environ.get("DATABASE_URL")
+    os.environ["DATABASE_URL"] = database_url
+    try:
+        command.downgrade(alembic_config(), "base")
+        command.upgrade(alembic_config(), "head")
+        yield database_url
+    finally:
+        if previous is None:
+            os.environ.pop("DATABASE_URL", None)
+        else:
+            os.environ["DATABASE_URL"] = previous
+
+
+@pytest.fixture
+def v2_env(monkeypatch: pytest.MonkeyPatch, migrated_database: str) -> Iterator[str]:
+    from app.auth import mailer
+    from app.auth.ratelimit import limiter
+    from app.core.config import get_settings
+
+    monkeypatch.setenv("DATABASE_URL", migrated_database)
+    monkeypatch.setenv("TALENTFLOW_SECRET_KEY", TEST_SECRET)
+    monkeypatch.setenv("EMAIL_BACKEND", "memory")
+    monkeypatch.setenv("SESSION_COOKIE_SECURE", "true")
+    monkeypatch.setenv("APP_BASE_URL", "https://localhost")
+    get_settings.cache_clear()
+    engine = create_engine(migrated_database)
+    with engine.begin() as connection:
+        connection.execute(sql_text(f"TRUNCATE {', '.join(V2_TABLES)} RESTART IDENTITY CASCADE"))
+    engine.dispose()
+    limiter.reset()
+    mailer.outbox.clear()
+    yield migrated_database
+    get_settings.cache_clear()
+    limiter.reset()
+    mailer.outbox.clear()
+
+
+def new_v2_client() -> TestClient:
+    # HTTPS so the Secure, __Host- prefixed cookies behave exactly as in production.
+    return TestClient(app, base_url="https://localhost")
+
+
+@pytest.fixture
+def v2_client(v2_env: str) -> Iterator[TestClient]:
+    with new_v2_client() as test_client:
         yield test_client

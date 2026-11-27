@@ -8,3 +8,8 @@ PyMuPDF==1.28.2
 python-multipart==0.0.32
 langgraph==1.2.15
 langsmith==0.14.9
+# Phase 6 account platform: PostgreSQL, migrations and password hashing.
+SQLAlchemy==2.1.9
+psycopg[binary]==3.3.9
+alembic==1.20.1
+argon2-cffi==25.1.0

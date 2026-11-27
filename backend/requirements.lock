@@ -53,3 +53,16 @@ uuid_utils==0.17.1
 websockets==16.1.1
 xxhash==4.0.1
 zstandard==0.25.0
+
+# Phase 6 account platform, resolved in the same Linux Python 3.11 image with
+# every pre-existing locked version constrained and unchanged (2026-11-27).
+alembic==1.20.1
+argon2-cffi==25.1.0
+argon2-cffi-bindings==26.2.0
+cffi==2.1.1
+Mako==1.4.3
+MarkupSafe==3.0.4
+psycopg==3.3.9
+psycopg-binary==3.3.9
+pycparser==3.12
+SQLAlchemy==2.1.9
