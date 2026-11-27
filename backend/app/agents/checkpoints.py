@@ -52,6 +52,9 @@ class WorkflowEntry:
     owner: str
     client_request_id: str
     fingerprint: str
+    # Immutable copy: duplicate detection must not read state that a running
+    # graph is replacing without holding the entry lock.
+    request_revision: str
     created: float
     expires: float
     state: dict
@@ -83,10 +86,18 @@ class WorkflowManager:
             self._purge(entry, clear_result=True)
 
     def cleanup(self):
+        # The registry lock only protects the dict snapshot. A workflow whose
+        # lock is held is executing graph nodes; skip it instead of waiting, so
+        # a slow graph never blocks other starts. It is expired on a later pass
+        # or by its own get/resume/cancel, which always call _expire.
         with self.lock:
-            for entry in self.entries.values():
-                with entry.lock:
+            entries = list(self.entries.values())
+        for entry in entries:
+            if entry.lock.acquire(blocking=False):
+                try:
                     self._expire(entry)
+                finally:
+                    entry.lock.release()
 
     def clear(self):
         with self.lock:
@@ -123,34 +134,36 @@ class WorkflowManager:
         hashed = owner_hash(owner)
         validate_minimization(request.comparison)  # BEFORE state/checkpoint creation.
         fingerprint = snapshot_hash(request.comparison)
+        self.cleanup()
+        duplicate = None
+        # Critical section: registry lookup, capacity and publication only. No
+        # graph execution and no waiting on another workflow happens here.
         with self.lock:
-            self.cleanup()
-            for entry in self.entries.values():
-                if hmac.compare_digest(entry.owner, hashed) and entry.client_request_id == str(request.client_request_id):
-                    if entry.fingerprint != fingerprint or entry.state["request_revision"] != request.request_revision:
+            for existing in self.entries.values():
+                if hmac.compare_digest(existing.owner, hashed) and existing.client_request_id == str(request.client_request_id):
+                    if existing.fingerprint != fingerprint or existing.request_revision != request.request_revision:
                         raise WorkflowFault("duplicate_request_changed", "This start request was already used with different documents. Start with a new request identifier.", 409)
-                    with entry.lock:
-                        return self._public(entry)
-            if len(self.entries) >= self.max_workflows:
-                terminal = [entry for entry in self.entries.values() if entry.state.get("status") in TERMINAL]
-                if not terminal:
-                    raise WorkflowFault("workflow_capacity", "The local workflow limit is reached. Cancel an existing workflow or wait for expiry.", 429)
-                oldest = min(terminal, key=lambda entry: entry.created)
-                with oldest.lock:
-                    self._purge(oldest, clear_result=True)
-                    del self.entries[oldest.workflow_id]
-            now, workflow_id = self.clock(), str(uuid4())
-            entry = WorkflowEntry(workflow_id, hashed, str(request.client_request_id), fingerprint, now, now + self.ttl_seconds, {
-                "workflow_id": workflow_id, "request_revision": request.request_revision, "snapshot_hash": fingerprint,
-                "request": request.comparison.model_dump(mode="json"), "status": "processing", "current_node": "intake_validation",
-                "completed_nodes": [], "human_review_status": "not_requested", "errors": [], "validation_notes": [], "retry_count": 0,
-            })
-            entry.graph = make_graph(entry.checkpointer)
-            entry.graph.step_timeout = 10
-            # Acquire before publishing, so a duplicate concurrent start cannot
-            # observe the internal processing state before first execution.
-            entry.lock.acquire()
-            self.entries[workflow_id] = entry
+                    duplicate = existing
+                    break
+            if duplicate is None:
+                if len(self.entries) >= self.max_workflows:
+                    # Executing entries hold their lock and are never terminal.
+                    terminal = [item for item in self.entries.values() if item.state.get("status") in TERMINAL and item.lock.acquire(blocking=False)]
+                    if not terminal:
+                        raise WorkflowFault("workflow_capacity", "The local workflow limit is reached. Cancel an existing workflow or wait for expiry.", 429)
+                    oldest = min(terminal, key=lambda item: item.created)
+                    try:
+                        self._purge(oldest, clear_result=True)
+                        del self.entries[oldest.workflow_id]
+                    finally:
+                        for item in terminal:
+                            item.lock.release()
+                entry = self._create(request, hashed, fingerprint)
+        if duplicate is not None:
+            # Waiting for a concurrent first execution happens outside the
+            # registry lock; the duplicate then observes its final state.
+            with duplicate.lock:
+                return self._public(duplicate)
         try:
             self._execute(entry, entry.state)
             response = self._public(entry)
@@ -162,6 +175,22 @@ class WorkflowManager:
             return response
         finally:
             entry.lock.release()
+
+    def _create(self, request: WorkflowStart, hashed: str, fingerprint: str) -> WorkflowEntry:
+        """Build and publish a new, locked entry; caller holds the registry lock."""
+        now, workflow_id = self.clock(), str(uuid4())
+        entry = WorkflowEntry(workflow_id, hashed, str(request.client_request_id), fingerprint, request.request_revision, now, now + self.ttl_seconds, {
+            "workflow_id": workflow_id, "request_revision": request.request_revision, "snapshot_hash": fingerprint,
+            "request": request.comparison.model_dump(mode="json"), "status": "processing", "current_node": "intake_validation",
+            "completed_nodes": [], "human_review_status": "not_requested", "errors": [], "validation_notes": [], "retry_count": 0,
+        })
+        entry.graph = make_graph(entry.checkpointer)
+        entry.graph.step_timeout = 10
+        # Acquire before publishing, so a duplicate concurrent start cannot
+        # observe the internal processing state before first execution.
+        entry.lock.acquire()
+        self.entries[workflow_id] = entry
+        return entry
 
     def get(self, workflow_id, owner):
         entry = self._find(workflow_id, owner)
@@ -197,7 +226,16 @@ class WorkflowManager:
                 return self._public(entry)
             if entry.state["status"] == "completed":
                 raise WorkflowFault("workflow_completed", "The report is already finalized. Start a new workflow for current documents.", 409)
-            entry.state.update(status="cancelled")
+            if entry.state["status"] == "cancelled":
+                return self._public(entry)
+            previous = entry.state["status"]
+            updates = {"status": "cancelled"}
+            if previous in {"blocked", "failed"}:
+                # Keep the original errors and failed step visible: cancelling a
+                # stopped workflow must not hide why it stopped.
+                updates["cancelled_from"] = previous
+                updates["validation_notes"] = [*entry.state.get("validation_notes", []), f"Cancelled after the workflow was {previous}; the original error is retained."]
+            entry.state.update(updates)
             self._purge(entry, clear_result=True)
             return self._public(entry)
 
@@ -209,7 +247,7 @@ class WorkflowManager:
             step_status = "completed" if node in state.get("completed_nodes", []) else "pending"
             if node == state.get("current_node") and status == "waiting_for_review":
                 step_status = "waiting_for_review"
-            elif node == state.get("current_node") and status in {"blocked", "failed"}:
+            elif node == state.get("current_node") and (status in {"blocked", "failed"} or state.get("cancelled_from")):
                 step_status = "failed"
             elif step_status == "pending" and status in {"cancelled", "expired"}:
                 step_status = "cancelled"

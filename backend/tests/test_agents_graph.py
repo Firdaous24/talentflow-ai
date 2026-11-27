@@ -338,3 +338,59 @@ def test_graph_needs_no_network_or_model_provider(monkeypatch):
     serialized = completed.model_dump()
     assert not {"ranking", "score", "recommendation", "hiring_decision"} & serialized.keys()
     assert set(serialized["comparison"]) == {"comparisons", "warnings", "technical_evidence", "review_assertion", "method"}
+
+
+def test_slow_graph_execution_does_not_block_another_start(monkeypatch):
+    import threading
+
+    import app.agents.graph as graph_module
+
+    original = graph_module.compare_job
+    started, release, calls = threading.Event(), threading.Event(), []
+
+    def slow_first_compare(request, *args):
+        calls.append(1)
+        if len(calls) == 1:
+            started.set()
+            assert release.wait(10), "test gate was never released"
+        return original(request, *args)
+
+    monkeypatch.setattr(graph_module, "compare_job", slow_first_compare)
+    manager = WorkflowManager()
+    results = {}
+    slow = threading.Thread(target=lambda: results.__setitem__("slow", manager.start(start_request(), OWNER)))
+    slow.start()
+    try:
+        assert started.wait(5)
+        fast = threading.Thread(target=lambda: results.__setitem__("fast", manager.start(start_request(), OWNER)))
+        fast.start()
+        fast.join(5)
+        # Before the fix, the second start waited on the slow entry lock inside cleanup().
+        assert not fast.is_alive(), "a slow graph blocked another workflow start"
+        assert results["fast"].status == "waiting_for_review"
+        assert "slow" not in results
+    finally:
+        release.set()
+        slow.join(10)
+    assert results["slow"].status == "waiting_for_review"
+    assert results["slow"].workflow_id != results["fast"].workflow_id
+
+
+def test_cancelling_a_blocked_workflow_keeps_the_original_error():
+    manager = WorkflowManager()
+    comparison = request_body()
+    comparison.review.candidate_confirmed = False
+    with pytest.raises(WorkflowFault) as raised:
+        manager.start(start_request(comparison), OWNER)
+    blocked = raised.value.workflow
+    assert blocked.status == "blocked"
+    cancelled = manager.cancel(blocked.workflow_id, OWNER)
+    assert cancelled.status == "cancelled"
+    assert cancelled.errors == blocked.errors
+    assert cancelled.errors[0].code == "candidate_review_required"
+    steps = {step.node: step.status for step in cancelled.steps}
+    assert steps["candidate_preparation"] == "failed"
+    assert steps["intake_validation"] == "completed"
+    assert all(steps[node] == "cancelled" for node in NODES[2:])
+    assert any("original error is retained" in note for note in cancelled.validation_notes)
+    assert manager.cancel(blocked.workflow_id, OWNER) == cancelled
