@@ -140,7 +140,7 @@ function Layout() {
           <div className="sidebar-footer">
             <span className="avatar small">TF</span>
             <div>
-              Portfolio workspace<small>TalentFlow AI · v0.8.0</small>
+              Portfolio workspace<small>TalentFlow AI · v0.9.0</small>
             </div>
           </div>
         </div>

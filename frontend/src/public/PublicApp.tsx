@@ -80,7 +80,7 @@ function Shell() {
           <Route path="/login" element={<Login />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/account" element={<AccountSpace />} />
+          <Route path="/account/*" element={<AccountSpace />} />
           <Route path="/legal/:page" element={<Legal />} />
         </Routes>
       </main>

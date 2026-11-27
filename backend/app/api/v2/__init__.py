@@ -4,12 +4,16 @@ from fastapi import APIRouter
 
 from app.api.v2.account import router as account_router
 from app.api.v2.auth import router as auth_router
+from app.api.v2.candidate import overview_router as candidate_overview_router
+from app.api.v2.candidate import router as candidate_router
 from app.api.v2.spaces import router as spaces_router
 
 router = APIRouter(prefix="/api/v2")
 router.include_router(auth_router)
 router.include_router(account_router)
 router.include_router(spaces_router)
+router.include_router(candidate_router)
+router.include_router(candidate_overview_router)
 
 # Routes reachable without a session. Everything else answers 401 when signed out.
 PUBLIC_ROUTES = frozenset({

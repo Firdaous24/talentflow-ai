@@ -48,3 +48,10 @@ def sign_up(client: TestClient, email: str, role: str = "candidate") -> dict:
     response = login(client, email)
     assert response.status_code == 200, response.text
     return response.json()
+
+
+def upload_cv(client: TestClient, pdf: bytes, keep_original: bool = False):
+    return client.post(
+        "/api/v2/me/cv", files={"file": ("fictional-cv.pdf", pdf, "application/pdf")},
+        data={"keep_original": "true" if keep_original else "false"}, headers={"X-CSRF-Token": csrf(client)},
+    )

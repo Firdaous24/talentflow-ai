@@ -13,3 +13,5 @@ SQLAlchemy==2.1.9
 psycopg[binary]==3.3.9
 alembic==1.20.1
 argon2-cffi==25.1.0
+# Phase 7 candidate space: AES-256-GCM envelope encryption of stored CVs.
+cryptography==50.0.2

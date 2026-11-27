@@ -6,7 +6,10 @@ from typing import Annotated, Literal
 
 from pydantic import AfterValidator, BeforeValidator, ConfigDict, Field
 
+from app.models.candidate import CandidateProfile, CVParsingResponse
 from app.models.candidate import Schema as BaseSchema
+from app.models.job import JobAnalysisResponse, RequirementComparison, ReviewedRequirement, TechnicalEvidence
+from app.services.coverage import CoverageCounts, FieldChange, Gap, SectionDiff
 
 
 class Schema(BaseSchema):
@@ -138,7 +141,98 @@ class Organization(Schema):
     member_count: int
 
 
+# ---------------------------------------------------------------------------
+# Candidate space (phase 7)
+# ---------------------------------------------------------------------------
+
+CVStatus = Literal["to_review", "reviewed", "confirmed"]
+NextStep = Literal["upload_cv", "review_cv", "add_target", "review_criteria", "view_coverage"]
+
+
+class CVVersionSummary(Schema):
+    id: uuid.UUID
+    number: int
+    created_at: datetime
+    page_count: int
+    status: CVStatus
+    reviewed_at: datetime | None
+    confirmed_at: datetime | None
+    has_original: bool
+    current: bool
+
+
+class CVVersionDetail(CVVersionSummary):
+    """The owner's own version: original extraction (with warnings and evidence) and reviewed profile."""
+
+    parsed: CVParsingResponse
+    reviewed_profile: CandidateProfile | None
+
+
+class CVReviewRequest(Schema):
+    profile: CandidateProfile
+
+
+class CVConfirmRequest(Schema):
+    warnings_acknowledged: Literal[True] = Field(description="The candidate read the extraction warnings and checked the profile.")
+
+
+class VersionReference(Schema):
+    id: uuid.UUID
+    number: int
+
+
+class CVDiff(Schema):
+    from_version: VersionReference
+    to_version: VersionReference
+    fields: list[FieldChange]
+    sections: list[SectionDiff]
+
+
+class TargetSummary(Schema):
+    id: uuid.UUID
+    title: str | None
+    created_at: datetime
+    requirement_count: int
+    criteria_confirmed_at: datetime | None
+
+
+class TargetDetail(TargetSummary):
+    source_text: str
+    analysis: JobAnalysisResponse
+    requirements: list[ReviewedRequirement]
+    requirements_reviewed: bool
+
+
+class RequirementsUpdate(Schema):
+    requirements: list[ReviewedRequirement] = Field(min_length=1, max_length=150)
+
+
+class CoverageReport(Schema):
+    """Documentary coverage of one target by the current confirmed CV. Not an assessment of ability."""
+
+    target_id: uuid.UUID
+    cv_version: VersionReference
+    counts: CoverageCounts
+    comparisons: list[RequirementComparison]
+    technical_evidence: list[TechnicalEvidence]
+    warnings: list[str]
+    method: Literal["qualification-document-checklist-v1"] = "qualification-document-checklist-v1"
+    notice: Literal["documentary_coverage_not_competence"] = "documentary_coverage_not_competence"
+
+
+class GapReport(Schema):
+    """Fixed message keys only: nothing is written or suggested in the candidate's place."""
+
+    target_id: uuid.UUID
+    cv_version: VersionReference
+    gaps: list[Gap]
+
+
 class CandidateOverview(Schema):
     cv_versions: int
+    current_version: CVVersionSummary | None = None
+    targets: int = 0
+    confirmed_targets: int = 0
     recruiter_visibility: bool
-    next_step: str
+    original_storage_available: bool = False
+    next_step: NextStep

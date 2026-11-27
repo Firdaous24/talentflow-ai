@@ -1,6 +1,9 @@
-"""Phase 6 relational model: accounts, sessions, consents, audit and minimal organizations.
+"""Relational model: accounts, sessions, consents, audit and minimal organizations
+(phase 6), then the candidate space (phase 7): CV versions and private job targets.
 
-Personal data is deleted for real (no soft delete). The audit log stores a
+Personal data is deleted for real (no soft delete). CV content is stored
+encrypted only (`*_enc` columns, see app/storage/crypto.py), each version with
+its own wrapped data key in `cv_data_keys`. The audit log stores a
 pseudonymous actor reference (HMAC of the user id), so it survives account
 deletion without identifying anyone. Enumerations are CHECK constraints on
 text columns: they migrate and downgrade without PostgreSQL enum types.
@@ -20,8 +23,10 @@ from sqlalchemy import (
     Index,
     LargeBinary,
     MetaData,
+    SmallInteger,
     String,
     Text,
+    UniqueConstraint,
     Uuid,
     func,
 )
@@ -34,6 +39,8 @@ LOCALES = ("fr", "en")
 CONSENT_PURPOSES = ("processing", "recruiter_visibility", "model_assistance", "marketing")
 TOKEN_PURPOSES = ("verify_email", "reset_password")
 ORG_ROLES = ("owner", "member")
+JOB_VISIBILITIES = ("private", "public")
+JOB_STATUSES = ("draft", "open", "closed")
 
 NAMING = {
     "ix": "ix_%(table_name)s_%(column_0_N_name)s",
@@ -88,6 +95,7 @@ class User(Timestamped, Base):
     sessions: Mapped[list["AuthSession"]] = relationship(back_populates="user", cascade="all, delete-orphan", passive_deletes=True)
     consents: Mapped[list["Consent"]] = relationship(back_populates="user", cascade="all, delete-orphan", passive_deletes=True)
     memberships: Mapped[list["Membership"]] = relationship(back_populates="user", cascade="all, delete-orphan", passive_deletes=True)
+    candidate_profile: Mapped["CandidateProfile | None"] = relationship(back_populates="user", cascade="all, delete-orphan", passive_deletes=True)
 
 
 class AuthSession(Timestamped, Base):
@@ -172,3 +180,81 @@ class AuditLog(Base):
     target_id: Mapped[uuid.UUID | None] = mapped_column(Uuid)
     details: Mapped[dict] = mapped_column(JSONB, server_default="{}")
     at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), index=True)
+
+
+class CandidateProfile(Timestamped, Base):
+    """A candidate's own profile (phase 7). Imported profiles without an account arrive in phase 8."""
+
+    __tablename__ = "candidate_profiles"
+
+    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True, default=uuid7)
+    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), unique=True)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=utcnow)
+
+    user: Mapped[User] = relationship(back_populates="candidate_profile")
+    versions: Mapped[list["CVVersion"]] = relationship(back_populates="profile", cascade="all, delete-orphan", passive_deletes=True, order_by="CVVersion.number")
+
+
+class CVVersion(Timestamped, Base):
+    """One uploaded CV. A new upload adds a version; it never overwrites an older one.
+
+    Only ciphertext is stored: the extracted text, the parsing result and the
+    reviewed profile. A confirmed version always has a reviewed profile."""
+
+    __tablename__ = "cv_versions"
+    __table_args__ = (
+        UniqueConstraint("candidate_profile_id", "number"),
+        CheckConstraint("number >= 1", name="number_positive"),
+        CheckConstraint("confirmed_at IS NULL OR reviewed_enc IS NOT NULL", name="confirmed_after_review"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True, default=uuid7)
+    candidate_profile_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("candidate_profiles.id", ondelete="CASCADE"), index=True)
+    number: Mapped[int] = mapped_column()
+    page_count: Mapped[int] = mapped_column(SmallInteger)
+    extracted_text_enc: Mapped[bytes] = mapped_column(LargeBinary)
+    parsed_enc: Mapped[bytes] = mapped_column(LargeBinary)
+    reviewed_enc: Mapped[bytes | None] = mapped_column(LargeBinary)
+    reviewed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    confirmed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    original_file_ref: Mapped[str | None] = mapped_column(String(64))
+
+    profile: Mapped[CandidateProfile] = relationship(back_populates="versions")
+    data_key: Mapped["CVDataKey"] = relationship(back_populates="version", cascade="all, delete-orphan", passive_deletes=True)
+
+
+class CVDataKey(Base):
+    """The version's data key, wrapped by the master key. Deleting it shreds the version."""
+
+    __tablename__ = "cv_data_keys"
+
+    cv_version_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("cv_versions.id", ondelete="CASCADE"), primary_key=True)
+    wrapped_key: Mapped[bytes] = mapped_column(LargeBinary)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+    version: Mapped[CVVersion] = relationship(back_populates="data_key")
+
+
+class JobOffer(Timestamped, Base):
+    """A job post. In phase 7, only private targets pasted by a candidate exist
+    (`owner_user_id`); organization offers arrive in phase 8. Exactly one owner."""
+
+    __tablename__ = "job_offers"
+    __table_args__ = (
+        CheckConstraint(_in("visibility", JOB_VISIBILITIES), name="visibility"),
+        CheckConstraint(_in("status", JOB_STATUSES), name="status"),
+        CheckConstraint("(organization_id IS NULL) <> (owner_user_id IS NULL)", name="single_owner"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True, default=uuid7)
+    organization_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("organizations.id", ondelete="CASCADE"), index=True)
+    owner_user_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    visibility: Mapped[str] = mapped_column(String(16), server_default="private")
+    status: Mapped[str] = mapped_column(String(16), server_default="draft")
+    title: Mapped[str | None] = mapped_column(String(2000))
+    source_text: Mapped[str] = mapped_column(Text)
+    analysis: Mapped[dict] = mapped_column(JSONB)
+    reviewed_requirements: Mapped[list | None] = mapped_column(JSONB)
+    criteria_confirmed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    closed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=utcnow)

@@ -1,10 +1,11 @@
-"""Signed-in account management: language, consents and complete deletion."""
+"""Signed-in account management: language, consents and complete deletion (CV content included)."""
 
 from fastapi import APIRouter, Depends, Path, Response
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.api.v2.auth import account_payload, enforce
+from app.api.v2.candidate import stored_original_refs
 from app.api.v2.deps import PRIVACY_POLICY_VERSION, DbDep, SettingsDep, api_error, audit, current_session, current_user
 from app.api.v2.schemas import (
     Account,
@@ -20,6 +21,7 @@ from app.auth.ratelimit import LOGIN_FAILURES_PER_ACCOUNT, limiter
 from app.auth.security import verify_password
 from app.core.config import Settings
 from app.db.models import CONSENT_PURPOSES, AuthSession, Consent, Membership, Organization, User, utcnow
+from app.storage import files
 
 router = APIRouter(prefix="/me", tags=["Accounts"])
 
@@ -39,6 +41,8 @@ def delete_account(body: DeleteAccountRequest, auth_session: AuthSession = Depen
     if not valid:
         limiter.hit("login-account", user.email)
         raise api_error(403, "reauthentication_failed", "The password is incorrect. The account was not deleted.")
+    # Read before any pending deletion, so no autoflush runs in the middle of it.
+    originals = stored_original_refs(db, user)
     for membership in list(user.memberships):
         others = db.scalars(select(Membership).where(Membership.organization_id == membership.organization_id, Membership.user_id != user.id).order_by(Membership.created_at)).all()
         if not others:
@@ -48,8 +52,14 @@ def delete_account(body: DeleteAccountRequest, auth_session: AuthSession = Depen
         elif membership.org_role == "owner" and not any(item.org_role == "owner" for item in others):
             others[0].org_role = "owner"
     audit(db, settings, "account.deleted", user.id, "user", user.id, role=user.role)
-    db.delete(user)  # Sessions, tokens, consents and memberships cascade in the database.
+    # Sessions, tokens, consents, memberships, the candidate profile, its CV
+    # versions, their data keys and private job posts cascade in the database.
+    db.delete(user)
     db.commit()
+    for reference in originals:
+        # The data keys are already gone, so a file left behind is unreadable;
+        # the worker also sweeps orphans.
+        files.remove(reference)
     limiter.reset("login-account", user.email)
     response = Response(status_code=204)
     response.delete_cookie(settings.session_cookie, path="/", secure=settings.cookie_secure, httponly=True, samesite="lax")

@@ -33,7 +33,7 @@ def test_complete_candidate_lifecycle(v2_client, v2_env):
     me = v2_client.get("/api/v2/auth/me")
     assert me.status_code == 200 and me.json()["id"] == account["id"]
     overview = v2_client.get("/api/v2/candidate/overview").json()
-    assert overview == {"cv_versions": 0, "recruiter_visibility": False, "next_step": "upload_cv"}
+    assert overview == {"cv_versions": 0, "current_version": None, "targets": 0, "confirmed_targets": 0, "recruiter_visibility": False, "original_storage_available": False, "next_step": "upload_cv"}
     assert unsafe(v2_client, "POST", "/api/v2/auth/logout", token=response.json()["csrf_token"]).status_code == 204
     assert v2_client.get("/api/v2/auth/me").status_code == 401
 

@@ -1,16 +1,23 @@
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import type { FormEvent } from "react";
-import { Link, Navigate } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Building2, FileText, LogOut, ShieldCheck, Trash2, UsersRound } from "lucide-react";
+import { Building2, LogOut, ShieldCheck, Trash2, UsersRound } from "lucide-react";
 import { AuthApiError, authApi } from "../auth/api";
 import type { Account, CandidateOverview, Consents, Locale, Organization } from "../auth/api";
 import { useAuth } from "../auth/AuthContext";
 import { Skeleton } from "../components/ui";
 import { setLanguage } from "../i18n";
+import { CandidateHome, CandidateNav, DataPanel } from "./candidate/Home";
 import { Field, Notice, PasswordField, useDocumentTitle, useErrorText } from "./shared";
+import "./candidate/candidate.css";
 
 type Failure = { text: string; tone: "warning" | "error" } | null;
+
+// The CV and job-post pages load on demand: the public pages and the demo stay light.
+const CvPage = lazy(() => import("./candidate/CvPage").then((module) => ({ default: module.CvPage })));
+const OffersPage = lazy(() => import("./candidate/Offers").then((module) => ({ default: module.OffersPage })));
+const OfferPage = lazy(() => import("./candidate/Offers").then((module) => ({ default: module.OfferPage })));
 
 function formatDate(value: string, language: string) {
   return new Intl.DateTimeFormat(language, { dateStyle: "medium" }).format(new Date(value));
@@ -42,11 +49,7 @@ function CandidatePanel({ consents, onConsents }: { consents: Consents | null; o
 
   return (
     <>
-      <section className="card account-card" aria-labelledby="cv-heading">
-        <h2 id="cv-heading"><FileText size={19} aria-hidden="true" />{t("account.candidate.cvTitle")}</h2>
-        {overview ? <p>{t("account.candidate.cvEmpty")}</p> : <Skeleton width="80%" />}
-        <Link to="/" className="button secondary">{t("account.candidate.openDemo")}</Link>
-      </section>
+      <CandidateHome overview={overview} />
       <section className="card account-card" aria-labelledby="visibility-heading">
         <h2 id="visibility-heading"><UsersRound size={19} aria-hidden="true" />{t("account.candidate.visibilityTitle")}</h2>
         <p>{t("account.candidate.visibilityBody")}</p>
@@ -272,13 +275,32 @@ export function AccountSpace() {
         <button type="button" className="button secondary" onClick={() => void signOut()}><LogOut size={16} aria-hidden="true" />{t("account.logout")}</button>
       </div>
       {failure && <Notice tone={failure.tone}>{failure.text}</Notice>}
-      <div className="account-grid">
-        {account.role === "candidate" && <CandidatePanel consents={consents} onConsents={setConsents} />}
-        {account.role === "recruiter" && <RecruiterPanel />}
-        <ConsentsPanel consents={consents} onConsents={setConsents} />
-        <PreferencesPanel account={account} onAccount={setAccount} />
-        <DeletePanel />
-      </div>
+      {account.role === "candidate" && <CandidateNav />}
+      <Suspense fallback={<div className="card account-card skeleton-stack" aria-busy="true"><Skeleton width="40%" height={24} /><Skeleton width="75%" /></div>}>
+      <Routes>
+        <Route
+          index
+          element={
+            <div className="account-grid">
+              {account.role === "candidate" && <CandidatePanel consents={consents} onConsents={setConsents} />}
+              {account.role === "recruiter" && <RecruiterPanel />}
+              <ConsentsPanel consents={consents} onConsents={setConsents} />
+              <PreferencesPanel account={account} onAccount={setAccount} />
+              <DataPanel />
+              <DeletePanel />
+            </div>
+          }
+        />
+        {account.role === "candidate" && (
+          <>
+            <Route path="cv" element={<CvPage />} />
+            <Route path="offers" element={<OffersPage />} />
+            <Route path="offers/:id" element={<OfferPage />} />
+          </>
+        )}
+        <Route path="*" element={<Navigate to="/account" replace />} />
+      </Routes>
+      </Suspense>
     </div>
   );
 }

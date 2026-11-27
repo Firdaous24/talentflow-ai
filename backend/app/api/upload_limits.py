@@ -6,6 +6,8 @@ from starlette.types import ASGIApp, Receive, Scope, Send
 from app.services.pdf import MAX_UPLOAD_BYTES
 
 MAX_REQUEST_BYTES = MAX_UPLOAD_BYTES + 64 * 1024
+# The demo parser and the candidate space upload (phase 7) share the same limit.
+UPLOAD_PATHS = frozenset({"/api/v1/candidates/parse", "/api/v2/me/cv"})
 
 
 class UploadLimitMiddleware:
@@ -13,7 +15,7 @@ class UploadLimitMiddleware:
         self.app = app
 
     async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
-        if scope["type"] != "http" or scope["method"] != "POST" or scope["path"].rstrip("/") != "/api/v1/candidates/parse":
+        if scope["type"] != "http" or scope["method"] != "POST" or scope["path"].rstrip("/") not in UPLOAD_PATHS:
             await self.app(scope, receive, send)
             return
         body = bytearray()

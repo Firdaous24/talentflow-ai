@@ -23,6 +23,8 @@ All screenshots use fictional documents against the local stack. Light and dark 
 | ![Seven-node LangGraph visualization paused at the human_review interrupt](docs/images/agents-human-review.png) | ![Completed seven-node LangGraph workflow after an explicit review acknowledgment, in the dark theme](docs/images/agents-final-report.png) |
 | **Public home (French, demo warning)** | **Role choice at sign-up (dark theme)** |
 | ![Public home in French with the permanent “Version de démonstration · Maroc” banner, the evidence-over-scores headline and links to the demo and sign-up](docs/images/public-home.png) | ![Sign-up role choice with two cards, “Je suis candidat·e” and “Je recrute”, each explaining what the space allows, in the dark theme](docs/images/role-choice.png) |
+| **Candidate space — documentary coverage** | **Candidate space — CV versions (dark theme)** |
+| ![Coverage report in French: the permanent “not an assessment of your ability” notice, the count “1/3 requis · 1/2 souhaités · 1 à interpréter”, and each criterion with the job clause and the CV excerpt side by side; “Docker” is shown as a neutral, dashed “Non documenté”](docs/images/candidate-coverage.png) | ![“Mon CV” in the dark theme: upload of a new version (only the encrypted text is kept) and the version history with the current, confirmed version](docs/images/candidate-cv.png) |
 
 ## Architecture
 
@@ -52,23 +54,29 @@ Data flow: **PDF CV** → parsed profile with source evidence → human review a
 - **Real LangGraph interrupt/resume.** A seven-node `StateGraph` pauses at `interrupt()` and continues with `Command(resume=...)` after a human acknowledgment; evidence is verified again before the final report. No simulated progress.
 - **No opaque scores, no automated decisions.** Three statuses only (`documented`, `not_documented`, `needs_review`), with explicit limitations attached to every result; no percentage, gauge or automatic rejection.
 - **Accounts with roles (v0.8.0).** Candidate and recruiter accounts under `/api/v2`: argon2id passwords, server-side `HttpOnly` sessions, CSRF on every unsafe request, rate limits, versioned consents, account deletion and a pseudonymised append-only audit log in PostgreSQL. The `/api/v1` demo stays public and account-free.
-- **Local-first and private by default.** Loopback-only ports, Host/Origin checks on every API route, bounded request bodies, no persistence of CVs, no external calls without consent; e-mails are captured locally by Mailpit.
+- **Candidate space with encrypted CVs (v0.9.0).** Versioned CVs stored as AES-256-GCM ciphertext only, one data key per version wrapped by a master key from the environment (crypto-shredding on deletion); review, history and diff; private job posts, documentary coverage after both reviews, honest gaps, full export and deletion.
+- **Local-first and private by default.** Loopback-only ports, Host/Origin checks on every API route, bounded request bodies, CVs never stored in clear (the original PDF is off by default), no external calls without consent; e-mails are captured locally by Mailpit.
 - **Side-by-side evidence view.** The job clause and the CV excerpt sit next to each other, with the exact span highlighted from the API offsets and a `chars a–b` badge; “not documented” is shown as a neutral absence, never as a failure.
-- **Tested end to end.** 769 backend tests (including reversible migrations and a generated authorization matrix), 103 frontend tests, 11 real-browser Chromium workflows, ruff and ESLint, strict TypeScript, and GitHub Actions CI with a PostgreSQL service on every push.
+- **Tested end to end.** 849 backend tests (including reversible migrations, a generated authorization matrix and a check that no CV content is stored in clear), 109 frontend tests, 12 real-browser Chromium workflows, ruff and ESLint, strict TypeScript, and GitHub Actions CI with a PostgreSQL service on every push.
 
 ## Quick start
 
-A `.env` file is **required**: it holds the database credentials and the secret used to sign sessions and CSRF tokens. Never commit it.
+A `.env` file is **required**: it holds the database credentials, the secret used to sign sessions and CSRF tokens, and the master key that encrypts stored CVs. Never commit it.
 
 ```powershell
 Copy-Item .env.example .env
 # Generate the secret and set it as TALENTFLOW_SECRET_KEY in .env (at least 32 characters):
 python -c "import secrets; print(secrets.token_urlsafe(48))"
+# Generate the CV encryption master key and set it as TALENTFLOW_DATA_KEY in .env (32 bytes, base64url):
+python -c "import secrets; print(secrets.token_urlsafe(32))"
 # Keep SESSION_COOKIE_SECURE=false for local HTTP, and replace POSTGRES_PASSWORD.
 docker compose up -d --build --wait
 ```
 
-The backend refuses a secret shorter than 32 characters or starting with `change-me`. Compose starts `db` (PostgreSQL), `migrate` (applies Alembic migrations, then exits), `backend`, `worker`, `mailpit` and `frontend`. Then open:
+> [!WARNING]
+> **Back up `TALENTFLOW_DATA_KEY` outside the repository** (for example in a password manager), separately from the database. **If it is lost, every stored CV becomes unreadable**: there is no recovery. If it leaks, treat it as compromised and rotate it.
+
+The backend refuses a secret shorter than 32 characters or starting with `change-me`, and answers 503 `encryption_not_configured` on CV routes while `TALENTFLOW_DATA_KEY` is missing or a placeholder. Compose starts `db` (PostgreSQL), `migrate` (applies Alembic migrations, then exits), `backend`, `worker`, `mailpit` and `frontend`. Then open:
 
 | URL | What |
 |---|---|
@@ -86,7 +94,7 @@ Since v0.8.0 (phase 6 of the [v1 design](docs/V1_DESIGN.md)), people can open an
 | Role | Space | Today |
 |---|---|---|
 | **Visitor** | Public home, demo, legal pages | Account-free demo at `/`, home at `/welcome`, permanent demo warning (Morocco only) |
-| **Candidate** | Own data only | Candidate space, consents (separate, dated, versioned, withdrawable), language, account deletion; CV storage arrives in phase 7 |
+| **Candidate** | Own data only | [Candidate space](#candidate-space): encrypted CV versions, review and diff, private job posts, coverage and gaps, consents, export, account deletion |
 | **Recruiter** | Data of their organisations only | Minimal organisations (create, list, members), account deletion; job posts, imports and ordering arrive in phase 8 |
 
 The flow is: role choice → sign-up (terms accepted, marketing never pre-ticked) → e-mail verification (link in Mailpit) → sign-in → own space → sign-out or account deletion (password required). Public pages and account spaces are in French by default with English available; the choice is stored only when you click a language.
@@ -95,15 +103,28 @@ Security in short: argon2id password hashing; a random session token whose SHA-2
 
 Routes, error codes and the retention worker are documented in [docs/accounts_phase6.md](docs/accounts_phase6.md).
 
+## Candidate space
+
+Since v0.9.0 (phase 7), a signed-in candidate works in three tabs, **Aperçu**, **Mon CV** and **Mes offres**, following one ordered path: upload a CV → review and confirm it → paste a job post → review and confirm its criteria → read the documentary coverage and the gaps.
+
+- **Encrypted storage.** Each upload adds a version and never overwrites an older one. Only ciphertext is stored: the extracted text, the parsing result and the reviewed profile, sealed with AES-256-GCM under a per-version data key that `TALENTFLOW_DATA_KEY` wraps. Deleting the key shreds the version everywhere, backups included. The original PDF is **not kept by default** (`CV_ORIGINAL_STORAGE=disabled`).
+- **Review and history.** Only the current version is reviewed; any edit clears its confirmation. Older versions stay readable and locked, and two versions can be compared item by item.
+- **Coverage.** Computed by the existing `compare_job` on the qualification-only projection, only after both reviews. It shows « x/y requis · a/b souhaités · n à interpréter », each number filtering the side-by-side evidence, under a permanent notice that it is not an assessment of ability.
+- **Gaps.** Fixed sentences, such as « Si c'est vrai, ajoutez-le avec un exemple vérifiable », with a link to the matching CV section. Nothing is written in the candidate's place.
+- **Your data.** A complete JSON export, recruiter visibility as a withdrawable opt-in, and account deletion that removes rows, keys and files.
+
+Details, routes and the deviations from the design are in [docs/candidate_space_phase7.md](docs/candidate_space_phase7.md).
+
 Release history and the validation recorded at each phase are in [docs/CHANGELOG.md](docs/CHANGELOG.md).
 
 ## Current status
 
-**Current release: v0.8.0.** **Phases 1 through 6 are implemented:** backend foundation, Docker infrastructure, React workspace, layout-aware French/English CV parsing, source evidence, human review, deterministic job analysis and document comparison, technical-environment provenance, compact evidence results, source-bound excerpts, bounded LangGraph orchestration, and (phase 6) mandatory PostgreSQL with accounts, roles and consents. Optional CV model extraction requires backend configuration and per-upload consent; job analysis and the graph require no AI credentials. Validation for each phase is recorded in the [changelog](docs/CHANGELOG.md).
+**Current release: v0.9.0.** **Phases 1 through 7 are implemented:** backend foundation, Docker infrastructure, React workspace, layout-aware French/English CV parsing, source evidence, human review, deterministic job analysis and document comparison, technical-environment provenance, compact evidence results, source-bound excerpts, bounded LangGraph orchestration, (phase 6) mandatory PostgreSQL with accounts, roles and consents, and (phase 7) the candidate space with encrypted CV versions. Optional CV model extraction requires backend configuration and per-upload consent; job analysis and the graph require no AI credentials. Validation for each phase is recorded in the [changelog](docs/CHANGELOG.md).
 
 Implemented:
 
-- Modular, typed FastAPI backend, version `0.8.0`.
+- Modular, typed FastAPI backend, version `0.9.0`.
+- Candidate space with encrypted, versioned CVs, private job posts, coverage, gaps and export (see [Candidate space](#candidate-space)).
 - PostgreSQL (SQLAlchemy 2, psycopg 3) with reversible Alembic migrations, candidate and recruiter accounts under `/api/v2`, a retention worker and local e-mail capture with Mailpit (see [Accounts and roles](#accounts-and-roles)).
 - Service information at `GET /` and liveness at `GET /api/v1/health`.
 - Swagger documentation at `/docs` and OpenAPI schema at `/openapi.json`.
@@ -146,6 +167,7 @@ In the `/api/v1` demo, candidate and requirement confirmations are **unverified 
 | AI orchestration | LangGraph 1.2.15 | Deterministic local evidence workflow with human interrupt/resume |
 | Database | PostgreSQL 17, SQLAlchemy 2, psycopg 3, Alembic | Required; accounts, sessions, consents, organisations, audit log |
 | Accounts | argon2-cffi, server-side sessions, signed CSRF, Mailpit (local e-mail) | Implemented under `/api/v2` |
+| CV encryption | cryptography (AES-256-GCM envelope encryption) | Candidate CVs stored as ciphertext only |
 | Frontend | React, TypeScript, Vite, Tailwind CSS, Lucide, React Router, i18next (FR/EN) | Implemented |
 | Packaging | Docker, Docker Compose | Implemented |
 
@@ -164,6 +186,7 @@ talentflow-ai/
 │   │   ├── auth/                # argon2id, tokens, CSRF, rate limiter, mailer
 │   │   ├── core/config.py       # Settings from the environment (secret, database, cookies, e-mail)
 │   │   ├── db/                  # SQLAlchemy models and sessions
+│   │   ├── storage/             # Envelope encryption of stored CVs (crypto, cv, optional original files)
 │   │   ├── worker.py            # Retention purges
 │   │   ├── models/              # Pydantic contracts: candidate.py, job.py
 │   │   ├── services/            # pdf, layout, sections, records, multilingual, extraction, llm (optional),
@@ -203,7 +226,7 @@ talentflow-ai/
 
 Install Docker Desktop for Windows with the WSL 2 backend, enable Linux containers, and start Docker Desktop. The workflow requires the Docker Compose plugin; host Python is unnecessary for container execution and testing. Run commands from `C:\Users\MSI\Desktop\talentflow-ai`.
 
-Initial setup (copy the example only if `.env` does not already exist, then set `TALENTFLOW_SECRET_KEY` as in the [Quick start](#quick-start)):
+Initial setup (copy the example only if `.env` does not already exist, then set `TALENTFLOW_SECRET_KEY` and `TALENTFLOW_DATA_KEY` as in the [Quick start](#quick-start)):
 
 ```powershell
 Set-Location C:\Users\MSI\Desktop\talentflow-ai
@@ -215,7 +238,7 @@ docker compose config --quiet
 docker compose up -d --build --wait
 ```
 
-`.env` is required. The example supplies public local-development placeholders for `POSTGRES_DB`, `POSTGRES_USER` and `POSTGRES_PASSWORD` (replace the password), a placeholder `TALENTFLOW_SECRET_KEY` that the backend refuses until you generate a real one, and `SESSION_COOKIE_SECURE=false` for local HTTP only. Compose stops with an explicit error if a required value is missing. Keep `.env` out of Git; secrets go to containers at runtime, never into image contents. Avoid sharing full `docker compose config` output because it contains resolved passwords; use `--quiet` for validation.
+`.env` is required. The example supplies public local-development placeholders for `POSTGRES_DB`, `POSTGRES_USER` and `POSTGRES_PASSWORD` (replace the password), placeholders for `TALENTFLOW_SECRET_KEY` and `TALENTFLOW_DATA_KEY` that the backend refuses until you generate real ones, `CV_ORIGINAL_STORAGE=disabled`, and `SESSION_COOKIE_SECURE=false` for local HTTP only. Compose stops with an explicit error if a required value is missing. Keep `.env` out of Git; secrets go to containers at runtime, never into image contents. Avoid sharing full `docker compose config` output because it contains resolved passwords; use `--quiet` for validation.
 
 Open **http://localhost:5173/welcome** for the public home, **http://localhost:5173** for the demo workspace, **http://localhost:8025** for Mailpit and **http://127.0.0.1:8000/docs** for Swagger. Initial image downloads/builds may take several minutes. HTTP services are published only on loopback (ports 5173, 8000 and 8025 must be free), and every `/api/v1` and `/api/v2` route rejects non-local `Host`/`Origin` headers.
 
@@ -294,7 +317,7 @@ The existing `frontend/` directory contains a React + TypeScript SPA built by Vi
 
 The frontend calls `GET /api/v1/health`, `POST /api/v1/candidates/parse`, and `GET /api/v1/candidates/extraction-config` for public optional provider availability. The parse route remains compatible; optional form flags require explicit consent. Multipart requests use the field `file`, letting the browser set the boundary. `VITE_API_BASE_URL` is a build-time Vite variable; an empty value uses relative `/api/v1/...` paths. Vite proxies `/api` to `127.0.0.1:8000` during host development. The Docker frontend uses Nginx on port 8080 to proxy `/api/` to `backend:8000` and serve SPA routes; the browser sees only `localhost:5173`. Frontend startup waits for API health. The Node build stage is excluded from the lightweight non-root Nginx runtime image.
 
-Default processing stays local: no CV file or profile is written to browser storage or a database. Optional model assistance transmits extracted text only after explicit per-upload consent to the displayed provider, whose retention policy applies. Successful candidate data is held in React memory until refresh/close or clearing the session. Raw uploaded file references are released after successful parsing. Do not put secrets in `VITE_*` variables: these values are public build output. The default Compose build explicitly uses the same-origin proxy; to change its base URL, change the frontend build argument and rebuild.
+In the demo workbench, processing stays local: no CV file or profile is written to browser storage or a database (the candidate space stores CVs encrypted only, see [Candidate space](#candidate-space)). Optional model assistance transmits extracted text only after explicit per-upload consent to the displayed provider, whose retention policy applies. Successful candidate data is held in React memory until refresh/close or clearing the session. Raw uploaded file references are released after successful parsing. Do not put secrets in `VITE_*` variables: these values are public build output. The default Compose build explicitly uses the same-origin proxy; to change its base URL, change the frontend build argument and rebuild.
 
 For optional host development, install Node 22.12+ (Node 22 LTS is used in Docker), start the backend, then:
 
@@ -375,7 +398,7 @@ Set-Location backend
 .\.venv\Scripts\python.exe -m pytest
 ```
 
-Tests use FastAPI TestClient and do not require a running server or external services. The 88 database tests (`/api/v2`, migrations, worker) run only when `TEST_DATABASE_URL` points to a **disposable** PostgreSQL database, because their fixtures downgrade and truncate it; without it they are skipped. See [docs/accounts_phase6.md](docs/accounts_phase6.md#tests) for a one-line throwaway container.
+Tests use FastAPI TestClient and do not require a running server or external services. The 137 database tests (`/api/v2`, migrations, encryption at rest, worker) run only when `TEST_DATABASE_URL` points to a **disposable** PostgreSQL database, because their fixtures downgrade and truncate it; without it they are skipped. See [docs/accounts_phase6.md](docs/accounts_phase6.md#tests) for a one-line throwaway container.
 
 ## Parse a CV
 
@@ -478,8 +501,8 @@ See [agent workflow testing](docs/agent_workflow_testing.md) for actual results,
 - **Lint:** `ruff check app tests migrations *.py` in `backend/` (rules E/F/I/B/UP, `backend/ruff.toml`; dev tools in `backend/requirements-dev.txt`) and `npm run lint` in `frontend/`.
 - **Types and tests:** `npx tsc --noEmit`, `npx vitest run` and `npm run build` in `frontend/`; `pytest` in `backend/`.
 - **CI:** `.github/workflows/ci.yml` runs on pushes and pull requests to `main`: backend (lock-constrained install, ruff, Alembic `upgrade` → `downgrade base` → `upgrade` → `check` against a disposable PostgreSQL service, then pytest with database tests required), frontend (Node 22: lint, tsc, vitest, build) and Compose configuration validation. It uses no secrets and deploys nothing.
-- **End-to-end:** eleven real-API Chromium scripts in `frontend/e2e/`, including the demo mode and `auth-smoke.mjs` (sign-up with role choice, e-mail verification through Mailpit, sign-in, sign-out, CSRF and account deletion, in French and English); see [agent workflow testing](docs/agent_workflow_testing.md).
+- **End-to-end:** twelve real-API Chromium scripts in `frontend/e2e/`, including the demo mode, `auth-smoke.mjs` (sign-up with role choice, e-mail verification through Mailpit, sign-in, sign-out, CSRF and account deletion, in French and English) and `candidate-smoke.mjs` (CV versions, review, job post criteria, coverage counts, evidence, gaps, diff, export and deletion); see [agent workflow testing](docs/agent_workflow_testing.md).
 
 ## Roadmap
 
-The v1 platform is delivered in phases, each tagged with a green CI ([V1_DESIGN.md §9](docs/V1_DESIGN.md)): accounts and roles (v0.8.0, done), candidate space (v0.9.0), recruiter space with anonymous coverage ordering (v0.10.0), pipeline and evidence reports (v0.11.0), discovery (v0.12.0), then compliance, hardening and the Arabic interface (v1.0.0). The ordering only counts documented criteria, never produces a score, and never triggers an automatic decision; hiring decisions remain outside this tool's purpose.
+The v1 platform is delivered in phases, each tagged with a green CI ([V1_DESIGN.md §9](docs/V1_DESIGN.md)): accounts and roles (v0.8.0, done), candidate space (v0.9.0, done), recruiter space with anonymous coverage ordering (v0.10.0), pipeline and evidence reports (v0.11.0), discovery (v0.12.0), then compliance, hardening and the Arabic interface (v1.0.0). The ordering only counts documented criteria, never produces a score, and never triggers an automatic decision; hiring decisions remain outside this tool's purpose.

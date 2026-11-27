@@ -585,6 +585,8 @@ Chaque phase est livrable et testable seule. Elle se termine par un tag, une CI 
 
 ### Phase 7 — Espace candidat (v0.9.0)
 
+*Livrée sur `feat/v1-phase7` ; écarts assumés (parsing synchrone, opt-in par le consentement existant, critères en JSONB) : [candidate_space_phase7.md](candidate_space_phase7.md).*
+
 - **Périmètre** :
   - dépôt de CV avec versions (texte chiffré, PDF optionnel), revue, historique et diff ;
   - offres collées, revue des critères, rapport de couverture (vue côte à côte) et analyse des écarts ;
