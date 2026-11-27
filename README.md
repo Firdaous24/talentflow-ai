@@ -4,7 +4,9 @@ TalentFlow AI is a recruitment intelligence portfolio project with local French/
 
 ## Current status
 
-**Phases 1 through 5 are implemented:** backend foundation, Docker infrastructure, React workspace, layout-aware French/English CV parsing, source evidence, human review, deterministic job analysis and document comparison, technical-environment provenance, compact evidence results, source-bound excerpts and bounded LangGraph orchestration. Optional CV model extraction requires backend configuration and per-upload consent; job analysis and the graph require no AI credentials. Phase 5 validation is recorded below.
+[![CI](https://github.com/Firdaous24/talentflow-ai/actions/workflows/ci.yml/badge.svg)](https://github.com/Firdaous24/talentflow-ai/actions/workflows/ci.yml)
+
+**Current release: v0.6.0.** **Phases 1 through 5 are implemented:** backend foundation, Docker infrastructure, React workspace, layout-aware French/English CV parsing, source evidence, human review, deterministic job analysis and document comparison, technical-environment provenance, compact evidence results, source-bound excerpts and bounded LangGraph orchestration. Optional CV model extraction requires backend configuration and per-upload consent; job analysis and the graph require no AI credentials. Phase 5 validation is recorded below.
 
 Implemented:
 
@@ -437,3 +439,14 @@ See [agent workflow testing](docs/agent_workflow_testing.md) for actual results,
 ## Next phase
 
 Next, broaden independently authored CV/job holdouts and target prose, negation, cross-language qualification and layout failures. Add authenticated, auditable review records with purpose-limited persistence before shared deployment, then evaluate any optional job model against the same evidence boundaries using fictional data. Public deployment remains future work; candidate ranking and employment decisions remain outside this tool's purpose.
+
+## Tooling, CI and hardening — v0.6.0
+
+- **Lint:** `ruff check app tests *.py` in `backend/` (rules E/F/I/B/UP, `backend/ruff.toml`; dev tools in `backend/requirements-dev.txt`) and `npm run lint` in `frontend/` (ESLint flat config with typescript-eslint and React hooks rules).
+- **CI:** `.github/workflows/ci.yml` runs on pushes and pull requests to `main`: backend (lock-constrained install, ruff, pytest), frontend (Node 22: lint, tsc, vitest, build) and Compose configuration validation. It uses no secrets and deploys nothing.
+- **Local API boundary:** every `/api/v1` route rejects non-local `Host` or `Origin` headers (403) and bounds JSON bodies to 1 MiB before parsing. CV uploads keep the 5 MiB / 10-page limits; agent workflows keep their 512 KiB limit.
+- **Agents:** `testserver` is no longer an allowed runtime host; graph execution no longer runs under the workflow registry lock, so a slow workflow cannot block other starts; cancelling a blocked or failed workflow keeps its original error. `/review` and `/report` are documented API-only routes.
+- **Compose:** PostgreSQL is an optional `db` profile; `docker compose up -d --build` starts only the frontend and API.
+- **Frontend:** `App.tsx` was split into page modules without behaviour changes.
+
+Actual validation: **681 backend tests**, **90 frontend tests**, ruff, ESLint, strict TypeScript and the Vite production build passed on Windows. `docker compose up -d --build --wait` started healthy frontend and backend services, and **all nine real-API Chromium workflows** passed.

@@ -2,7 +2,7 @@
 
 Assistant de recrutement local-first fondé sur les preuves documentaires, la revue humaine et la traçabilité.
 React 19 / TypeScript / Vite → FastAPI / Pydantic → services déterministes (PyMuPDF, analyse d'offre FR/EN,
-comparaison par preuves) + orchestration LangGraph locale avec interrupt/resume (Phase 5, tag `v0.5.0`).
+comparaison par preuves) + orchestration LangGraph locale avec interrupt/resume (Phase 5). Dernier jalon : `v0.6.0` (outillage, CI, durcissement).
 PostgreSQL est disponible en profil Compose optionnel `db` mais **pas encore utilisé** par l'application.
 
 ## Commandes validées sous Windows (Git Bash)
@@ -12,17 +12,19 @@ préfixer avec `export PATH="/c/Program Files/nodejs:$PATH" &&`. Enchaîner les 
 
 ### Backend (Python 3.11, venv `backend/.venv`)
 - Tests : `cd backend && PYTHONDONTWRITEBYTECODE=1 .venv/Scripts/python.exe -m pytest -p no:cacheprovider -q`
-  (référence `v0.5.0` : **649 passés**)
+  (référence `v0.6.0` : **681 passés**)
 - Un fichier : `... -m pytest -p no:cacheprovider -q tests/test_jobs.py`
 - Serveur local : `cd backend && .venv/Scripts/python.exe -m uvicorn app.main:app --reload --port 8000`
-- Lint/types Python : non configurés pour l'instant.
+- Lint : `.venv/Scripts/python.exe -m ruff check app tests *.py` (config `backend/ruff.toml`, outils dev dans
+  `requirements-dev.txt`). Pas de reformatage massif : corriger, ou ignorer de façon ciblée et justifiée.
+- Pas de vérification de types Python (mypy non configuré).
 
 ### Frontend (`frontend/`)
 - Installation : `npm ci` (le `node_modules` doit être installé avec le Node Windows, pas dans Docker)
 - Tests : `npx vitest run` (référence : **90 passés**, 9 fichiers)
 - Types : `npx tsc --noEmit` (0 erreur attendue, mode strict)
 - Build : `npm run build`
-- Lint : pas d'ESLint configuré pour l'instant.
+- Lint : `npm run lint` (ESLint flat config, typescript-eslint, règles react-hooks classiques ; 0 erreur attendue).
 
 ### Docker
 - Valider : `docker compose config --quiet` (ne jamais afficher la config complète : mots de passe résolus)
@@ -34,6 +36,16 @@ préfixer avec `export PATH="/c/Program Files/nodejs:$PATH" &&`. Enchaîner les 
 - Tests frontend conteneur : `docker build --target test -t talentflow-ai-frontend-test:local frontend && docker run --rm talentflow-ai-frontend-test:local npm test`
 - E2E Chromium (9 scripts) : voir `docs/agent_workflow_testing.md` (certains scripts exigent un montage `/fixtures`).
 - **Interdit sans accord explicite** : `docker compose down --volumes`, tout `prune`, toute suppression de volume.
+
+## CI
+- `.github/workflows/ci.yml` (push et PR sur `main`) : backend (ruff + pytest, install contrainte par
+  `requirements.lock`), frontend (Node 22 : lint, tsc, vitest, build), compose (`config --quiet` avec un `.env`
+  généré depuis `.env.example`). Aucun secret, aucun déploiement. Suivi : `gh run list` / `gh run watch`.
+
+## Sécurité réseau
+- Toutes les routes `/api/v1` refusent un `Host`/`Origin` non local (403 `local_requests_only`) et limitent le
+  corps JSON à 1 MiB ; l'upload CV reste à 5 MiB, les workflows agents à 512 KiB. Les tests utilisent
+  `TestClient(app, base_url="http://localhost")` : ne jamais réintroduire `testserver` dans les hôtes autorisés.
 
 ## Pièges connus
 - `core.autocrlf=true` sur ce poste ; `.gitattributes` impose LF. Des fixtures sont figées par hash SHA-256 des
