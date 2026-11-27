@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { ArrowRight, Ban, ChevronRight, FileText, FlaskConical, Scale, ShieldCheck, UserCheck } from "lucide-react";
 import { api, ApiError } from "../api";
 import { ConnectionBadge } from "../components/ConnectionBadge";
@@ -46,10 +46,12 @@ export function Dashboard() {
   const { candidates, connection, checkHealth, addCandidate } = useSession();
   const { state, setState } = useJobSession();
   const notify = useToast();
-  const navigate = useNavigate();
   const steps = useWorkflowSteps();
   const [demoBusy, setDemoBusy] = useState(false);
   const [demoError, setDemoError] = useState<string | null>(null);
+  // Navigation is rendered, not imperatively triggered after an await, so it
+  // always commits inside React's lifecycle.
+  const [demoTarget, setDemoTarget] = useState<string | null>(null);
   const confirmed = candidates.filter((entry) => entry.confirmed).length;
 
   async function startDemo() {
@@ -62,7 +64,7 @@ export function Dashboard() {
       // Prefill the sample job and select the demo profile. Selecting does not confirm it.
       setState((current) => ({ ...emptyJobSession(), selectedId: entry.id, text: DEMO_JOB, revision: current.revision + 1 }));
       notify("Fictional CV parsed. Review and confirm the profile; the sample job post is ready in Job Analysis.", "success");
-      navigate(`/candidates/${entry.id}`);
+      setDemoTarget(`/candidates/${entry.id}`);
     } catch (error) {
       const message = error instanceof ApiError || error instanceof Error ? error.message : "The demo could not start.";
       setDemoError(`${message} Check that the local API is running, then try again.`);
@@ -74,6 +76,7 @@ export function Dashboard() {
 
   return (
     <div className="dashboard">
+      {demoTarget && <Navigate to={demoTarget} />}
       <section className="dash-hero">
         <div className="dash-hero-copy">
           <span className="eyebrow">YOUR RECRUITMENT WORKSPACE</span>

@@ -13,5 +13,7 @@ export default defineConfig({
     environment: "jsdom",
     setupFiles: "./src/test/setup.ts",
     restoreMocks: true,
+    // Several suites drive complete multi-page workflows; 5 s is too tight on slow runners.
+    testTimeout: 15000,
   },
 });
