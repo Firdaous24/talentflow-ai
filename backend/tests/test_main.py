@@ -20,7 +20,7 @@ def test_root(client: TestClient) -> None:
     response = client.get("/")
     assert response.status_code == 200
     assert response.json() == {
-        "name": "TalentFlow AI", "version": "0.1.0", "docs": "/docs"
+        "name": "TalentFlow AI", "version": "0.6.0", "docs": "/docs"
     }
 
 
@@ -34,7 +34,7 @@ def test_docs_and_openapi(client: TestClient) -> None:
     assert client.get("/docs").status_code == 200
     schema = client.get("/openapi.json").json()
     assert schema["info"]["title"] == "TalentFlow AI"
-    assert schema["info"]["version"] == "0.1.0"
+    assert schema["info"]["version"] == "0.6.0"
     assert {"/", "/api/v1/health"} <= schema["paths"].keys()
 
 
