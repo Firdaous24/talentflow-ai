@@ -1,16 +1,70 @@
 # TalentFlow AI
 
-TalentFlow AI is a recruitment intelligence portfolio project with local French/English CV extraction, reviewed job requirements and a transparent qualification-evidence checklist. A local LangGraph workflow orchestrates the existing evidence services with an explicit human review checkpoint. Optional CV model assistance requires consent.
+[![CI](https://github.com/Firdaous24/talentflow-ai/actions/workflows/ci.yml/badge.svg)](https://github.com/Firdaous24/talentflow-ai/actions/workflows/ci.yml)
+
+**A local-first recruitment assistant that turns CVs and job posts into source-grounded evidence, then leaves every judgement to a human reviewer.**
+
+## Why this project
+
+Screening tools often reduce a person to a match score. TalentFlow AI takes the opposite approach: it extracts what the documents actually say, links every statement to its exact source text, and shows a recruiter which job requirements are *documented*, *not documented* or *need human review*. Nothing is ranked, scored or decided automatically. A CV profile and the job requirements must both be reviewed and confirmed by a person before any comparison runs, the comparison only sees qualification fields (never identity, contact details, employers, locations or dates), and no external model is called without explicit configuration and per-upload consent.
+
+## Preview
+
+All screenshots use fictional documents against the local stack.
+
+| Dashboard | Job Analysis — evidence checklist |
+|---|---|
+| ![Dashboard with one confirmed fictional candidate](docs/images/dashboard.png) | ![Comparison results: documented, not documented and needs-review counts with the technical evidence overview](docs/images/job-analysis-comparison.png) |
+| **AI Agents — paused for human review** | **AI Agents — final report** |
+| ![LangGraph timeline paused at the human_review interrupt](docs/images/agents-human-review.png) | ![Completed seven-step LangGraph timeline after an explicit review acknowledgment](docs/images/agents-final-report.png) |
+
+## Architecture
+
+```mermaid
+flowchart LR
+    browser["Browser<br/>React 19 + TypeScript (Vite)"] -->|"same-origin /api"| nginx["Nginx<br/>127.0.0.1:5173"]
+    nginx -->|proxy| api["FastAPI + Pydantic<br/>127.0.0.1:8000<br/>loopback Host/Origin boundary"]
+    api --> parse["CV parsing<br/>PyMuPDF, layout-aware FR/EN"]
+    api --> jobs["Job analysis<br/>deterministic FR/EN rules"]
+    api --> compare["Evidence comparison<br/>qualification-only projection"]
+    parse -.->|"optional, config + consent"| llm["OpenAI-compatible provider<br/>(off by default)"]
+    subgraph wf["LangGraph StateGraph · in-memory checkpoints"]
+        direction TB
+        n1[intake_validation] --> n2[candidate_preparation] --> n3[job_preparation] --> n4[evidence_comparison] --> n5[evidence_verification] --> n6{{"human_review<br/>interrupt()"}} --> n7[final_report]
+    end
+    api --> wf
+    n4 -.->|reuses| compare
+    reviewer(["Human reviewer"]) -.->|"inspect, acknowledge, Command(resume)"| n6
+```
+
+Data flow: **PDF CV** → parsed profile with source evidence → human review and confirmation → **job description** → extracted requirements with exact offsets → human review → **evidence checklist**, either directly (`POST /api/v1/jobs/compare`) or through the LangGraph workflow, which pauses for an explicit review before its final report.
+
+## Technical highlights
+
+- **Source-grounded evidence.** Every job requirement and every CV excerpt carries its exact quote and `start`/`end` offsets in Unicode code points; the server re-checks them against a fresh analysis of the source before answering.
+- **Qualification-only projection.** Comparisons accept education, experience descriptions, skills, projects, certifications and languages only; identity, contact, employer, location and date fields are rejected by the schema.
+- **Real LangGraph interrupt/resume.** A seven-node `StateGraph` pauses at `interrupt()` and continues with `Command(resume=...)` after a human acknowledgment; evidence is verified again before the final report. No simulated progress.
+- **No scores, no automated decisions.** Three statuses only (`documented`, `not_documented`, `needs_review`), with explicit limitations attached to every result.
+- **Local-first and private by default.** Loopback-only ports, Host/Origin checks on every API route, bounded request bodies, no persistence of CVs, no external calls without consent.
+- **Tested end to end.** 681 backend tests and 90 frontend tests, 9 real-browser Chromium workflows, ruff and ESLint, strict TypeScript, and GitHub Actions CI on every push.
+
+## Quick start
+
+```powershell
+docker compose up -d --build --wait
+```
+
+Open **http://localhost:5173** for the workspace and **http://127.0.0.1:8000/docs** for the API documentation. See [Docker workflow](#docker-workflow-primary) for details and [Run tests on the host](#run-tests-on-the-host-optional) for local checks.
+
+Release history and the validation recorded at each phase are in [docs/CHANGELOG.md](docs/CHANGELOG.md).
 
 ## Current status
 
-[![CI](https://github.com/Firdaous24/talentflow-ai/actions/workflows/ci.yml/badge.svg)](https://github.com/Firdaous24/talentflow-ai/actions/workflows/ci.yml)
-
-**Current release: v0.6.0.** **Phases 1 through 5 are implemented:** backend foundation, Docker infrastructure, React workspace, layout-aware French/English CV parsing, source evidence, human review, deterministic job analysis and document comparison, technical-environment provenance, compact evidence results, source-bound excerpts and bounded LangGraph orchestration. Optional CV model extraction requires backend configuration and per-upload consent; job analysis and the graph require no AI credentials. Phase 5 validation is recorded below.
+**Current release: v0.6.0.** **Phases 1 through 5 are implemented:** backend foundation, Docker infrastructure, React workspace, layout-aware French/English CV parsing, source evidence, human review, deterministic job analysis and document comparison, technical-environment provenance, compact evidence results, source-bound excerpts and bounded LangGraph orchestration. Optional CV model extraction requires backend configuration and per-upload consent; job analysis and the graph require no AI credentials. Validation for each phase is recorded in the [changelog](docs/CHANGELOG.md).
 
 Implemented:
 
-- Modular, typed FastAPI backend, version `0.1.0`.
+- Modular, typed FastAPI backend, version `0.6.0`.
 - Service information at `GET /` and liveness at `GET /api/v1/health`.
 - Swagger documentation at `/docs` and OpenAPI schema at `/openapi.json`.
 - Browser CORS access restricted to `http://localhost:5173` for GET and POST requests.
@@ -62,49 +116,39 @@ Candidate and requirement confirmations are **unverified client workflow asserti
 talentflow-ai/
 ├── backend/
 │   ├── app/
-│   │   ├── __init__.py
-│   │   ├── main.py
+│   │   ├── main.py              # FastAPI app, middlewares, routers, workflow lifespan
 │   │   ├── api/
-│   │   │   ├── __init__.py
-│   │   │   ├── upload_limits.py
-│   │   │   └── routes/
-│   │   │       ├── __init__.py
-│   │   │       ├── candidates.py
-│   │   │       ├── health.py
-│   │   │       └── jobs.py
-│   │   ├── models/
-│   │   │   ├── __init__.py
-│   │   │   ├── candidate.py
-│   │   │   └── job.py
-│   │   └── services/
-│   │       ├── __init__.py
-│   │       ├── extraction.py
-│   │       ├── pdf.py
-│   │       └── jobs.py
-│   ├── tests/
-│   │   ├── fixtures/cvs.json
-│   │   ├── conftest.py
-│   │   ├── test_main.py
-│   │   ├── test_candidates.py
-│   │   ├── test_extraction.py
-│   │   ├── test_pdf.py
-│   │   └── test_upload_limits.py
-│   ├── requirements.txt
-│   ├── evaluate.py           # Multilingual and accuracy CV datasets
-│   ├── evaluate_jobs.py      # Independent fictional job annotations
-│   ├── requirements.lock
-│   ├── Dockerfile
-│   ├── .dockerignore
-│   └── .venv/                 # Existing local environment; excluded from Git and Docker
-├── frontend/                # React workspace, tests, Dockerfile, Nginx proxy
-├── docs/                    # CV, job analysis and Docker architecture
-├── evaluation/              # Recorded fictional evaluation results
-├── .gitignore
-├── .dockerignore
+│   │   │   ├── local_boundary.py  # Loopback Host/Origin check and 1 MiB JSON limit on /api/v1
+│   │   │   ├── upload_limits.py   # 5 MiB multipart limit for CV uploads
+│   │   │   └── routes/            # health, candidates, jobs, agents
+│   │   ├── models/              # Pydantic contracts: candidate.py, job.py
+│   │   ├── services/            # pdf, layout, sections, records, multilingual, extraction, llm (optional),
+│   │   │                        # jobs, job_formatting, job_vocabulary
+│   │   └── agents/              # LangGraph StateGraph, checkpoints, verification, boundary middleware
+│   ├── tests/                   # pytest suites and fictional fixtures
+│   ├── evaluate*.py             # Offline evaluation scripts (CV, jobs, comparison accuracy)
+│   ├── requirements.txt / requirements.lock / requirements-dev.txt
+│   ├── ruff.toml
+│   └── Dockerfile               # base / test / runtime targets
+├── frontend/
+│   ├── src/
+│   │   ├── App.tsx              # Layout, navigation and routes
+│   │   ├── pages/               # Dashboard, Parser, Candidates, JobAnalysis, AIAgents, Settings, NotFound
+│   │   ├── components/          # ReviewProfile, ComparisonResults, Profile, warnings, ConnectionBadge
+│   │   ├── *Session.tsx         # In-memory session state (CV, job, agents)
+│   │   ├── *Api.ts / api.ts     # Typed API clients
+│   │   └── test/                # Vitest suites
+│   ├── e2e/                     # Playwright Chromium scripts and image
+│   ├── eslint.config.js
+│   ├── nginx.conf
+│   └── Dockerfile
+├── docs/                        # Architecture notes, CHANGELOG, audit, screenshots (docs/images)
+├── evaluation/                  # Recorded fictional evaluation results
+├── .github/workflows/ci.yml     # Backend, frontend and Compose checks
+├── docker-compose.yml           # frontend + backend (+ optional db profile)
+├── compose.dev.yaml / compose.test.yaml
 ├── .env.example
-├── docker-compose.yml
-├── compose.dev.yaml
-├── compose.test.yaml
+├── CLAUDE.md                    # Guide for coding agents
 └── README.md
 ```
 
@@ -330,8 +374,6 @@ Phase 3.6 adds complete role/degree subtitles, next-line employers and source-su
 
 On four new fictional regression PDFs, field precision improved **68.75% to 100%**, recall **25% to 100%**, exact projects **0/7 to 7/7**, and incorrect/unsupported predicted fields **20/64 to 0/176**. These are development fixtures, not general real-world accuracy. The original eight multilingual fixtures still match all 202 expected fields. Full before/after counts, methodology, snapshot fingerprints and file inventory are in [CV accuracy refinement](docs/cv_accuracy_refinement.md).
 
-Phase 3.6 validation: **141 backend tests** and **21 frontend tests**, strict TypeScript/production build and real Chromium upload/review checks. The normal Docker command and PostgreSQL volume were preserved. No external model was called during testing.
-
 ```powershell
 docker compose -f docker-compose.yml -f compose.test.yaml run --rm --no-deps backend python evaluate.py --dataset accuracy
 ```
@@ -356,73 +398,21 @@ docker compose -f docker-compose.yml -f compose.test.yaml build backend
 docker compose -f docker-compose.yml -f compose.test.yaml run --rm --no-deps backend python evaluate.py
 ```
 
-Measured development-fixture results: **202/202 correct predicted fields, 202/202 recalled fields, 8/8 exact profiles, 48/48 skill precision/recall, 0/202 unsupported fields against ground truth**. These are small regression fixtures developed alongside the parser, not an independent holdout or real-world accuracy estimate. Phase 3.5 validation: **108 backend tests passed**, including all 60 original tests; Phase 3.5 frontend validation: **18 tests passed**, strict TypeScript and production build passed. Real Chromium tests passed English/two-column French upload, source evidence, corrections/removal/confirmation, navigation and session clearing. Provider tests use mocks; no live external model was called.
+Measured development-fixture results: **202/202 correct predicted fields, 202/202 recalled fields, 8/8 exact profiles, 48/48 skill precision/recall, 0/202 unsupported fields against ground truth**. These are small regression fixtures developed alongside the parser, not an independent holdout or real-world accuracy estimate.
 
 Scanned PDFs still require future OCR. Dense/overlapping/multi-band layouts, hidden annotation URLs, company-first records and ambiguous short dates may remain incomplete. Dictionary matches do not establish proficiency. Quotes/evidence do not verify qualification truth. File/page/text limits do not provide hard native CPU/memory isolation. No real CV is committed, persisted to PostgreSQL or logged by the parser.
 
 See [multilingual parsing and evaluation](docs/multilingual_cv_parsing.md), [recorded evaluation](evaluation/multilingual_results.json), [fictional French output](evaluation/fictional_french_output.json), and [CV parsing architecture](docs/cv_parsing_architecture.md).
 
-## Job analysis and evidence comparison — Phase 4
+## Job analysis and evidence comparison
 
-Open **Job Analysis** at http://localhost:5173/matching. Select any uploaded candidate, including Awaiting review profiles. If needed, follow **Review selected candidate**, review and explicitly confirm the profile, then return with the same selection. Paste a French/English job description, analyze the real source, inspect required/preferred/unspecified groups, correct labels, acknowledge requirement review and select **Compare evidence**. Both reviews are required for comparison. The results show documented, not documented and needs human review sections with explanations and source excerpts. Original extraction and corrections remain separate. Changes to qualifications, confirmation, source or requirements invalidate previous results; refresh/clearing removes session data. The same reviewed documents can now be reused in the Phase 5 AI Agents workflow.
+Open **Job Analysis** at http://localhost:5173/matching. Select any uploaded candidate, including Awaiting review profiles. If needed, follow **Review selected candidate**, review and explicitly confirm the profile, then return with the same selection. Paste a French/English job description, analyze the real source, inspect required/preferred/unspecified groups, correct labels, acknowledge requirement review and select **Compare evidence**. Both reviews are required for comparison. The results show documented, not documented and needs human review sections with explanations and source excerpts. Original extraction and corrections remain separate. Changes to qualifications, confirmation, source or requirements invalidate previous results; refresh/clearing removes session data. The same reviewed documents can now be reused in the AI Agents workflow.
 
-The new API endpoints are `POST /api/v1/jobs/analyze`, `POST /api/v1/jobs/compare` and `GET /api/v1/jobs/capabilities`. Comparison accepts qualification-only snapshots and validates source/evidence and current review snapshots. Names, contact fields, employers, institutions, locations, dates and links are excluded. Free-text qualification descriptions still require human privacy review. Confirmations are unverified workflow assertions, without authentication or durable approval records. No ranking, suitability scores, eligibility or employment recommendations are produced.
+The API endpoints are `POST /api/v1/jobs/analyze`, `POST /api/v1/jobs/compare` and `GET /api/v1/jobs/capabilities`. Comparison accepts qualification-only snapshots and validates source/evidence and current review snapshots. Names, contact fields, employers, institutions, locations, dates and links are excluded. Free-text qualification descriptions still require human privacy review. Confirmations are unverified workflow assertions, without authentication or durable approval records. No ranking, suitability scores, eligibility or employment recommendations are produced.
 
-Actual Phase 4 validation: **225 backend tests** passed on Windows and Docker, **33 frontend tests** passed, strict TypeScript/Vite builds passed, and all three real Chromium workflows passed. The normal `docker compose up -d --build` succeeded; all three services are healthy and the existing PostgreSQL container/volume is preserved. Frontend, SPA route, Swagger, health and proxied job APIs returned HTTP 200.
+Technical environment lists, compact results, the Technical Evidence Overview and source-bound excerpts are described in the [changelog](docs/CHANGELOG.md), [job analysis architecture](docs/job_analysis_architecture.md) and [comparison results UX](docs/comparison_results_ux.md).
 
-Ten independently annotated fictional jobs matched **33/33 skills** for precision and recall, **37/37 explicit classifications**, **39/39 source evidence and statuses**, and **0/39 unsupported requirements**. These small development fixtures are not a real-world accuracy estimate. Existing CV evaluations still match 202/202 multilingual fields and 176/176 accuracy fields. Run from `backend/`:
-
-```powershell
-.\.venv\Scripts\python.exe evaluate_jobs.py --output ../evaluation/job_analysis_results.json
-```
-
-For Chromium after startup, run `docker run --rm --ipc=host --add-host=host.docker.internal:host-gateway talentflow-ai-browser-test:local node job-smoke.mjs` after rebuilding `frontend/e2e`. See [job analysis architecture](docs/job_analysis_architecture.md) for the complete file inventory, API shapes, privacy/review boundaries, evaluation methodology, initial/final artifacts, executed validation and known limitations.
-
-## Realistic job-post extraction — Phase 4.1
-
-Job Analysis now recognizes Environnement technique, Technical Environment, Technology/Tech Stack, Tools and Technologies and additional French/English profile/preference headings, including copied-post emoji/punctuation. Technical environment mentions appear separately from Required/Preferred/Unspecified qualifications. They retain unspecified source status and always require human interpretation during comparison, even after a classification edit. Application contacts, hashtags, company prose and generic responsibilities do not become candidate requirements.
-
-Inline arrows, pipes and labels extract location, contract and work mode independently, with exact source evidence and detailed schedule excerpts. For the fictional AI Architect example, **Rabat/Technopolis**, **CDI** and **Hybrid** are separate fields; six environment rows contain **18 distinct technologies**, without invented mandatory qualifications. Job-only normalization keeps Azure OpenAI, Azure AI, Azure, OpenAI, AI, Machine Learning, LLMs, RAG and API/REST APIs distinct. The existing CV vocabulary and parser behavior are preserved.
-
-Actual validation: **377 backend tests** passed on Windows and Docker; **40 frontend tests**, strict TypeScript/Vite builds and **all four Chromium workflows** passed. Normal Compose startup and all three service healthchecks passed, preserving the existing PostgreSQL container/volume. Direct and proxied Job Analysis APIs and Swagger remain available.
-
-On the unchanged **14 fictional realistic posts**, technology recall improved **19/87 → 87/87**, classification **12/38 → 38/38**, explicit metadata **31/43 → 43/43**, and unsupported rows **14/27 → 0/38**. A frozen baseline runs in an isolated interpreter, with source hashes recorded. These development regressions are not representative real-world accuracy. From `backend/`:
-
-```powershell
-.\.venv\Scripts\python.exe evaluate_jobs_realistic.py --baseline-root ../.artifacts/phase41-baseline --output ../evaluation/job_realistic_results.json --example-output ../evaluation/fictional_ai_architect_output.json
-```
-
-Omit `--baseline-root` when the preserved local snapshot is unavailable. The Docker test image includes the current-only evaluator. See [job accuracy](docs/job_analysis_accuracy.md) for the complete file inventory, baseline methodology, metrics, example JSON, known limitations and browser commands; [job analysis architecture](docs/job_analysis_architecture.md) documents the additive API fields and review boundaries.
-
-Comparison workflow fixes retain the reviewed-profile and evidence gates while adding an exact **Comparison availability** checklist. Every session profile is selectable in the native dropdown, including Awaiting review profiles; selection does not approve comparison. Review selected candidate opens the correct profile, and confirmation preserves the same selection on return without refreshing. Comparison requires both candidate confirmation and the separate job review. Oversized qualification lists are identified before submission without truncation. Structured validation errors identify the field to correct, and outdated source analysis prompts fresh analysis/review. The false HTTP 422 caused by inconsistent acronym context is fixed. The initial comparison fix passed **400 backend tests**, **51 frontend tests**, the strict production build and **five Chromium workflows**. See [comparison workflow fix](docs/job_comparison_workflow_fix.md) for current selection behavior, subsequent test results and verification commands.
-
-## Compact comparison results — Phase 4.2
-
-Comparison results now open with dynamic evidence-status counts and a **Technical Evidence Overview**. Canonical technologies appear once under **Mentioned in both documents** or **No supporting mention found in the reviewed CV**, with expandable job excerpts, immutable source offsets and unverified reviewed-CV field references. **Requires interpretation** keeps ambiguous source clauses visible without treating an environment list as a mandatory qualification.
-
-Requirement cards start collapsed and retain the original evidence, reviewed labels, interpretation notes and warnings behind accessible controls. Status filters and expand/collapse controls operate locally, without another API request. Both candidate selection before review and the separate candidate/job confirmation gates remain intact. The backend adds a backward-compatible `technical_evidence` response field; comparison inputs and qualification-status semantics are unchanged. There are no similarity scores, rankings or employment recommendations.
-
-Actual Phase 4.2 validation: **429 backend tests**, **69 frontend tests**, strict TypeScript/Vite build and **all six Chromium workflows** passed. Compose configuration/startup passed with all services healthy and the original PostgreSQL volume preserved. See [comparison results UX](docs/comparison_results_ux.md) for the contract, canonical aggregation, current limitations, testing commands and desktop/mobile screenshots.
-
-## Source-grounded comparison accuracy — Phase 4.3
-
-The French Data Business Analyst example now extracts **SQL, GCP, Teradata and Airflow**, including parenthesized/slash-separated technical stacks. Job-only aliases preserve cloud/database/tool distinctions, original classifications and environment provenance. Explicit business-analysis statements are retrieved without claiming mastery. Professional duration and telecom-sector employment are not inferred from projects, dates, networking or VoIP.
-
-Comparison evidence now includes optional exact excerpt offsets while retaining the full reviewed field for compatibility. Results show concise supporting text with **View full reviewed field**, collapsed metadata/notes and responsive evidence layouts. Shared CV boundary detection now recognizes explicit academic/university project headings and English Business Analyst entries, keeping their descriptions, dates and technologies separate.
-
-On **16 fictional cases annotated and SHA-frozen before tuning**, technology recall improved **29/48 → 48/48**, evidence recall **29/39 → 36/39**, concise excerpt boundaries **18/30 → 36/36**, unsupported evidence **1/30 → 0/36**, and CV segmentation assertions **11/60 → 41/60**. These are development measurements, not representative real-world accuracy. Unsupported internship titles, conservative whole-field privacy/negation filtering and a frozen sector-status taxonomy disagreement remain documented.
-
-Actual validation: **495 backend tests** passed on Windows and Linux Docker; **73 frontend tests**, strict TypeScript/Vite build and **all seven real-API Chromium workflows** passed. Normal Compose startup remains working with the existing PostgreSQL container/volume preserved. See [real-world comparison accuracy](docs/real_world_comparison_accuracy.md) for the complete file inventory, exact before/after metrics, source contract, browser verification and limitations.
-
-## Copied-post and qualification fixes — Phase 4.3.1
-
-Formatting-only copied text no longer becomes a requirement. The French Data Business Analyst reproduction now yields **six requirements instead of seven**, preserving original backslashes, evidence quotes and offsets on meaningful lines. Explicit minimum experience is **required**, while the candidate comparison remains **needs_review**; preferred, conditional, quoted, negated and technical-environment contexts retain separate handling.
-
-Business Analysis retrieval adds precise wording and coordinated modeling support while keeping UML, process modeling, functional specifications and requirements documents distinct. The positive fictional profile returns **four exact excerpts instead of three**; the negative profile returns none. SQL, GCP, Teradata and Airflow remain recognized. Privacy filters, human confirmation and session behavior are preserved.
-
-Actual validation: **580 backend tests** passed on Windows and Linux Docker; **74 frontend tests**, strict TypeScript/Vite builds and **all eight real-API Chromium workflows** passed. Compose startup and all service healthchecks passed with the existing PostgreSQL container/volume preserved. See [final job accuracy fixes](docs/job_analysis_final_accuracy_fixes.md) for root causes, files, before/after results, immutable evaluation-label differences and remaining limitations.
-
-## Local evidence orchestration — Phase 5
+## Local evidence orchestration (AI Agents)
 
 Open **AI Agents** at http://localhost:5173/agents after reviewing a candidate and job in Job Analysis. Start an evidence workflow to execute real LangGraph nodes: intake validation, candidate preparation, job preparation, existing deterministic comparison, evidence verification, human review and final report. Execution pauses at an actual LangGraph `interrupt`; inspect the evidence, explicitly acknowledge the local review assertion and select **Review & Resume**. Supported `Command(resume=...)` continues the checkpoint and verifies evidence again before finalization. Status/report reads do not rerun nodes.
 
@@ -432,21 +422,15 @@ Workflows use separate memory checkpointers, 30-minute TTL, a maximum of 32 reta
 
 Versioned routes are under `/api/v1/agents/workflows`: start, status, review, resume, cancel and report. All require `X-Workflow-Session`; the server verifies ownership, original snapshots, source spans, qualification fields and canonical technical references. Requests are bounded before JSON parsing; validation errors do not echo submitted text. No external provider or tracing export occurs during graph execution.
 
-Actual validation: **649 backend tests** passed on Windows and Linux Docker, **90 frontend tests** passed, strict TypeScript and the Vite production build passed, and **all nine real-API Chromium workflows** passed. The new graph workflow passed on desktop/mobile with genuine interrupt/resume, source inspection, stale-review invalidation, cancellation and ownership checks. The exact `docker compose up -d --build` succeeded with all three services healthy and the original PostgreSQL container/volume preserved. Browser testing also fixed a UUID compatibility issue on the local Docker HTTP address.
-
 See [agent workflow testing](docs/agent_workflow_testing.md) for actual results, commands and screenshots, and [LangGraph architecture](docs/langgraph_architecture.md) for actual transitions, schemas, routes, retention, setup and limitations.
 
-## Next phase
+## Quality checks and CI
+
+- **Lint:** `ruff check app tests *.py` in `backend/` (rules E/F/I/B/UP, `backend/ruff.toml`; dev tools in `backend/requirements-dev.txt`) and `npm run lint` in `frontend/`.
+- **Types and tests:** `npx tsc --noEmit`, `npx vitest run` and `npm run build` in `frontend/`; `pytest` in `backend/`.
+- **CI:** `.github/workflows/ci.yml` runs on pushes and pull requests to `main`: backend (lock-constrained install, ruff, pytest), frontend (Node 22: lint, tsc, vitest, build) and Compose configuration validation. It uses no secrets and deploys nothing.
+- **End-to-end:** nine real-API Chromium scripts in `frontend/e2e/`; see [agent workflow testing](docs/agent_workflow_testing.md).
+
+## Roadmap
 
 Next, broaden independently authored CV/job holdouts and target prose, negation, cross-language qualification and layout failures. Add authenticated, auditable review records with purpose-limited persistence before shared deployment, then evaluate any optional job model against the same evidence boundaries using fictional data. Public deployment remains future work; candidate ranking and employment decisions remain outside this tool's purpose.
-
-## Tooling, CI and hardening — v0.6.0
-
-- **Lint:** `ruff check app tests *.py` in `backend/` (rules E/F/I/B/UP, `backend/ruff.toml`; dev tools in `backend/requirements-dev.txt`) and `npm run lint` in `frontend/` (ESLint flat config with typescript-eslint and React hooks rules).
-- **CI:** `.github/workflows/ci.yml` runs on pushes and pull requests to `main`: backend (lock-constrained install, ruff, pytest), frontend (Node 22: lint, tsc, vitest, build) and Compose configuration validation. It uses no secrets and deploys nothing.
-- **Local API boundary:** every `/api/v1` route rejects non-local `Host` or `Origin` headers (403) and bounds JSON bodies to 1 MiB before parsing. CV uploads keep the 5 MiB / 10-page limits; agent workflows keep their 512 KiB limit.
-- **Agents:** `testserver` is no longer an allowed runtime host; graph execution no longer runs under the workflow registry lock, so a slow workflow cannot block other starts; cancelling a blocked or failed workflow keeps its original error. `/review` and `/report` are documented API-only routes.
-- **Compose:** PostgreSQL is an optional `db` profile; `docker compose up -d --build` starts only the frontend and API.
-- **Frontend:** `App.tsx` was split into page modules without behaviour changes.
-
-Actual validation: **681 backend tests**, **90 frontend tests**, ruff, ESLint, strict TypeScript and the Vite production build passed on Windows. `docker compose up -d --build --wait` started healthy frontend and backend services, and **all nine real-API Chromium workflows** passed.
