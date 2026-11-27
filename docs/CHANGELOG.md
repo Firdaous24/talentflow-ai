@@ -1,9 +1,21 @@
 # Changelog
 
 Detailed delivery history and the validation recorded at each milestone. The [README](../README.md) describes the current state.
-Milestone tags: `v0.5.0` (phases 1–5), `v0.6.0` (tooling, CI and hardening) and `v0.7.0` (UI redesign).
+Milestone tags: `v0.5.0` (phases 1–5), `v0.6.0` (tooling, CI and hardening), `v0.7.0` (UI redesign) and `v0.8.0` (accounts and roles).
 
-## Accounts and roles — v0.8.0 (phase 6, branch `feat/v1-phase6`, not merged)
+## Candidate space — v0.9.0 (phase 7, branch `feat/v1-phase7`, not merged)
+
+Second phase of the v1 platform. Details: [candidate_space_phase7.md](candidate_space_phase7.md).
+
+- **Encrypted CV storage:** each upload creates a new CV version and never overwrites an older one. Only ciphertext is stored (extracted text, parsing result and reviewed profile), sealed with AES-256-GCM under a per-version data key; the data key is wrapped by the master key `TALENTFLOW_DATA_KEY`, read from the environment only. Deleting the key shreds the version. The original PDF is **off by default** (`CV_ORIGINAL_STORAGE=disabled`); when an instance enables it, the candidate opts in per upload and the file is encrypted the same way.
+- **Review and history:** the current version is reviewed and confirmed (any edit clears the confirmation); older versions stay readable but locked; a field-by-field diff compares two versions.
+- **Job posts and coverage:** pasted job posts stay private, are analyzed by the existing deterministic analyzer and their criteria are reviewed with the demo’s correction rules. The coverage report runs `compare_job` on the qualification-only projection, only after both reviews, and shows « x/y requis · a/b souhaités · n à interpréter » with each number filtering the side-by-side evidence. Gaps are fixed sentences with a link to the matching CV section; nothing is generated in the candidate’s place.
+- **Visibility, export and deletion:** recruiter visibility stays an opt-in consent withdrawn immediately; `GET /api/v2/me/export` returns every personal datum (decrypted CVs included); account deletion removes rows, data keys and files, and the worker sweeps orphan files.
+- **Isolation:** another candidate’s version or job post answers 404, exactly like an unknown identifier; no recruiter route exposes a candidate profile, with or without the opt-in. Migration `0002` is reversible.
+
+Actual validation: **849 backend tests** (769 existing + 80 for the candidate space, against PostgreSQL), **109 frontend tests**, ruff, ESLint, strict TypeScript, migrations `upgrade`/`downgrade`/`upgrade` + `alembic check`, and **twelve real-API Chromium workflows** (the eleven existing ones plus `candidate-smoke.mjs`) against the rebuilt Compose stack.
+
+## Accounts and roles — v0.8.0 (phase 6, merged and tagged)
 
 First phase of the v1 platform described in [V1_DESIGN.md](V1_DESIGN.md). Details: [accounts_phase6.md](accounts_phase6.md).
 
