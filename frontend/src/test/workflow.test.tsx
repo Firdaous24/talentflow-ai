@@ -211,7 +211,7 @@ describe("CV workflow", () => {
       screen.getByText("No candidates in this session"),
     ).toBeInTheDocument();
   });
-  it("shows backend connectivity and honest planned modules", async () => {
+  it("shows backend connectivity and the available reviewed-evidence workflow", async () => {
     vi.mocked(api.health).mockRejectedValue(new Error("Backend offline"));
     const user = userEvent.setup();
     open("/settings");
@@ -223,12 +223,16 @@ describe("CV workflow", () => {
     await waitFor(() =>
       expect(screen.getAllByText("Backend connected")).toHaveLength(2),
     );
-    await user.click(screen.getByRole("link", { name: "Job Matching" }));
-    expect(screen.getByText("Coming soon")).toBeInTheDocument();
+    await user.click(screen.getByRole("link", { name: "Job Analysis" }));
     expect(
-      screen.getByText(/Matching and scores are not available/),
+      screen.getByRole("heading", { name: "Job Analysis" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("No candidates available"),
     ).toBeInTheDocument();
     await user.click(screen.getByRole("link", { name: "AI Agents" }));
-    expect(screen.getByText(/No AI agents are running/)).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "AI Agents" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Start evidence workflow" })).toBeDisabled();
+    expect(screen.getByRole("region", { name: "Workflow prerequisites" })).toHaveTextContent("Upload a CV");
   });
 });

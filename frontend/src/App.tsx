@@ -31,6 +31,10 @@ import type { LucideIcon } from "lucide-react";
 import { SessionProvider, useSession } from "./session";
 import { API_BASE_URL } from "./api";
 import { Parser } from "./pages/Parser";
+import { JobAnalysis } from "./pages/JobAnalysis";
+import { AIAgents } from "./pages/AIAgents";
+import { AgentSessionProvider } from "./agentSession";
+import { JobSessionProvider } from "./jobSession";
 import { ReviewProfile } from "./components/ReviewProfile";
 
 const navigation: {
@@ -44,11 +48,10 @@ const navigation: {
   { path: "/candidates", label: "Candidates", icon: UsersRound },
   {
     path: "/matching",
-    label: "Job Matching",
+    label: "Job Analysis",
     icon: BriefcaseBusiness,
-    planned: true,
   },
-  { path: "/agents", label: "AI Agents", icon: Bot, planned: true },
+  { path: "/agents", label: "AI Agents", icon: Bot },
   { path: "/settings", label: "Settings", icon: Settings2 },
 ];
 function ConnectionBadge() {
@@ -175,8 +178,8 @@ function Layout() {
             <Route path="/parser" element={<Parser />} />
             <Route path="/candidates" element={<Candidates />} />
             <Route path="/candidates/:id" element={<CandidateDetail />} />
-            <Route path="/matching" element={<ComingSoon kind="matching" />} />
-            <Route path="/agents" element={<ComingSoon kind="agents" />} />
+            <Route path="/matching" element={<JobAnalysis />} />
+            <Route path="/agents" element={<AIAgents />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
@@ -377,28 +380,28 @@ function Dashboard() {
             <br />
             one step at a time.
           </h2>
-          <p>Here’s what’s planned for TalentFlow AI.</p>
+          <p>Explore document evidence and explicit human review.</p>
           <Link to="/matching" className="roadmap-item">
             <span className="icon-box neutral">
               <BriefcaseBusiness size={18} />
             </span>
             <div>
-              <strong>Explainable job matching</strong>
-              <small>Compare profiles with job requirements</small>
+              <strong>Job Analysis</strong>
+              <small>Review requirements and compare documented evidence</small>
             </div>
-            <span className="badge neutral">Soon</span>
+            <span className="badge green">Available</span>
           </Link>
           <Link to="/agents" className="roadmap-item">
             <span className="icon-box neutral">
               <Bot size={18} />
             </span>
             <div>
-              <strong>Multi-agent analysis</strong>
-              <small>A future LangGraph workflow</small>
+              <strong>Evidence workflow</strong>
+              <small>LangGraph orchestration with a human checkpoint</small>
             </div>
-            <span className="badge neutral">Soon</span>
+            <span className="badge green">Available</span>
           </Link>
-          <p className="roadmap-note">Planned modules are not active yet.</p>
+          <p className="roadmap-note">Deterministic nodes coordinate evidence services; no external model is called.</p>
         </section>
       </div>
     </>
@@ -528,65 +531,6 @@ function CandidateDetail() {
     </>
   );
 }
-function ComingSoon({ kind }: { kind: "matching" | "agents" }) {
-  const matching = kind === "matching";
-  const Icon = matching ? BriefcaseBusiness : Bot;
-  return (
-    <>
-      <div className="page-heading">
-        <div>
-          <span className="eyebrow">THE ROAD AHEAD</span>
-          <h1>{matching ? "Job Matching" : "AI Agents"}</h1>
-          <p>
-            {matching
-              ? "More context for better recruitment decisions."
-              : "A coordinated approach to recruitment analysis."}
-          </p>
-        </div>
-        <span className="badge violet">Coming soon</span>
-      </div>
-      <section className="card coming-soon">
-        <span className="coming-icon">
-          <Icon size={40} strokeWidth={1.5} />
-        </span>
-        <span className="eyebrow">PLANNED MODULE</span>
-        <h2>
-          {matching
-            ? "Understand the fit. See the reasoning."
-            : "Specialized agents. A shared workflow."}
-        </h2>
-        <p>
-          {matching
-            ? "Future job analysis will compare candidate profiles with role requirements and explain the evidence behind each recommendation. Matching and scores are not available yet."
-            : "A future LangGraph workflow will coordinate specialized agents for CV analysis, job understanding and explainable recommendations. No AI agents are running in this version."}
-        </p>
-        <div className="planned-features">
-          {(matching
-            ? [
-                "Job requirement analysis",
-                "Evidence-based comparison",
-                "Explainable recommendations",
-              ]
-            : [
-                "LangGraph orchestration",
-                "Specialized analysis steps",
-                "Transparent review outputs",
-              ]
-          ).map((item) => (
-            <span key={item}>
-              <Clock3 size={15} />
-              {item}
-            </span>
-          ))}
-        </div>
-        <Link to="/parser" className="button primary">
-          Explore the CV Parser
-          <ArrowRight size={17} />
-        </Link>
-      </section>
-    </>
-  );
-}
 function Settings() {
   const { connection, healthError, checkHealth } = useSession();
   return (
@@ -629,6 +573,14 @@ function Settings() {
               <dt>CV parsing</dt>
               <dd>POST /api/v1/candidates/parse</dd>
             </div>
+            <div>
+              <dt>Job analysis</dt>
+              <dd>POST /api/v1/jobs/analyze</dd>
+            </div>
+            <div>
+              <dt>Evidence comparison</dt>
+              <dd>POST /api/v1/jobs/compare</dd>
+            </div>
           </dl>
           <button
             className="button secondary"
@@ -649,7 +601,7 @@ function Settings() {
           </h2>
           <p>
             A recruitment intelligence portfolio project with a working PDF
-            extraction workflow.
+            extraction and reviewed job-evidence workflow.
           </p>
           <dl className="info-list">
             <div>
@@ -683,8 +635,10 @@ function Settings() {
             PDF files go to the TalentFlow backend; extraction stays local by
             default. Optional model assistance sends extracted text to the
             displayed provider only with per-upload consent. Profiles remain in
-            memory, without browser storage or database persistence. OCR, job
-            matching and agents are planned.
+            memory, without browser storage or database persistence. Job
+            comparison uses qualification evidence and session review
+            assertions; these are not authenticated approvals. Agent checkpoints are
+            bounded backend memory, expire automatically and do not survive a backend restart. OCR is planned.
           </p>
         </div>
       </div>
@@ -705,7 +659,11 @@ function NotFound() {
 export function App() {
   return (
     <SessionProvider>
-      <Layout />
+      <JobSessionProvider>
+        <AgentSessionProvider>
+          <Layout />
+        </AgentSessionProvider>
+      </JobSessionProvider>
     </SessionProvider>
   );
 }
