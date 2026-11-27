@@ -45,8 +45,13 @@ def client() -> Iterator[TestClient]:
 # ---------------------------------------------------------------------------
 
 TEST_SECRET = "pytest-only-secret-key-0123456789-abcdefghijklmnop"
+# 32 bytes in base64url, for tests only (the real key comes from the environment).
+TEST_DATA_KEY = "cHl0ZXN0LW9ubHktZGF0YS1rZXktMzItYnl0ZXMhISE"
 BACKEND_DIR = Path(__file__).resolve().parents[1]
-V2_TABLES = ("audit_log", "consents", "email_tokens", "memberships", "sessions", "organizations", "users")
+V2_TABLES = (
+    "audit_log", "consents", "email_tokens", "memberships", "sessions", "organizations", "users",
+    "candidate_profiles", "cv_versions", "cv_data_keys", "job_offers",
+)
 
 
 def alembic_config() -> Config:
@@ -82,17 +87,22 @@ def migrated_database(database_url: str) -> Iterator[str]:
 
 
 @pytest.fixture
-def v2_env(monkeypatch: pytest.MonkeyPatch, migrated_database: str) -> Iterator[str]:
+def v2_env(monkeypatch: pytest.MonkeyPatch, migrated_database: str, tmp_path: Path) -> Iterator[str]:
     from app.auth import mailer
     from app.auth.ratelimit import limiter
     from app.core.config import get_settings
+    from app.storage.crypto import master_key
 
     monkeypatch.setenv("DATABASE_URL", migrated_database)
     monkeypatch.setenv("TALENTFLOW_SECRET_KEY", TEST_SECRET)
     monkeypatch.setenv("EMAIL_BACKEND", "memory")
     monkeypatch.setenv("SESSION_COOKIE_SECURE", "true")
     monkeypatch.setenv("APP_BASE_URL", "https://localhost")
+    monkeypatch.setenv("TALENTFLOW_DATA_KEY", TEST_DATA_KEY)
+    monkeypatch.setenv("CV_FILES_DIR", str(tmp_path / "cv_files"))
+    monkeypatch.delenv("CV_ORIGINAL_STORAGE", raising=False)
     get_settings.cache_clear()
+    master_key.cache_clear()
     engine = create_engine(migrated_database)
     with engine.begin() as connection:
         connection.execute(sql_text(f"TRUNCATE {', '.join(V2_TABLES)} RESTART IDENTITY CASCADE"))
@@ -101,6 +111,7 @@ def v2_env(monkeypatch: pytest.MonkeyPatch, migrated_database: str) -> Iterator[
     mailer.outbox.clear()
     yield migrated_database
     get_settings.cache_clear()
+    master_key.cache_clear()
     limiter.reset()
     mailer.outbox.clear()
 

@@ -1,4 +1,4 @@
-"""Role spaces: minimal recruiter organizations and the candidate overview.
+"""Recruiter space: minimal organizations (the candidate space lives in candidate.py).
 
 Isolation rules (design §4.5): a role mismatch answers 403; a resource of
 another organization answers 404, so its existence is never revealed.
@@ -13,15 +13,14 @@ from sqlalchemy.orm import Session
 
 from app.api.v2.account import member_count
 from app.api.v2.deps import DbDep, SettingsDep, api_error, audit, require_role
-from app.api.v2.schemas import CandidateOverview, Member, Organization, OrganizationCreate
+from app.api.v2.schemas import Member, Organization, OrganizationCreate
 from app.core.config import Settings
-from app.db.models import Consent, Membership, User
+from app.db.models import Membership, User
 from app.db.models import Organization as OrganizationRow
 
 router = APIRouter(tags=["Spaces"])
 MAX_OWNED_ORGANIZATIONS = 5
 Recruiter = Depends(require_role("recruiter"))
-Candidate = Depends(require_role("candidate"))
 
 
 def organization_payload(db: Session, membership: Membership) -> Organization:
@@ -69,9 +68,3 @@ def list_members(organization_id: uuid.UUID, user: User = Recruiter, db: Session
     rows = db.scalars(select(Membership).where(Membership.organization_id == organization_id).order_by(Membership.created_at)).all()
     return [Member(email=row.user.email, org_role=row.org_role, joined_at=row.created_at) for row in rows]
 
-
-@router.get("/candidate/overview", response_model=CandidateOverview, summary="Candidate space overview (candidates)")
-def candidate_overview(user: User = Candidate, db: Session = DbDep) -> CandidateOverview:
-    visible = db.scalar(select(Consent.id).where(Consent.user_id == user.id, Consent.purpose == "recruiter_visibility", Consent.withdrawn_at.is_(None))) is not None
-    # CV versions arrive in phase 7; the space already exists and stays empty.
-    return CandidateOverview(cv_versions=0, recruiter_visibility=visible, next_step="upload_cv")

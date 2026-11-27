@@ -6,7 +6,7 @@ fails the suite instead of shipping unprotected.
 
 - anonymous (with a valid CSRF token): 401 on everything but the public routes;
 - wrong role: 403 `forbidden_role`;
-- another organization, or an unknown identifier: 404, never 403;
+- another organization, another candidate's resource, or an unknown identifier: 404, never 403;
 - no CSRF token: 403 `csrf_failed` on every unsafe operation, signed in or not.
 """
 
@@ -38,12 +38,33 @@ POLICY = {
     ("GET", "/api/v2/orgs/{organization_id}"): "recruiter:organization",
     ("GET", "/api/v2/orgs/{organization_id}/members"): "recruiter:organization",
     ("GET", "/api/v2/candidate/overview"): "candidate",
+    # Phase 7: candidate space. ":owned" routes address one of the caller's own resources.
+    ("POST", "/api/v2/me/cv"): "candidate",
+    ("GET", "/api/v2/me/cv/versions"): "candidate",
+    ("GET", "/api/v2/me/cv/versions/{version_id}"): "candidate:owned",
+    ("GET", "/api/v2/me/cv/versions/{version_id}/original"): "candidate:owned",
+    ("PUT", "/api/v2/me/cv/versions/{version_id}/review"): "candidate:owned",
+    ("POST", "/api/v2/me/cv/versions/{version_id}/confirm"): "candidate:owned",
+    ("GET", "/api/v2/me/cv/diff"): "candidate:owned",
+    ("POST", "/api/v2/me/targets"): "candidate",
+    ("GET", "/api/v2/me/targets"): "candidate",
+    ("GET", "/api/v2/me/targets/{target_id}"): "candidate:owned",
+    ("PUT", "/api/v2/me/targets/{target_id}/requirements"): "candidate:owned",
+    ("POST", "/api/v2/me/targets/{target_id}/confirm"): "candidate:owned",
+    ("DELETE", "/api/v2/me/targets/{target_id}"): "candidate:owned",
+    ("GET", "/api/v2/me/targets/{target_id}/coverage"): "candidate:owned",
+    ("GET", "/api/v2/me/targets/{target_id}/gaps"): "candidate:owned",
+    ("GET", "/api/v2/me/export"): "authenticated",
 }
 BODIES = {
     ("PATCH", "/api/v2/me"): {"locale": "en"},
     ("DELETE", "/api/v2/me"): {"password": "irrelevant password"},
     ("PUT", "/api/v2/me/consents/{purpose}"): {"granted": True},
     ("POST", "/api/v2/orgs"): {"name": "Matrix Org"},
+    ("POST", "/api/v2/me/targets"): {"text": "Backend Developer\nRequired qualifications:\n- Python\n- Docker"},
+    ("PUT", "/api/v2/me/cv/versions/{version_id}/review"): {"profile": {}},
+    ("POST", "/api/v2/me/cv/versions/{version_id}/confirm"): {"warnings_acknowledged": True},
+    ("PUT", "/api/v2/me/targets/{target_id}/requirements"): {"requirements": [{"id": "req-001", "text": "Python", "category": "technical_skill", "classification": "required"}]},
     ("POST", "/api/v2/auth/register"): {"email": "matrix@example.com", "password": "matrix password 1", "role": "candidate", "accept_terms": True},
     ("POST", "/api/v2/auth/login"): {"email": "matrix@example.com", "password": "x"},
     ("POST", "/api/v2/auth/verify-email"): {"token": "A" * 43},
@@ -62,12 +83,18 @@ def operations(*kinds: str) -> list[tuple[str, str]]:
     return sorted(key for key, kind in POLICY.items() if kind.split(":")[0] in kinds)
 
 
-def concrete(path: str, organization_id: object = None) -> str:
-    return path.replace("{organization_id}", str(organization_id or uuid.uuid4())).replace("{purpose}", "marketing")
+def concrete(path: str, organization_id: object = None, owned: dict | None = None) -> str:
+    owned = owned or {}
+    url = path.replace("{organization_id}", str(organization_id or uuid.uuid4())).replace("{purpose}", "marketing")
+    url = url.replace("{version_id}", str(owned.get("version_id") or uuid.uuid4())).replace("{target_id}", str(owned.get("target_id") or uuid.uuid4()))
+    if path.endswith("/cv/diff"):
+        version = owned.get("version_id") or uuid.uuid4()
+        url += f"?from={version}&to={version}"
+    return url
 
 
-def call(client, method: str, path: str, organization_id: object = None, csrf: bool = True):
-    url = concrete(path, organization_id)
+def call(client, method: str, path: str, organization_id: object = None, csrf: bool = True, owned: dict | None = None):
+    url = concrete(path, organization_id, owned)
     body = BODIES.get((method, path))
     if method in SAFE:
         return client.request(method, url)
@@ -159,3 +186,45 @@ def test_malformed_identifiers_are_rejected_without_leaking(actors):
     response = clients["recruiter_a"].get("/api/v2/orgs/not-a-uuid")
     assert response.status_code == 422
     assert "not-a-uuid" not in response.text
+
+
+@pytest.fixture
+def candidates(v2_env):
+    """Two candidates; the first has a CV version (with an original PDF) and a job post."""
+    from conftest import SYNTHETIC_CVS, make_pdf
+    from v2_helpers import upload_cv
+
+    clients = {name: new_v2_client().__enter__() for name in ("owner", "other")}
+    sign_up(clients["owner"], "owner@example.com", "candidate")
+    sign_up(clients["other"], "other@example.com", "candidate")
+    version = upload_cv(clients["owner"], make_pdf(SYNTHETIC_CVS[0]["text"])).json()
+    target = unsafe(clients["owner"], "POST", "/api/v2/me/targets", BODIES[("POST", "/api/v2/me/targets")]).json()
+    yield clients, {"version_id": version["id"], "target_id": target["id"]}
+    for client in clients.values():
+        client.__exit__(None, None, None)
+
+
+@pytest.mark.parametrize(("method", "path"), sorted(key for key, kind in POLICY.items() if kind == "candidate:owned"))
+def test_candidates_are_isolated_with_404(candidates, method, path):
+    clients, owned = candidates
+    foreign = call(clients["other"], method, path, owned=owned)
+    unknown = call(clients["other"], method, path)
+    assert foreign.status_code == unknown.status_code == 404, foreign.text
+    assert foreign.json() == unknown.json()  # Existence is not revealed.
+    assert "Avery" not in foreign.text and "Backend Developer" not in foreign.text
+    if method in SAFE and not path.endswith("/original"):
+        assert call(clients["owner"], method, path, owned=owned).status_code in {200, 409}
+
+
+def test_recruiters_never_reach_candidate_content(candidates):
+    """No recruiter route exposes a candidate's profile, even with the visibility opt-in (design §2.3)."""
+    clients, owned = candidates
+    assert unsafe(clients["owner"], "PUT", "/api/v2/me/consents/recruiter_visibility", {"granted": True}).status_code == 200
+    with new_v2_client() as recruiter:
+        sign_up(recruiter, "recruiter@example.com", "recruiter")
+        organization = unsafe(recruiter, "POST", "/api/v2/orgs", {"name": "Hiring Org"}).json()
+        for method, path in sorted(key for key, kind in POLICY.items() if key[0] in SAFE and kind.split(":")[0] in {"recruiter", "candidate", "authenticated"}):
+            response = call(recruiter, method, path, organization["id"], owned=owned)
+            assert "Avery" not in response.text and "owner@example.com" not in response.text, (method, path)
+            if POLICY[(method, path)].startswith("candidate"):
+                assert response.status_code == 403

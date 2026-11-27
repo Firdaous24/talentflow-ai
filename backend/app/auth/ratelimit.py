@@ -65,5 +65,8 @@ LOGIN_FAILURES_PER_ACCOUNT = (Rule(5, 60), Rule(20, 3600))
 LOGIN_ATTEMPTS_PER_CLIENT = (Rule(30, 60),)
 REGISTRATIONS_PER_CLIENT = (Rule(10, 3600),)
 EMAILS_PER_ACCOUNT = (Rule(3, 3600),)
+# Candidate space (phase 7): uploads 20/min per account (design §6), plus a daily ceiling.
+CV_UPLOADS_PER_ACCOUNT = (Rule(20, 60), Rule(100, 86400))
+JOB_ANALYSES_PER_ACCOUNT = (Rule(30, 60), Rule(300, 86400))
 
 limiter = RateLimiter()

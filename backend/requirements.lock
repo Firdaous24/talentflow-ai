@@ -66,3 +66,7 @@ psycopg==3.3.9
 psycopg-binary==3.3.9
 pycparser==3.12
 SQLAlchemy==2.1.9
+
+# Phase 7 candidate space (CV encryption), resolved in the same Linux Python 3.11
+# image with every pre-existing locked version constrained and unchanged (2026-11-27).
+cryptography==50.0.2
