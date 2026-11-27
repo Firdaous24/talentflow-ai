@@ -11,6 +11,7 @@ from fastapi.responses import JSONResponse
 
 from app.agents.checkpoints import WorkflowManager
 from app.agents.middleware import AgentBoundaryMiddleware
+from app.api.local_boundary import LocalBoundaryMiddleware
 from app.api.routes.agents import router as agents_router
 from app.api.routes.candidates import router as candidates_router
 from app.api.routes.health import router as health_router
@@ -44,7 +45,9 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+# Last added runs first: CORS -> agents boundary -> /api/v1 local boundary -> upload limit.
 app.add_middleware(UploadLimitMiddleware)
+app.add_middleware(LocalBoundaryMiddleware)
 app.add_middleware(AgentBoundaryMiddleware)
 
 app.add_middleware(

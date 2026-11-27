@@ -1,13 +1,12 @@
 """Local-only workflow boundary and byte limit, applied before JSON parsing."""
 
-from urllib.parse import urlsplit
-
 from fastapi.responses import JSONResponse
 
 from app.agents.checkpoints import MAX_BODY_BYTES
 
-# Runtime allow-list. Tests use a "localhost" base URL instead of an extra host.
-LOCAL_HOSTS = frozenset({"localhost", "127.0.0.1", "::1", "host.docker.internal"})
+# Runtime allow-list (shared with every /api/v1 route). Tests use a "localhost"
+# base URL instead of an extra host.
+from app.api.local_boundary import LOCAL_HOSTS, is_local_request
 
 
 class AgentBoundaryMiddleware:
@@ -31,14 +30,7 @@ class AgentBoundaryMiddleware:
             response = JSONResponse(status_code=status, content={"detail": {"code": code, "message": message}}, headers={"Cache-Control": "no-store"})
             await response(scope, receive, safe_send)
 
-        try:
-            host = urlsplit("//" + headers.get(b"host", b"").decode("ascii")).hostname
-            origin = headers.get(b"origin")
-            parsed = urlsplit(origin.decode("ascii")) if origin else None
-            if host not in self.allowed_hosts or parsed and (parsed.hostname not in self.allowed_hosts or parsed.scheme not in {"http", "https"} or parsed.username or parsed.password or parsed.path or parsed.query or parsed.fragment):
-                await reject(403, "local_workflow_only", "Agent workflows are restricted to local development hosts and origins.")
-                return
-        except (UnicodeError, ValueError):
+        if not is_local_request(headers, self.allowed_hosts):
             await reject(403, "local_workflow_only", "Agent workflows are restricted to local development hosts and origins.")
             return
         if scope["method"] != "POST":
