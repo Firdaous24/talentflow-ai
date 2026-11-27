@@ -1,9 +1,24 @@
 # Changelog
 
 Detailed delivery history and the validation recorded at each milestone. The [README](../README.md) describes the current state.
-Milestone tags: `v0.5.0` (phases 1–5), `v0.6.0` (tooling, CI and hardening), `v0.7.0` (UI redesign) and `v0.8.0` (accounts and roles).
+Milestone tags: `v0.5.0` (phases 1–5), `v0.6.0` (tooling, CI and hardening), `v0.7.0` (UI redesign), `v0.8.0` (accounts and roles) and `v0.9.0` (candidate space).
 
-## Candidate space — v0.9.0 (phase 7, branch `feat/v1-phase7`, not merged)
+## Recruiter space — v0.10.0 (phase 8, branch `feat/v1-phase8`, not merged)
+
+Third phase of the v1 platform. Details: [recruiter_space_phase8.md](recruiter_space_phase8.md).
+
+- **Offers:** organization offers with criteria review and confirmation; an offer opens only on confirmed criteria and becomes public only when open. Changing criteria closes it and queues every match for recomputation.
+- **Bulk import:** a batch exists only with the recruiter's attestation that candidates were informed (timestamped, audited; 422 without it). Up to 200 PDFs, one per request; each waits encrypted in a PostgreSQL queue that the worker consumes with `FOR UPDATE SKIP LOCKED`, then is erased. Duplicates are detected with a per-organization HMAC. Imported profiles are deleted automatically 90 days after the import.
+- **Review queue:** imported profiles show qualifications only and enter the ranking only once confirmed.
+- **Anonymous ranking:** strict lexicographic order (required documented ↓, preferred documented ↓, to interpret ↑), ties grouped in arrival order labelled as not meaningful, « 5/6 requis · 2/3 souhaités · 1 à interpréter » with each number opening its side-by-side evidence, a permanent notice below the list, no score, percentage, gauge or rank number, and no automatic action. Comparisons are stored encrypted; only the counts are in clear.
+- **Reveal:** voluntary, per profile, with a reason from a closed list and a note; the audit keeps the reason only.
+- **Claim links:** the recruiter shares a single-purpose link (no e-mail is sent); its holder deletes the imported profile without an account, or claims it into a candidate account.
+- **Candidates:** applications to public offers require a confirmed CV and the `recruiter_visibility` consent; withdrawing the consent hides the candidate at once. The export includes applications.
+- **Isolation:** every recruiter resource is checked through the other organization, the caller's own organization and an unknown identifier (404). Migration `0003` is reversible.
+
+Actual validation: **955 backend tests** (849 existing + 106 for the recruiter space, including property tests on 700 generated rankings and a batch of 200 PDFs), **115 frontend tests**, ruff, ESLint, strict TypeScript, migrations `upgrade`/`downgrade`/`upgrade` + `alembic check`, and **thirteen real-API Chromium workflows** (the twelve existing ones plus `recruiter-smoke.mjs`) against the rebuilt Compose stack.
+
+## Candidate space — v0.9.0 (phase 7, merged and tagged)
 
 Second phase of the v1 platform. Details: [candidate_space_phase7.md](candidate_space_phase7.md).
 

@@ -606,6 +606,8 @@ Chaque phase est livrable et testable seule. Elle se termine par un tag, une CI 
 
 ### Phase 8 — Espace recruteur : offres, import, classement (v0.10.0)
 
+*Livrée sur `feat/v1-phase8` ; écarts assumés (invitations de membres reportées, visibilité des inscrits limitée au consentement, un fichier par requête) : [recruiter_space_phase8.md](recruiter_space_phase8.md).*
+
 - **Périmètre** :
   - organisations et membres ;
   - offres persistées avec confirmation des critères ;

@@ -2,11 +2,13 @@
 
 Assistant de recrutement local-first fondé sur les preuves documentaires, la revue humaine et la traçabilité.
 React 19 / TypeScript / Vite → FastAPI / Pydantic → services déterministes (PyMuPDF, analyse d'offre FR/EN,
-comparaison par preuves) + orchestration LangGraph locale avec interrupt/resume (Phase 5). Dernier jalon : `v0.8.0` (comptes et rôles, PostgreSQL obligatoire).
-Plateforme v1 en cours ([docs/V1_DESIGN.md](docs/V1_DESIGN.md), décisions §11) : la phase 6 (`v0.8.0`, fusionnée) rend
+comparaison par preuves) + orchestration LangGraph locale avec interrupt/resume (Phase 5). Dernier jalon : `v0.9.0` (espace candidat, CV chiffrés).
+Plateforme v1 en cours ([docs/V1_DESIGN.md](docs/V1_DESIGN.md), décisions §11) : la phase 6 (`v0.8.0`) rend
 **PostgreSQL obligatoire** (SQLAlchemy 2 + Alembic) et ajoute les comptes à rôle sous `/api/v2` ([docs/accounts_phase6.md](docs/accounts_phase6.md)) ;
-la phase 7 (`v0.9.0`, branche `feat/v1-phase7`) ajoute l'espace candidat : CV versionnés **chiffrés**, offres, couverture et écarts
-([docs/candidate_space_phase7.md](docs/candidate_space_phase7.md)).
+la phase 7 (`v0.9.0`) ajoute l'espace candidat : CV versionnés **chiffrés**, offres, couverture et écarts
+([docs/candidate_space_phase7.md](docs/candidate_space_phase7.md)) ; la phase 8 (`v0.10.0`, branche `feat/v1-phase8`) ajoute l'espace
+recruteur : import en masse attesté, file Postgres traitée par le worker, **classement anonyme lexicographique**, levée d'anonymat
+motivée ([docs/recruiter_space_phase8.md](docs/recruiter_space_phase8.md)).
 `/api/v1` reste la démo publique, sans compte.
 
 ## Commandes validées sous Windows (Git Bash)
@@ -16,7 +18,7 @@ préfixer avec `export PATH="/c/Program Files/nodejs:$PATH" &&`. Enchaîner les 
 
 ### Backend (Python 3.11, venv `backend/.venv`)
 - Tests : `cd backend && PYTHONDONTWRITEBYTECODE=1 .venv/Scripts/python.exe -m pytest -p no:cacheprovider -q`
-  (référence phase 7 : **849 passés** avec `TEST_DATABASE_URL` ; sans elle, 712 passent et les 137 tests sur base sont ignorés).
+  (référence phase 8 : **955 passés** avec `TEST_DATABASE_URL` ; sans elle, 716 passent et les 239 tests sur base sont ignorés).
   `TEST_DATABASE_URL` doit viser une base **jetable** (les fixtures font `downgrade base` puis `TRUNCATE`) : jamais la base Compose.
   Exemple : `docker run -d --rm --name tf-test-pg -p 127.0.0.1:55432:5432 -e POSTGRES_DB=talentflow_test -e POSTGRES_USER=talentflow_test -e POSTGRES_PASSWORD=test-only-local postgres:17.11-bookworm`
 - Migrations : `.venv/Scripts/python.exe -m alembic upgrade head` (URL via `DATABASE_URL` ou `POSTGRES_*`) ; toute migration est réversible
@@ -29,7 +31,7 @@ préfixer avec `export PATH="/c/Program Files/nodejs:$PATH" &&`. Enchaîner les 
 
 ### Frontend (`frontend/`)
 - Installation : `npm ci` (le `node_modules` doit être installé avec le Node Windows, pas dans Docker)
-- Tests : `npx vitest run` (référence : **109 passés**, 12 fichiers). Node local = **22 LTS** (winget `OpenJS.NodeJS.22`), comme l'image Docker.
+- Tests : `npx vitest run` (référence : **115 passés**, 13 fichiers). Node local = **22 LTS** (winget `OpenJS.NodeJS.22`), comme l'image Docker.
   **Lancer depuis un chemin en `C:` majuscule** (`cd "C:/Users/MSI/Desktop/talentflow-ai/frontend"`) : si le dossier courant s'écrit `c:`
   en minuscule (terminal VS Code), vitest charge deux instances et échoue au chargement (« failed to find the current suite »),
   quelle que soit la version de Node. En cas de doute, l'image Docker fait référence : `docker build --target test -t talentflow-ai-frontend-test:local frontend && docker run --rm talentflow-ai-frontend-test:local npx vitest run`.
@@ -46,9 +48,11 @@ préfixer avec `export PATH="/c/Program Files/nodejs:$PATH" &&`. Enchaîner les 
   Les ports 127.0.0.1:8000, :5173 et :8025 doivent être libres. Le volume `postgres_data` ne doit jamais être supprimé.
 - Tests backend conteneur : `docker compose -f docker-compose.yml -f compose.test.yaml run --rm backend` (base `test-db` en tmpfs, distincte de `postgres_data`)
 - Tests frontend conteneur : `docker build --target test -t talentflow-ai-frontend-test:local frontend && docker run --rm talentflow-ai-frontend-test:local npm test`
-- E2E Chromium (12 scripts, dont `demo-smoke.mjs`, `auth-smoke.mjs` et `candidate-smoke.mjs`) : voir `docs/agent_workflow_testing.md` (certains scripts exigent
+- E2E Chromium (13 scripts, dont `demo-smoke.mjs`, `auth-smoke.mjs`, `candidate-smoke.mjs` et `recruiter-smoke.mjs`, qui attend le worker) : voir `docs/agent_workflow_testing.md` (certains scripts exigent
   un montage `/fixtures` ; `comparison-workflow-smoke.mjs` avec `-e NATIVE_MOUSE=1`). `auth-smoke.mjs` lit les e-mails dans Mailpit.
-  Captures : `screenshots-phase6.mjs` (écrans publics) et `screenshots-phase7.mjs` (espace candidat) avec `-v <dossier>:/out`.
+  Captures : `screenshots-phase6.mjs` (écrans publics), `screenshots-phase7.mjs` (espace candidat) et `screenshots-phase8.mjs`
+  (espace recruteur) avec `-v <dossier>:/out`. Les E2E et captures suppriment les comptes fictifs qu'ils créent.
+  L'inscription est limitée à 10 par heure et par client (en mémoire) : redémarrer `backend` avant d'enchaîner beaucoup de scripts.
   Sous Git Bash, préfixer `MSYS_NO_PATHCONV=1` dès qu'un argument est un chemin Linux (`-v …:/out`, `--build-arg LOCK_FILE=/dev/null`).
 - **Interdit sans accord explicite** : `docker compose down --volumes`, tout `prune`, toute suppression de volume.
 
@@ -94,9 +98,14 @@ préfixer avec `export PATH="/c/Program Files/nodejs:$PATH" &&`. Enchaîner les 
 - Git : Conventional Commits, une branche par chantier, tag par jalon (`vX.Y.Z`), pas de push sans accord.
 
 ## Garde-fous métier (non négociables)
-- Aucun score, pourcentage, classement ou tri de candidats. Statuts autorisés uniquement :
+- Aucun score, pourcentage, jauge ni numéro de rang. Statuts autorisés uniquement :
   `documented`, `not_documented`, `needs_review`. « Non documenté » ne signifie pas « incompétent ».
-- Aucune décision ni recommandation automatique d'embauche.
+- Seul classement permis (V1_DESIGN §3.3, `app/services/ranking.py`) : tri **lexicographique strict** (requis documentés ↓,
+  souhaités documentés ↓, « à interpréter » ↑), ex æquo groupés en ordre d'arrivée, **anonyme par défaut**, mention permanente
+  sous la liste. La levée d'anonymat est volontaire, motivée et journalisée (jamais l'identité ni la note dans l'audit).
+- Un candidat inscrit n'est visible d'un recruteur que tant que son consentement `recruiter_visibility` est actif :
+  la règle vit dans `storage/matching.visible_profile()` et ne se recopie jamais.
+- Aucune décision ni recommandation automatique d'embauche ; aucune action liée au rang (rejet, acceptation, e-mail).
 - Revue humaine obligatoire : comparaison et workflow bloqués tant que le profil CV **et** les critères de
   l'offre ne sont pas confirmés ; toute modification invalide les résultats et accusés précédents.
 - Comparaison sur projection « qualification seule » : jamais identité, contact, employeur, lieu, dates,
