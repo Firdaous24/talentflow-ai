@@ -20,6 +20,7 @@ import {
   ChevronRight,
   CircleHelp,
   Layers3,
+  UserRound,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { ConnectionBadge } from "./components/ConnectionBadge";
@@ -36,6 +37,7 @@ import { Candidates, CandidateDetail } from "./pages/Candidates";
 import { Dashboard } from "./pages/Dashboard";
 import { NotFound } from "./pages/NotFound";
 import { Settings } from "./pages/Settings";
+import { PublicApp, isPublicPath } from "./public/PublicApp";
 
 const navigation: {
   path: string;
@@ -125,6 +127,11 @@ function Layout() {
               Candidate profiles live in this session. Refresh to clear them.
             </p>
           </div>
+          <Link to="/account" className="help-link" onClick={() => setMobileOpen(false)}>
+            <UserRound size={17} aria-hidden="true" />
+            My account
+            <ArrowUpRight size={15} aria-hidden="true" />
+          </Link>
           <Link to="/settings" className="help-link">
             <CircleHelp size={17} />
             About this workspace
@@ -133,7 +140,7 @@ function Layout() {
           <div className="sidebar-footer">
             <span className="avatar small">TF</span>
             <div>
-              Portfolio workspace<small>TalentFlow AI · v0.7.0</small>
+              Portfolio workspace<small>TalentFlow AI · v0.8.0</small>
             </div>
           </div>
         </div>
@@ -186,12 +193,15 @@ function Layout() {
   );
 }
 export function App() {
+  const { pathname } = useLocation();
+  // Public and account pages have their own shell; the demo workbench keeps its
+  // session providers mounted above both so navigating away loses nothing.
   return (
     <SessionProvider>
       <JobSessionProvider>
         <AgentSessionProvider>
           <ToastProvider>
-            <Layout />
+            {isPublicPath(pathname) ? <PublicApp /> : <Layout />}
           </ToastProvider>
         </AgentSessionProvider>
       </JobSessionProvider>
