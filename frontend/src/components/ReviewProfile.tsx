@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import type { FormEvent } from "react";
 import type {
   CandidateProfile,
@@ -111,7 +112,7 @@ export function ReviewProfile({ entry }: { entry: SessionCandidate }) {
     setEditing(false);
     setMessage(
       confirm
-        ? "Profile confirmed for this session. Future matching is not implemented."
+        ? "Profile confirmed for this session. Open Job Analysis to select this profile and review the comparison requirements."
         : "Corrections saved in this session. Review confirmation is still required.",
     );
   }
@@ -233,6 +234,11 @@ export function ReviewProfile({ entry }: { entry: SessionCandidate }) {
           {message}
         </p>
       )}
+      {current.confirmed && (
+        <Link to="/matching" className="button secondary">
+          Continue to Job Analysis
+        </Link>
+      )}
       {editing && (
         <form
           className="card review-editor"
@@ -243,7 +249,8 @@ export function ReviewProfile({ entry }: { entry: SessionCandidate }) {
           <p>
             Extracted, missing and user-corrected values are labeled below.
             Dictionary mentions do not verify proficiency. Confirmation records
-            your review only; it does not run matching.
+            your review for this session. Open Job Analysis to compare
+            qualification evidence.
           </p>
           <div className="review-fields">
             {["full_name", "email", "phone", "linkedin_url", "github_url"].map(

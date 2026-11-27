@@ -10,7 +10,7 @@ ALIASES = {
     'education': ['education', 'academic background', 'formation', 'formations', 'études', 'parcours académique'],
     'experience': ['experience', 'experiences', 'work experience', 'professional experience', 'expériences professionnelles', 'expérience professionnelle', 'parcours professionnel'],
     'skills': ['skills', 'technical skills', 'technologies', 'compétences techniques', 'compétences informatiques', 'compétences'],
-    'projects': ['projects', 'personal projects', 'selected projects', 'projets', 'projets sélectionnés', 'réalisations'],
+    'projects': ['projects', 'personal projects', 'selected projects', 'academic projects', 'university projects', 'selected academic projects', 'projets', 'projets sélectionnés', 'projets académiques', 'projets universitaires', 'projets scolaires', 'projets personnels', 'réalisations'],
     'languages': ['languages', 'spoken languages', 'langues'],
     'certifications': ['certifications', 'certificates', 'certificats'],
     'other': ['summary', 'profile', 'professional summary', 'profil', 'à propos', 'résumé professionnel', 'interests', 'references', "centres d’intérêt"],

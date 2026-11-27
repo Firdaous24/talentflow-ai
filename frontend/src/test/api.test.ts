@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { api, ApiError, MAX_PDF_BYTES, validatePdf } from "../api";
+import { api, ApiError, MAX_PDF_BYTES, request, validatePdf } from "../api";
 import { pdfFile, syntheticProfile } from "./fixtures";
 
 afterEach(() => vi.unstubAllGlobals());
@@ -80,6 +80,87 @@ describe("API client", () => {
       ),
     );
     await expect(api.parse(pdfFile())).rejects.toThrow("Field required");
+  });
+  it("preserves comparison validation paths without exposing rejected profile values", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(
+        new Response(
+          JSON.stringify({
+            detail: [
+              {
+                loc: ["body", "candidate", "experience", 0, "technologies"],
+                msg: "List should have at most 100 items after validation",
+                input: ["private fictional value"],
+              },
+              {
+                loc: [
+                  "body",
+                  "review",
+                  "candidate_snapshot",
+                  "experience",
+                  0,
+                  "technologies",
+                ],
+                msg: "List should have at most 100 items after validation",
+              },
+            ],
+          }),
+          { status: 422 },
+        ),
+      ),
+    );
+    const error = await request("/api/v1/jobs/compare", {
+      method: "POST",
+    }).catch((caught: unknown) => caught);
+    expect(error).toBeInstanceOf(ApiError);
+    expect(error).toMatchObject({
+      status: 422,
+      validationIssues: [
+        {
+          path: ["candidate", "experience", 0, "technologies"],
+          message: "List should have at most 100 items after validation",
+        },
+        {
+          path: [
+            "review",
+            "candidate_snapshot",
+            "experience",
+            0,
+            "technologies",
+          ],
+          message: "List should have at most 100 items after validation",
+        },
+      ],
+    });
+    expect((error as ApiError).message).toContain(
+      "candidate.experience.0.technologies",
+    );
+    expect(JSON.stringify(error)).not.toContain("private fictional value");
+  });
+  it("handles malformed validation entries with a safe actionable error", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi
+        .fn()
+        .mockResolvedValue(
+          new Response(
+            JSON.stringify({
+              detail: [
+                null,
+                {
+                  loc: ["body", "requirements", 0, "text"],
+                  msg: "String should have at least 1 character",
+                },
+              ],
+            }),
+            { status: 422 },
+          ),
+        ),
+    );
+    await expect(request("/api/v1/jobs/compare")).rejects.toThrow(
+      "requirements.0.text: String should have at least 1 character",
+    );
   });
   it("reports network failures and non-JSON HTTP errors", async () => {
     const fetchMock = vi

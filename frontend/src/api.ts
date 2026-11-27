@@ -9,15 +9,48 @@ export const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? "").replace(
   "",
 );
 export const MAX_PDF_BYTES = 5 * 1024 * 1024;
+export interface ApiValidationIssue {
+  path: (string | number)[];
+  message: string;
+}
 export class ApiError extends Error {
   constructor(
     message: string,
     public readonly status?: number,
     public readonly code?: string,
+    public readonly validationIssues: ApiValidationIssue[] = [],
+    public readonly detail?: unknown,
   ) {
     super(message);
     this.name = "ApiError";
   }
+}
+function validationIssues(body: unknown): ApiValidationIssue[] {
+  if (
+    !body ||
+    typeof body !== "object" ||
+    !("detail" in body) ||
+    !Array.isArray(body.detail)
+  )
+    return [];
+  return body.detail.map((item: unknown) => {
+    if (!item || typeof item !== "object")
+      return { path: [], message: "Invalid request" };
+    const path =
+      "loc" in item && Array.isArray(item.loc)
+        ? item.loc.filter(
+            (part): part is string | number =>
+              typeof part === "string" || typeof part === "number",
+          )
+        : [];
+    return {
+      path: path[0] === "body" ? path.slice(1) : path,
+      message:
+        "msg" in item && typeof item.msg === "string"
+          ? item.msg
+          : "Invalid request",
+    };
+  });
 }
 function errorDetail(body: unknown): string | undefined {
   if (!body || typeof body !== "object" || !("detail" in body))
@@ -25,8 +58,12 @@ function errorDetail(body: unknown): string | undefined {
   const detail = body.detail;
   if (typeof detail === "string") return detail;
   if (Array.isArray(detail))
-    return detail
-      .map((item: { msg?: string }) => item.msg ?? "Invalid request")
+    return validationIssues(body)
+      .map((issue) =>
+        issue.path.length
+          ? `${issue.path.join(".")}: ${issue.message}`
+          : issue.message,
+      )
       .join("; ");
   if (
     detail &&
@@ -36,7 +73,10 @@ function errorDetail(body: unknown): string | undefined {
   )
     return detail.message;
 }
-async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
+export async function request<T>(
+  path: string,
+  init: RequestInit = {},
+): Promise<T> {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 120_000);
   try {
@@ -61,6 +101,14 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
           `The API returned an error (${response.status}). Please try again.`,
         response.status,
         code,
+        validationIssues(body),
+        // Preserve only the purpose-limited agent failure trace. FastAPI validation
+        // entries can contain rejected private inputs and must never be retained.
+        body && typeof body === "object" && "detail" in body &&
+          body.detail && typeof body.detail === "object" &&
+          !Array.isArray(body.detail) && "workflow" in body.detail
+          ? { workflow: body.detail.workflow }
+          : undefined,
       );
     }
     if (body === null)

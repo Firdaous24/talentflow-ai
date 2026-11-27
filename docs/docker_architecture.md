@@ -28,10 +28,11 @@ For a deliberate dependency update, the `LOCK_FILE=/dev/null` build argument dis
 
 ## Services
 
-The base `docker-compose.yml` contains exactly two services:
+The base `docker-compose.yml` contains three services:
 
 - `backend`: publishes only `127.0.0.1:8000:8000`, runs without privileged mode or Linux capabilities, enables `no-new-privileges`, and uses an init process. A standard-library HTTP healthcheck verifies the health endpoint status and body. Its logs rotate at 10 MiB with three retained files.
 - `db`: uses an official PostgreSQL 17 Bookworm image, receives database name/user/password through Compose interpolation, and persists data in the project-scoped `postgres_data` named volume mounted at `/var/lib/postgresql/data`. It has no published host port. Its healthcheck uses `pg_isready` with container environment variables, escaped with `$$` to defer interpolation to the container shell.
+- `frontend`: publishes only `127.0.0.1:5173:8080`, serves the React bundle through non-root Nginx, proxies `/api/` to the backend and starts after backend health. It has its own HTTP healthcheck.
 
 The services share the project-scoped default Compose network. PostgreSQL can be addressed as `db:5432` inside that network. The backend currently has no database connection settings and no `depends_on`: existing PDF and health endpoints work independently of database readiness. `unless-stopped` restarts long-running local services after unexpected exits while respecting a manual stop.
 
@@ -52,6 +53,8 @@ PostgreSQL initializes its database and user only when the data directory is emp
 `compose.test.yaml` overrides the backend with the dedicated test target, its own image tag, pytest command, and no restart or healthcheck. Use a one-off `docker compose run --rm --no-deps backend` with that override. One-off runs do not publish service ports unless explicitly requested and do not start PostgreSQL. Tests need no host Python, paid API, internet access, or running API after the image has been built. Source and fixtures are copied into the test image; rebuild it after code or test changes.
 
 ## Future integration
+
+Phase 4 adds job analysis/comparison routes to the existing backend and the `/matching` React page through the same Nginx API proxy. No service, environment variable, database table or volume changes are required. The test stage now also copies `evaluate_jobs.py`; the optional browser QA image includes `job-smoke.mjs`. The normal startup command remains `docker compose up -d --build`. Phase 4 validation passed all three service healthchecks and preserved the original PostgreSQL container/volume. See [job analysis architecture](job_analysis_architecture.md) for executed checks and evaluation commands.
 
 Future LangGraph orchestration can execute within the backend or a separately justified worker service, with dependency and resource changes made explicitly. PostgreSQL persistence will require application configuration, a driver, migrations and readiness/retry handling when it becomes an actual dependency. None is added here.
 

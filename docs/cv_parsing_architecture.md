@@ -15,6 +15,8 @@ flowchart LR
   F --> I[Validated candidate + partial metadata]
   H -->|Accepted| I
   I --> J[Frontend review / corrections / confirmation]
+  J --> K[Qualification-only projection]
+  K --> L[Reviewed job requirement evidence checklist]
 ```
 
 ## Responsibilities
@@ -31,6 +33,9 @@ flowchart LR
 | `app/services/records.py` | Entry anchors, complete titles, employer/location separation, wrapped/colon projects and entry-bound source references |
 | `app/services/llm.py` | Provider protocol, optional compatible adapter, strict outputs, evidence rejection and fallback |
 | `app/models/candidate.py` | Existing candidate shape, validated fields and additive evidence/provider metadata |
+| `app/models/job.py` | Source-bound job and comparison contracts; candidate qualification projection |
+| `app/services/jobs.py` | Deterministic FR/EN requirements and conservative evidence comparison |
+| `app/api/routes/jobs.py` | Analysis, comparison validation and public capabilities |
 
 ## Contracts and privacy
 
@@ -39,6 +44,8 @@ flowchart LR
 Normal requests make no external call. Optional `use_llm=true` requires `external_consent=true`; absent consent is rejected. A model call additionally requires valid backend runtime configuration. `GET /api/v1/candidates/extraction-config` exposes public availability/destination/model with connectivity explicitly unchecked, never credentials. Model HTTP/errors/invalid output retain local results with a fallback warning. Source occurrence cannot verify semantic correctness, so review is mandatory.
 
 Candidate JSON remains flat at the root. Additive evidence includes dotted field path, quote, source ID, page, optional bounding box, method and uncertainty. It returns relevant source quotations rather than the entire extracted document. No candidate text is logged or persisted; frontend originals/corrections/confirmation remain in React memory. Only explicitly consented optional requests transmit extracted text to the configured provider. The original PDF is not uploaded to a model service.
+
+Phase 4 consumes a confirmed reviewed profile through a separate qualification-only projection, retaining degree/field, role/description/technologies, skills, project description/technologies, certification names and job-related language statements. Identity/contact fields, employers, institutions, locations, dates and links are excluded from comparison requests. Exact candidate field references identify reviewed profile statements; they do not certify the original CV or the truth of a correction. Source job analysis and review snapshots are validated on each comparison. Confirmation is an unverified client assertion, without authentication or durable approval records. See [job analysis architecture](job_analysis_architecture.md) for the workflow, contracts and privacy limits.
 
 ## Preserved ingestion policy
 
