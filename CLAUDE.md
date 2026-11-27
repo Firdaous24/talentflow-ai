@@ -27,9 +27,9 @@ préfixer avec `export PATH="/c/Program Files/nodejs:$PATH" &&`. Enchaîner les 
 
 ### Frontend (`frontend/`)
 - Installation : `npm ci` (le `node_modules` doit être installé avec le Node Windows, pas dans Docker)
-- Tests : `npx vitest run` (référence : **103 passés**, 11 fichiers). À lancer **seul** (pas enchaîné après le lint) :
-  sous Windows + Node 26, vitest échoue au chargement (« failed to find the current suite »), parfois de façon persistante.
-  Dans ce cas, utiliser l'image Docker de référence (Node 22) : `docker build --target test -t talentflow-ai-frontend-test:local frontend && docker run --rm talentflow-ai-frontend-test:local npx vitest run`.
+- Tests : `npx vitest run` (référence : **103 passés**, 11 fichiers). Node local = **22 LTS** (winget `OpenJS.NodeJS.22`), comme l'image Docker.
+  Ne pas revenir à Node 26 : vitest y échoue au chargement (« failed to find the current suite »). En cas de doute, l'image Docker
+  fait référence : `docker build --target test -t talentflow-ai-frontend-test:local frontend && docker run --rm talentflow-ai-frontend-test:local npx vitest run`.
 - Types : `npx tsc --noEmit` (0 erreur attendue, mode strict)
 - Build : `npm run build`
 - Lint : `npm run lint` (ESLint flat config, typescript-eslint, règles react-hooks classiques ; 0 erreur attendue).
@@ -77,7 +77,7 @@ préfixer avec `export PATH="/c/Program Files/nodejs:$PATH" &&`. Enchaîner les 
   octets bruts (`test_comparison_accuracy_corpus_is_frozen_and_independent`) : une copie en CRLF fait échouer ce
   test sans que le contenu commité soit en cause. Vérifier avec `git ls-files --eol`.
 - Les workflows LangGraph vivent en mémoire du processus : un seul worker uvicorn, perte au redémarrage.
-- Node local (v26) ≠ image Docker (`node:22-alpine`) ; en cas d'écart de comportement, la référence est Docker.
+- Node local (22 LTS, Windows) et image Docker (`node:22-alpine`) ont la même version majeure ; en cas d'écart de comportement, la référence est Docker.
 
 ## Conventions
 - Routes sous `/api/v1` ; schémas Pydantic hérités de `Schema` (`extra="forbid"`) ;
