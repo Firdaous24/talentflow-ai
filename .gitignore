@@ -44,3 +44,7 @@ coverage/
 .DS_Store
 Thumbs.db
 *.log
+
+# Candidate documents must never be committed (tests generate fictional PDFs at runtime).
+*.pdf
+*.docx
