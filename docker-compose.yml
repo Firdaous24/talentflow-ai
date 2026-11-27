@@ -99,7 +99,8 @@ services:
         condition: service_healthy
     restart: "no"
 
-  # Retention housekeeping (sessions, tokens, audit, orphan files); the import queue arrives in phase 8.
+  # Work queue (bulk-import parsing and match computation, polled every 2 s) and the
+  # hourly retention pass (imported CVs after 90 days, sessions, tokens, audit, orphan files).
   worker:
     <<: *hardening
     image: talentflow-ai-backend:local
