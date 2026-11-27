@@ -3,7 +3,7 @@
 Assistant de recrutement local-first fondé sur les preuves documentaires, la revue humaine et la traçabilité.
 React 19 / TypeScript / Vite → FastAPI / Pydantic → services déterministes (PyMuPDF, analyse d'offre FR/EN,
 comparaison par preuves) + orchestration LangGraph locale avec interrupt/resume (Phase 5, tag `v0.5.0`).
-PostgreSQL est provisionné dans Compose mais **pas encore utilisé** par l'application.
+PostgreSQL est disponible en profil Compose optionnel `db` mais **pas encore utilisé** par l'application.
 
 ## Commandes validées sous Windows (Git Bash)
 
@@ -26,8 +26,10 @@ préfixer avec `export PATH="/c/Program Files/nodejs:$PATH" &&`. Enchaîner les 
 
 ### Docker
 - Valider : `docker compose config --quiet` (ne jamais afficher la config complète : mots de passe résolus)
-- Démarrer : `docker compose up -d --build --wait`, puis `curl http://127.0.0.1:8000/api/v1/health`
-  et http://localhost:5173. Les ports 127.0.0.1:8000 et :5173 doivent être libres sur l'hôte.
+- Démarrer : `docker compose up -d --build --wait` (frontend + backend seulement, `.env` non requis), puis
+  `curl http://127.0.0.1:8000/api/v1/health` et http://localhost:5173. Les ports 127.0.0.1:8000 et :5173 doivent être libres.
+- Postgres (optionnel) : `docker compose --profile db up -d --wait` (valeurs `POSTGRES_*` dans `.env`).
+  Le volume `postgres_data` ne doit jamais être supprimé.
 - Tests backend conteneur : `docker compose -f docker-compose.yml -f compose.test.yaml run --rm backend`
 - Tests frontend conteneur : `docker build --target test -t talentflow-ai-frontend-test:local frontend && docker run --rm talentflow-ai-frontend-test:local npm test`
 - E2E Chromium (9 scripts) : voir `docs/agent_workflow_testing.md` (certains scripts exigent un montage `/fixtures`).

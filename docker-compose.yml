@@ -56,12 +56,17 @@ services:
         max-size: "10m"
         max-file: "3"
 
+  # Optional: the application does not use PostgreSQL yet. Start it with
+  # `docker compose --profile db up -d`. Its data volume is always preserved.
   db:
+    profiles: ["db"]
     image: postgres:17.11-bookworm@sha256:3645570cccdfa447589da9f57dd740faa29b30938e861289a5574b6ca6b03826
+    # Values come from .env (see .env.example). Without POSTGRES_PASSWORD the
+    # official image refuses to initialize, so the optional profile fails safely.
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:?Copy .env.example to .env and set POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER:?Copy .env.example to .env and set POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Copy .env.example to .env and set POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-}
+      POSTGRES_USER: ${POSTGRES_USER:-}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped

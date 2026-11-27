@@ -28,10 +28,10 @@ For a deliberate dependency update, the `LOCK_FILE=/dev/null` build argument dis
 
 ## Services
 
-The base `docker-compose.yml` contains three services:
+The base `docker-compose.yml` defines three services; `docker compose up` starts `backend` and `frontend`, while `db` only starts with its profile:
 
 - `backend`: publishes only `127.0.0.1:8000:8000`, runs without privileged mode or Linux capabilities, enables `no-new-privileges`, and uses an init process. A standard-library HTTP healthcheck verifies the health endpoint status and body. Its logs rotate at 10 MiB with three retained files.
-- `db`: uses an official PostgreSQL 17 Bookworm image, receives database name/user/password through Compose interpolation, and persists data in the project-scoped `postgres_data` named volume mounted at `/var/lib/postgresql/data`. It has no published host port. Its healthcheck uses `pg_isready` with container environment variables, escaped with `$$` to defer interpolation to the container shell.
+- `db` (optional, Compose profile `db`; start with `docker compose --profile db up -d`): uses an official PostgreSQL 17 Bookworm image, receives database name/user/password through Compose interpolation, and persists data in the project-scoped `postgres_data` named volume mounted at `/var/lib/postgresql/data`. It has no published host port. Its healthcheck uses `pg_isready` with container environment variables, escaped with `$$` to defer interpolation to the container shell.
 - `frontend`: publishes only `127.0.0.1:5173:8080`, serves the React bundle through non-root Nginx, proxies `/api/` to the backend and starts after backend health. It has its own HTTP healthcheck.
 
 The services share the project-scoped default Compose network. PostgreSQL can be addressed as `db:5432` inside that network. The backend currently has no database connection settings and no `depends_on`: existing PDF and health endpoints work independently of database readiness. `unless-stopped` restarts long-running local services after unexpected exits while respecting a manual stop.

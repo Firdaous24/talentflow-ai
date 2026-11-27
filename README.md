@@ -17,7 +17,7 @@ Implemented:
 - Pydantic v2 candidate schemas and deterministic extraction with explicit warnings.
 - Six fictional CV scenarios with PDFs generated in memory during tests.
 - Automated endpoint, PDF service, extraction, schema, upload-limit, and CORS tests.
-- Docker Compose workflow with a non-root backend, dedicated test image, and internal PostgreSQL service.
+- Docker Compose workflow with a non-root backend, dedicated test image, and an optional internal PostgreSQL service (`db` profile).
 - Responsive React interface with Dashboard, CV Parser, Candidates, and application information pages.
 - Layout-aware French/English section and entry extraction, expanded skill vocabulary and source evidence.
 - In-memory corrections/removal and explicit reviewed-profile confirmation.
@@ -50,7 +50,7 @@ Candidate and requirement confirmations are **unverified client workflow asserti
 | Tests | pytest, httpx, FastAPI TestClient | Implemented |
 | CV ingestion and schemas | PyMuPDF, python-multipart, Pydantic v2 | Implemented |
 | AI orchestration | LangGraph 1.2.15 | Deterministic local evidence workflow with human interrupt/resume |
-| Database | PostgreSQL | Local service implemented; application integration planned |
+| Database | PostgreSQL | Optional Compose profile `db`; application integration planned |
 | Frontend | React, TypeScript, Vite, Tailwind CSS, Lucide, React Router | Implemented |
 | Packaging | Docker, Docker Compose | Implemented |
 
@@ -124,7 +124,9 @@ docker compose up -d --build
 
 The example supplies safe, public local-development placeholders for `POSTGRES_DB`, `POSTGRES_USER`, and `POSTGRES_PASSWORD`. Replace the password before shared use. Keep `.env` out of Git; Compose passes database variables only to PostgreSQL; optional LLM variables go to the backend at runtime, never into image contents. Avoid sharing full `docker compose config` output because it contains resolved passwords; use `--quiet` for validation.
 
-Open **http://localhost:5173** for the application and **http://127.0.0.1:8000/docs** for Swagger. The one Compose command builds and starts the frontend, API, and PostgreSQL. Initial image downloads/builds may take several minutes. Both HTTP services are published only on loopback; PostgreSQL is available to containers as `db:5432` and has no public port. The API currently works independently of PostgreSQL. Existing database volumes are preserved.
+Open **http://localhost:5173** for the application and **http://127.0.0.1:8000/docs** for Swagger. The Compose command builds and starts the frontend and API only; `.env` is not required for them. Initial image downloads/builds may take several minutes. Both HTTP services are published only on loopback, and every `/api/v1` route rejects non-local `Host`/`Origin` headers.
+
+PostgreSQL is optional because the application does not use it yet. Start it explicitly with `docker compose --profile db up -d --wait` (it needs the `POSTGRES_*` values from `.env`; without a password the official image refuses to initialize). It is reachable from containers as `db:5432` and has no public port. The `postgres_data` volume is never removed by these commands. A database container started before the profile existed keeps running until you stop it with `docker compose --profile db stop db`.
 
 Daily operations:
 
@@ -164,7 +166,7 @@ docker compose -f docker-compose.yml -f compose.test.yaml build backend
 docker compose up -d --wait
 ```
 
-Database persistence and reset: PostgreSQL data is held in the project-scoped `postgres_data` volume, normally named `talentflow-ai_postgres_data`. Initialization variables apply only to an empty volume; changing `.env` does not alter existing database credentials. Inspect project volumes with `docker volume ls --filter label=com.docker.compose.project=talentflow-ai`. After an explicit decision to discard all local database data and any necessary backup, the destructive reset command is `docker compose down --volumes`, followed by `docker compose up -d --wait`. This command is documented only; automated work must obtain explicit approval before running it. Never use a global prune to reset this project.
+Database persistence and reset: PostgreSQL data is held in the project-scoped `postgres_data` volume, normally named `talentflow-ai_postgres_data`. Initialization variables apply only to an empty volume; changing `.env` does not alter existing database credentials. Inspect project volumes with `docker volume ls --filter label=com.docker.compose.project=talentflow-ai`. After an explicit decision to discard all local database data and any necessary backup, the destructive reset command is `docker compose down --volumes`, followed by `docker compose --profile db up -d --wait`. This command is documented only; automated work must obtain explicit approval before running it. Never use a global prune to reset this project.
 
 Troubleshooting: if Docker reports a daemon/named-pipe connection error, start Docker Desktop and verify Linux-container mode and daemon access. If ports 8000 or 5173 are occupied, stop the conflicting service or change its loopback host port. Use `docker compose ps` and service logs to diagnose unhealthy containers. Initial pulls/builds require internet access. Direct browser requests to the backend support CORS from `http://localhost:5173`; the default frontend uses its same-origin proxy.
 
