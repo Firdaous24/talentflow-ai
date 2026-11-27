@@ -102,7 +102,7 @@ export function Settings() {
           <dl className="info-list">
             <div>
               <dt>Version</dt>
-              <dd>0.8.0</dd>
+              <dd>0.9.0</dd>
             </div>
             <div>
               <dt>Extraction engine</dt>

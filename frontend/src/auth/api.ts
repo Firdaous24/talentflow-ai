@@ -13,7 +13,10 @@ export interface Organization extends OrganizationSummary { created_at: string; 
 export type ConsentPurpose = "processing" | "recruiter_visibility" | "model_assistance" | "marketing";
 export interface ConsentState { purpose: ConsentPurpose; granted: boolean; policy_version: string | null; granted_at: string | null }
 export interface Consents { current_policy_version: string; consents: ConsentState[]; history: { purpose: ConsentPurpose; policy_version: string; granted_at: string; withdrawn_at: string | null }[] }
-export interface CandidateOverview { cv_versions: number; recruiter_visibility: boolean; next_step: string }
+export type CVStatus = "to_review" | "reviewed" | "confirmed";
+export type NextStep = "upload_cv" | "review_cv" | "add_target" | "review_criteria" | "view_coverage";
+export interface CVVersionSummary { id: string; number: number; created_at: string; page_count: number; status: CVStatus; reviewed_at: string | null; confirmed_at: string | null; has_original: boolean; current: boolean }
+export interface CandidateOverview { cv_versions: number; current_version: CVVersionSummary | null; targets: number; confirmed_targets: number; recruiter_visibility: boolean; original_storage_available: boolean; next_step: NextStep }
 export interface RegisterInput { email: string; password: string; role: "candidate" | "recruiter"; locale: Locale; accept_terms: true; marketing: boolean }
 
 export class AuthApiError extends Error {
@@ -47,10 +50,12 @@ async function parse(response: Response): Promise<unknown> {
 
 async function send(method: string, path: string, body?: unknown): Promise<Response> {
   const headers: Record<string, string> = { Accept: "application/json" };
-  if (body !== undefined) headers["Content-Type"] = "application/json";
+  const form = body instanceof FormData;
+  // Multipart bodies let the browser set the boundary.
+  if (body !== undefined && !form) headers["Content-Type"] = "application/json";
   if (method !== "GET") headers["X-CSRF-Token"] = csrfToken ?? (await fetchCsrf());
   try {
-    return await fetch(`${API_BASE_URL}${path}`, { method, headers, credentials: "same-origin", body: body === undefined ? undefined : JSON.stringify(body) });
+    return await fetch(`${API_BASE_URL}${path}`, { method, headers, credentials: "same-origin", body: body === undefined ? undefined : form ? body : JSON.stringify(body) });
   } catch {
     throw new AuthApiError(0, "network", "Network error");
   }
@@ -72,7 +77,7 @@ function toError(response: Response, data: unknown): AuthApiError {
   return new AuthApiError(response.status, code, message, Number.isFinite(retry) && retry > 0 ? retry : undefined);
 }
 
-async function call<T>(method: string, path: string, body?: unknown): Promise<T> {
+export async function call<T>(method: string, path: string, body?: unknown): Promise<T> {
   let response = await send(method, path, body);
   let data = await parse(response);
   if (response.status === 403 && method !== "GET" && toError(response, data).code === "csrf_failed") {
