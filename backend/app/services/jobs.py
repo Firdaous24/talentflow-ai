@@ -1,16 +1,33 @@
 """Conservative bilingual requirements and an evidence checklist, without selection logic."""
 
 import re
-from typing import Callable, Protocol
+from collections.abc import Callable
+from typing import Protocol
 
 from app.models.job import (
-    CandidateEvidenceExcerpt, CandidateRequirementEvidence, JobAnalysisResponse, JobAnalyzeRequest,
-    JobComparisonRequest, JobComparisonResponse, JobDescription, JobRequirement,
-    JobSkill, RequirementComparison, RequirementEvidence, TechnicalEvidence,
+    CandidateEvidenceExcerpt,
+    CandidateRequirementEvidence,
+    JobAnalysisResponse,
+    JobAnalyzeRequest,
+    JobComparisonRequest,
+    JobComparisonResponse,
+    JobDescription,
+    JobRequirement,
+    JobSkill,
+    RequirementComparison,
+    RequirementEvidence,
+    TechnicalEvidence,
     TechnicalJobReference,
 )
+from app.services.job_formatting import (
+    APPLICATION,
+    CONTACT,
+    content_start,
+    meaningful_clause,
+    metadata_in,
+    section_heading,
+)
 from app.services.job_vocabulary import norm, normalized_label_words, skills_in
-from app.services.job_formatting import APPLICATION, CONTACT, content_start, meaningful_clause, metadata_in, section_heading
 
 
 class JobWorkflowError(ValueError):

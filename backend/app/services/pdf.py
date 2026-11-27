@@ -1,12 +1,13 @@
 """Bounded PDF ingestion without permanent storage or candidate logging."""
 
-from dataclasses import dataclass
 import re
-from threading import Lock
 import unicodedata
+from dataclasses import dataclass
+from threading import Lock
 
 import pymupdf
-from app.services.layout import LayoutLine, page_lines, reading_order, layout_text
+
+from app.services.layout import LayoutLine, layout_text, page_lines, reading_order
 
 MAX_UPLOAD_BYTES = 5 * 1024 * 1024
 MAX_PAGES = 10

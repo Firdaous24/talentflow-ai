@@ -10,10 +10,10 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-from pathlib import Path
 import re
 import subprocess
 import sys
+from pathlib import Path
 from typing import Any
 
 BACKEND_ROOT = Path(__file__).resolve().parent
@@ -109,6 +109,7 @@ def _predict(cases: list[dict[str, Any]], app_root: Path) -> list[dict[str, Any]
     """Worker only: imports occur after selecting the isolated app root."""
     sys.path.insert(0, str(app_root.resolve()))
     from pydantic import ValidationError
+
     from app.models.job import JobComparisonRequest, JobReviewAssertion, QualificationProfile, ReviewedRequirement
     from app.services.extraction import DeterministicCandidateExtractor
     from app.services.jobs import DeterministicJobAnalyzer, compare_job

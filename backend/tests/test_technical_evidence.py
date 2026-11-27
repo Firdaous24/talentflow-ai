@@ -1,11 +1,11 @@
 """Fictional, exact-source technical mentions without qualification inference."""
 
-from copy import deepcopy
 import json
+from copy import deepcopy
 from pathlib import Path
 
-from pydantic import ValidationError
 import pytest
+from pydantic import ValidationError
 
 from app.models.job import JobComparisonResponse, TechnicalEvidence
 from tests.test_jobs import payload, sync_review

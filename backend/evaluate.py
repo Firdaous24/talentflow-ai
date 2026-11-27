@@ -1,12 +1,15 @@
 """Reproducible field/skill evaluation on programmatically generated fictional PDFs."""
 import json
-from pathlib import Path
 import sys
+from pathlib import Path
+
 sys.path.insert(0, str(Path(__file__).parent / 'tests'))
 from multilingual_support import FIXTURES, make_layout_pdf
+
 from app.models.candidate import CandidateProfile
 from app.services.extraction import DeterministicCandidateExtractor
 from app.services.pdf import extract_pdf
+
 
 def flatten(value, path=''):
     result = {}
@@ -37,9 +40,9 @@ def evaluate(fixtures=None, render=None):
         # new authored field in the denominator instead of dropping its misses.
         compatible_truth = {**truth, 'experience': [{key: value for key, value in row.items() if key != 'location'} for row in truth.get('experience', [])], 'technical_skills': [{**row, 'category': 'tool' if row['category'] == 'web_technology' else row['category']} for row in truth.get('technical_skills', [])]}
         expected = CandidateProfile.model_validate(compatible_truth).model_dump(mode='json')
-        for row, original in zip(expected['experience'], truth.get('experience', [])):
+        for row, original in zip(expected['experience'], truth.get('experience', []), strict=False):
             row['location'] = original.get('location')
-        for row, original in zip(expected['technical_skills'], truth.get('technical_skills', [])):
+        for row, original in zip(expected['technical_skills'], truth.get('technical_skills', []), strict=False):
             row['category'] = original['category']
         p, e = flatten(predicted), flatten(expected)
         correct = sum(key in e and value == e[key] for key, value in p.items())

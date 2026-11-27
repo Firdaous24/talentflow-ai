@@ -1,12 +1,12 @@
 """PDF upload boundary and API contract regression tests."""
 
-import pytest
 import pymupdf
+import pytest
+from conftest import SYNTHETIC_CVS, make_pdf
 from fastapi.testclient import TestClient
 
 from app.models.candidate import CVParsingResponse
 from app.services.pdf import MAX_UPLOAD_BYTES
-from conftest import SYNTHETIC_CVS, make_pdf
 
 URL = "/api/v1/candidates/parse"
 

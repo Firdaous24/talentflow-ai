@@ -1,0 +1,17 @@
+# Minimal lint gate. The existing code uses a deliberately dense style
+# (long regex/rule lines, compact one-line branches); it is not reformatted.
+target-version = "py311"
+line-length = 120
+extend-exclude = [".venv"]
+
+[lint]
+select = ["E", "F", "I", "B", "UP"]
+ignore = [
+    "E501",  # Long rule/regex lines are intentional; wrapping them hurts reviewability of the patterns.
+    "E701",  # Compact `if x: return y` branches are part of the existing style.
+    "E702",  # Compact `a; b` statements are part of the existing style.
+]
+
+[lint.per-file-ignores]
+# `l` is the PyMuPDF line index next to `b` (block index); renaming adds churn without benefit.
+"app/services/layout.py" = ["E741"]

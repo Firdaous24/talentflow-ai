@@ -127,10 +127,10 @@ def comparison_route(state):
 
 def make_graph(checkpointer):
     builder = StateGraph(WorkflowState)
-    for name, function in zip(NODES, (intake, candidate, job, compare, verify, human, finalize)):
+    for name, function in zip(NODES, (intake, candidate, job, compare, verify, human, finalize), strict=True):
         builder.add_node(name, function)
     builder.add_edge(START, NODES[0])
-    for current, following in zip(NODES, NODES[1:]):
+    for current, following in zip(NODES, NODES[1:], strict=False):
         if current == "evidence_comparison":
             builder.add_conditional_edges(current, comparison_route, {"stop": END, "continue": following, "retry": current})
         else:

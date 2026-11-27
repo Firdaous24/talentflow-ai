@@ -1,7 +1,9 @@
 """Geometry-based regions; never globally interleave two columns by y coordinate."""
 from dataclasses import dataclass
 from statistics import median
+
 from app.services.sections import section_heading
+
 
 @dataclass(frozen=True)
 class Span:

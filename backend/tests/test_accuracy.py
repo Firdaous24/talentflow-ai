@@ -1,10 +1,12 @@
 """Formatting regressions and adversarial cases; only fictional CV content."""
 import pytest
+from accuracy_support import REGRESSION_FIXTURES, make_accuracy_pdf
+
 from app.models.candidate import CandidateProfile
 from app.services.extraction import DeterministicCandidateExtractor, extract_skills
 from app.services.multilingual import date_value
 from app.services.pdf import PDFText, extract_pdf, normalize_text
-from accuracy_support import REGRESSION_FIXTURES, make_accuracy_pdf
+
 
 @pytest.mark.parametrize('fixture', REGRESSION_FIXTURES, ids=lambda value: value['id'])
 def test_accuracy_ground_truth(fixture):

@@ -1,6 +1,7 @@
 """Conservative unlabeled header/entry rules and auditable source references."""
 import re
-from app.models.candidate import Education, WorkExperience, Project, FieldEvidence
+
+from app.models.candidate import FieldEvidence
 from app.services.sections import normalized, section_heading
 
 MONTHS = {'janvier': 1, 'january': 1, 'jan': 1, 'février': 2, 'fevrier': 2, 'february': 2, 'feb': 2, 'mars': 3, 'march': 3, 'avril': 4, 'april': 4, 'avr': 4, 'mai': 5, 'may': 5, 'juin': 6, 'june': 6, 'juillet': 7, 'july': 7, 'août': 8, 'aout': 8, 'august': 8, 'septembre': 9, 'september': 9, 'sept': 9, 'octobre': 10, 'october': 10, 'oct': 10, 'novembre': 11, 'november': 11, 'nov': 11, 'décembre': 12, 'decembre': 12, 'december': 12, 'dec': 12}

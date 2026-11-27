@@ -1,12 +1,16 @@
 """Independent realistic-post regressions and deliberately adversarial metrics."""
 
-from copy import deepcopy
 import hashlib
+from copy import deepcopy
 
 import pytest
 
 from evaluate_jobs_realistic import (
-    FIXTURE_PATH, evaluate, evaluate_isolated, load_cases, source_span,
+    FIXTURE_PATH,
+    evaluate,
+    evaluate_isolated,
+    load_cases,
+    source_span,
 )
 
 CASES = load_cases()
@@ -37,7 +41,7 @@ def test_independent_corpus_has_distinct_fictional_scenarios_and_all_three_label
             assert case["text"][begin:finish] == row["evidence"]
         for clause in case["negative_clauses"]:
             assert clause in case["text"]
-        assert "example.com" in case["text"] or not "@" in case["text"]
+        assert "example.com" in case["text"] or "@" not in case["text"]
 
 
 class FixedAnalyzer:

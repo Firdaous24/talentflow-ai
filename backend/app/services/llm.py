@@ -6,11 +6,13 @@ from urllib.parse import urlsplit
 
 import httpx
 from pydantic import Field, ValidationError
-from app.models.candidate import CandidateProfile, CVParsingResponse, FieldEvidence, Schema
+
+from app.models.candidate import CandidateProfile, FieldEvidence, Schema
 from app.services.extraction import CandidateExtractor, DeterministicCandidateExtractor, extract_skills
 from app.services.layout import LayoutLine
 from app.services.multilingual import leaves, supports
 from app.services.sections import section_heading
+
 
 class ClaimEvidence(Schema):
     field: str

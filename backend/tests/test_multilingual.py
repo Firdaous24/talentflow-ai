@@ -1,11 +1,13 @@
 """Real synthetic PDFs, French/English contracts and conservative edge cases."""
-import pytest
 import pymupdf
+import pytest
+from multilingual_support import FIXTURES, make_layout_pdf
+
 from app.models.candidate import CandidateProfile
-from app.services.extraction import DeterministicCandidateExtractor, detect_sections, extract_skills
+from app.services.extraction import DeterministicCandidateExtractor, detect_sections
 from app.services.multilingual import date_value
 from app.services.pdf import PDFText, extract_pdf
-from multilingual_support import FIXTURES, make_layout_pdf
+
 
 @pytest.mark.parametrize('fixture', FIXTURES, ids=lambda value: value['id'])
 def test_multilingual_pdf_ground_truth(fixture):

@@ -1,7 +1,7 @@
 """Shared in-process API client and fictional, programmatically generated PDFs."""
 
-from collections.abc import Iterator
 import json
+from collections.abc import Iterator
 from pathlib import Path
 
 import pymupdf

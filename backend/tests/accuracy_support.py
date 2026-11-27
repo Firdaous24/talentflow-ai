@@ -2,6 +2,7 @@
 import html
 import json
 from pathlib import Path
+
 import pymupdf
 
 REGRESSION_FIXTURES = json.loads((Path(__file__).parent / 'fixtures/accuracy_regression.json').read_text(encoding='utf-8'))

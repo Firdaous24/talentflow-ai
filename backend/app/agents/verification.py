@@ -8,8 +8,14 @@ from app.agents.errors import WorkflowFault
 from app.models.job import JobComparisonRequest, JobComparisonResponse
 from app.services.job_vocabulary import norm, skills_in
 from app.services.jobs import (
-    CONTACT_TEXT, PROTECTED, LIMITATIONS, DeterministicJobAnalyzer, compare_requirement,
-    qualification_leaves, technical_profile_index, validate_review,
+    CONTACT_TEXT,
+    LIMITATIONS,
+    PROTECTED,
+    DeterministicJobAnalyzer,
+    compare_requirement,
+    qualification_leaves,
+    technical_profile_index,
+    validate_review,
 )
 
 PHONE = re.compile(r"(?<!\w)(?:\+\d[\d ().-]{6,}\d|\d{7,15}|\(?\d{3}\)?[- .]\d{3}[- .]\d{4}|(?:\d{2}[- .]){4}\d{2})(?!\w)")
@@ -97,7 +103,7 @@ def verify_evidence(request: JobComparisonRequest, result: JobComparisonResponse
         category, sources = expected_technologies[technology.name]
         if technology.category != category or len(technology.job_references) != len(sources):
             fail()
-        for reference, source in zip(technology.job_references, sources):
+        for reference, source in zip(technology.job_references, sources, strict=True):
             if (reference.requirement_id, reference.origin, reference.classification, reference.evidence) != (source.id, source.origin, source.classification, source.evidence):
                 fail()
         interpretation = any(source.origin == "technical_environment" or source.classification == "unspecified" or rows[source.id].status == "needs_review" for source in sources)

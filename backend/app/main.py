@@ -4,18 +4,18 @@ import asyncio
 from contextlib import asynccontextmanager, suppress
 
 from fastapi import FastAPI, Request
-from fastapi.exceptions import RequestValidationError
 from fastapi.exception_handlers import request_validation_exception_handler
-from fastapi.responses import JSONResponse
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
-from app.api.routes.health import router as health_router
-from app.api.routes.candidates import router as candidates_router
-from app.api.routes.jobs import router as jobs_router
-from app.api.routes.agents import router as agents_router
-from app.api.upload_limits import UploadLimitMiddleware
 from app.agents.checkpoints import WorkflowManager
 from app.agents.middleware import AgentBoundaryMiddleware
+from app.api.routes.agents import router as agents_router
+from app.api.routes.candidates import router as candidates_router
+from app.api.routes.health import router as health_router
+from app.api.routes.jobs import router as jobs_router
+from app.api.upload_limits import UploadLimitMiddleware
 
 
 @asynccontextmanager

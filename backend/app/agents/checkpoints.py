@@ -11,7 +11,7 @@ import re
 import threading
 import time
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from uuid import uuid4
 
 from langgraph.checkpoint.memory import InMemorySaver
@@ -43,7 +43,7 @@ def owner_hash(owner: str | None) -> str:
 
 
 def iso(timestamp):
-    return datetime.fromtimestamp(timestamp, timezone.utc).isoformat()
+    return datetime.fromtimestamp(timestamp, UTC).isoformat()
 
 
 @dataclass

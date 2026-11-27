@@ -1,10 +1,21 @@
 """Optional provider calls are simulated; no CV content leaves these tests."""
 import json
+
 import httpx
 import pytest
+
 from app.models.candidate import CandidateProfile
-from app.services.llm import EvidenceCheckedExtractor, ModelExtraction, OpenAICompatibleProvider, ProviderFailure, ClaimEvidence, provider_configuration, strict_schema
+from app.services.llm import (
+    ClaimEvidence,
+    EvidenceCheckedExtractor,
+    ModelExtraction,
+    OpenAICompatibleProvider,
+    ProviderFailure,
+    provider_configuration,
+    strict_schema,
+)
 from app.services.pdf import PDFText
+
 
 class FakeProvider:
     def __init__(self, response=None, error=None): self.response, self.error = response, error

@@ -1,14 +1,13 @@
 """Fictional copied-post, explicit-threshold and source-bound BA regressions."""
 
-from copy import deepcopy
 import json
+from copy import deepcopy
 from pathlib import Path
 
 import pytest
 
 from app.services.jobs import DeterministicJobAnalyzer, business_concepts
 from tests.test_jobs import payload
-
 
 FIXTURE = json.loads((Path(__file__).parent / "fixtures/job_final_accuracy.json").read_text(encoding="utf-8"))
 

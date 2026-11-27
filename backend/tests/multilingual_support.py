@@ -1,7 +1,9 @@
 """Fictional PDFs with independently authored ground truth; no binary fixtures."""
 import json
 from pathlib import Path
+
 import pymupdf
+
 from app.services.sections import section_heading
 
 FIXTURES = json.loads((Path(__file__).parent / 'fixtures/multilingual.json').read_text(encoding='utf-8'))

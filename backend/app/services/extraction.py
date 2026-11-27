@@ -6,12 +6,20 @@ from typing import Protocol, TypeVar
 from pydantic import BaseModel, ValidationError
 
 from app.models.candidate import (
-    CandidateProfile, Certification, ContactInformation, CVParsingResponse,
-    Education, Language, ParsingMetadata, Project, TechnicalSkill, WorkExperience,
+    CandidateProfile,
+    Certification,
+    ContactInformation,
+    CVParsingResponse,
+    Education,
+    Language,
+    ParsingMetadata,
+    Project,
+    TechnicalSkill,
+    WorkExperience,
 )
+from app.services.multilingual import date_value, evidence_for, header_name, natural_records
 from app.services.pdf import PDFText
 from app.services.sections import normalized, section_heading
-from app.services.multilingual import date_value, header_name, natural_records, evidence_for
 
 
 class CandidateExtractor(Protocol):

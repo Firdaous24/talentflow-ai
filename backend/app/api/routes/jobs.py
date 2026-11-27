@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from starlette.concurrency import run_in_threadpool
 
 from app.models.job import JobAnalysisResponse, JobAnalyzeRequest, JobComparisonRequest, JobComparisonResponse
-from app.services.jobs import DeterministicJobAnalyzer, JobAnalyzer, JobWorkflowError, LIMITATIONS, compare_job
+from app.services.jobs import LIMITATIONS, DeterministicJobAnalyzer, JobAnalyzer, JobWorkflowError, compare_job
 
 router = APIRouter(prefix="/jobs", tags=["Jobs"])
 

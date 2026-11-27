@@ -6,7 +6,6 @@ import unicodedata
 from app.models.job import RequirementEvidence
 from app.services.job_vocabulary import norm, skills_in
 
-
 METADATA_LABELS = {
     "job title": "title", "title": "title", "poste": "title", "intitule du poste": "title",
     "company": "company", "entreprise": "company",

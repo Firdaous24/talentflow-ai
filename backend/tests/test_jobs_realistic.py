@@ -6,7 +6,6 @@ from app.models.job import JobComparisonRequest
 from app.services.jobs import DeterministicJobAnalyzer, compare_job, skills_in
 from tests.test_jobs import payload, sync_review
 
-
 ENVIRONMENT_HEADINGS = [
     "Environnement technique", "Stack technique", "Technologies", "Technologies utilisées", "Outils et technologies",
     "Technical Environment", "Technology Stack", "Tech Stack", "Tools and Technologies",

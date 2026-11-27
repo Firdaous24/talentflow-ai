@@ -11,7 +11,6 @@ from app.services.extraction import DeterministicCandidateExtractor, detect_sect
 from app.services.pdf import PDFText, extract_pdf
 from app.services.sections import section_heading
 
-
 ACADEMIC_HEADINGS = (
     "Academic Projects",
     "University Projects",

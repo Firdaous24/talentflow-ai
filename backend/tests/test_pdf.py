@@ -1,9 +1,9 @@
 """PDF service tests independent of HTTP."""
 
 import pytest
+from conftest import make_pdf
 
 from app.services.pdf import CVParsingError, extract_pdf, normalize_text
-from conftest import make_pdf
 
 
 def test_pdf_text_and_page_boundaries() -> None:

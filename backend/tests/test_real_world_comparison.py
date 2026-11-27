@@ -2,13 +2,12 @@
 
 from copy import deepcopy
 
-from pydantic import ValidationError
 import pytest
+from pydantic import ValidationError
 
 from app.models.job import CandidateRequirementEvidence
 from app.services.jobs import DeterministicJobAnalyzer
 from tests.test_jobs import payload
-
 
 FRENCH_DATA_BA = """Poste : Data Business Analyst
 Entreprise : Atelier Données Fictif

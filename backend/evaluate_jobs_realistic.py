@@ -10,9 +10,9 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-from pathlib import Path
 import subprocess
 import sys
+from pathlib import Path
 from typing import Any
 
 FIXTURE_PATH = Path(__file__).parent / "tests" / "fixtures" / "jobs_realistic.json"

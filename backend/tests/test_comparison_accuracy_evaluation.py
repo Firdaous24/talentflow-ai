@@ -1,15 +1,20 @@
 """Frozen corpus integrity and adversarial evaluator denominator checks."""
 
-from copy import deepcopy
 import hashlib
 import json
+from copy import deepcopy
 
 import pytest
 
 from evaluate_comparison_accuracy import (
-    field_value, load_cases, score_predictions, source_span,
-    valid_candidate_source, verify_freeze,
-    verify_app_manifest, valid_span,
+    field_value,
+    load_cases,
+    score_predictions,
+    source_span,
+    valid_candidate_source,
+    valid_span,
+    verify_app_manifest,
+    verify_freeze,
 )
 
 CASES = load_cases()

@@ -2,6 +2,7 @@
 import re
 import unicodedata
 
+
 def normalized(value: str) -> str:
     value = ''.join(c for c in unicodedata.normalize('NFKD', value.casefold()) if not unicodedata.combining(c))
     return re.sub(r'[^\w+#.]+', ' ', value).strip()

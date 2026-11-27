@@ -13,7 +13,9 @@ from pathlib import Path
 from typing import Any
 
 from app.models.job import (
-    JobComparisonRequest, JobReviewAssertion, QualificationProfile,
+    JobComparisonRequest,
+    JobReviewAssertion,
+    QualificationProfile,
     ReviewedRequirement,
 )
 from app.services.jobs import DeterministicJobAnalyzer, compare_job

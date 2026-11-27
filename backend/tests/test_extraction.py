@@ -1,12 +1,12 @@
 """Independent deterministic extraction and schema validation tests."""
 
 import pytest
+from conftest import SYNTHETIC_CVS
 from pydantic import ValidationError
 
 from app.models.candidate import CandidateProfile, Education, ParsingMetadata
 from app.services.extraction import DeterministicCandidateExtractor, extract_skills
 from app.services.pdf import PDFText
-from conftest import SYNTHETIC_CVS
 
 
 @pytest.mark.parametrize("fixture", SYNTHETIC_CVS, ids=lambda fixture: fixture["scenario"])

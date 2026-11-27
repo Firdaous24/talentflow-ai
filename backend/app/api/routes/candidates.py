@@ -7,8 +7,8 @@ from starlette.concurrency import run_in_threadpool
 
 from app.models.candidate import CVParsingResponse
 from app.services.extraction import CandidateExtractor, DeterministicCandidateExtractor
-from app.services.pdf import CVParsingError, MAX_UPLOAD_BYTES, extract_pdf
 from app.services.llm import EvidenceCheckedExtractor, configured_provider, provider_configuration
+from app.services.pdf import MAX_UPLOAD_BYTES, CVParsingError, extract_pdf
 
 router = APIRouter(prefix="/candidates", tags=["Candidates"])
 

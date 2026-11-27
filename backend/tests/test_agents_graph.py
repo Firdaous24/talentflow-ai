@@ -312,7 +312,9 @@ def test_capacity_and_idempotency_are_bounded():
 
 def test_graph_needs_no_network_or_model_provider(monkeypatch):
     import socket
+
     from langsmith.run_helpers import get_tracing_context
+
     from app.agents import graph as graph_module
 
     def forbidden(*args, **kwargs):

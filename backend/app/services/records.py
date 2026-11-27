@@ -1,6 +1,7 @@
 """Entry-local segmentation and conservative title / employer / date association."""
 import re
-from app.models.candidate import Education, WorkExperience, Project
+
+from app.models.candidate import Education, Project, WorkExperience
 from app.services.sections import normalized
 
 LABELS = {
@@ -49,7 +50,7 @@ def wrapped_title(first, following):
 
 def parse_records(lines, kind, warnings, document=None, bindings=None):
     from app.services.extraction import extract_skills, validated_fields
-    from app.services.multilingual import ROLE, DEGREE, INSTITUTION, date_range, date_value, section_sources
+    from app.services.multilingual import DEGREE, INSTITUTION, ROLE, date_range, date_value, section_sources
     sources = section_sources(document).get(kind, []) if document else []
     cursor = 0
     tokens = []

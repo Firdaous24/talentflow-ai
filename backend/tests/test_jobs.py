@@ -7,7 +7,6 @@ import pytest
 from app.models.job import JobComparisonRequest
 from app.services.jobs import DeterministicJobAnalyzer, compare_job
 
-
 ENGLISH = """Junior Python Developer
 Company: Invented Lantern Labs
 Location: Remote
