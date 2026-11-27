@@ -18,13 +18,11 @@ describe("Agent workflow API boundaries", () => {
     expect(init.headers["X-Workflow-Session"]).toBe("b".repeat(64));
     expect(init.cache).toBe("no-store");
   });
-  it("uses read-only GET requests for status, pending evidence and the final report", async () => {
+  it("uses a read-only GET request for the workflow status", async () => {
     const fetch = vi.fn().mockImplementation(async () => new Response(JSON.stringify({ workflow_id: "example" }), { status: 200 }));
     vi.stubGlobal("fetch", fetch);
     await agentApi.status("a".repeat(64), "example");
-    await agentApi.review("a".repeat(64), "example");
-    await agentApi.report("a".repeat(64), "example");
-    expect(fetch.mock.calls.map(([url]) => url)).toEqual(["/api/v1/agents/workflows/example", "/api/v1/agents/workflows/example/review", "/api/v1/agents/workflows/example/report"]);
+    expect(fetch.mock.calls.map(([url]) => url)).toEqual(["/api/v1/agents/workflows/example"]);
     expect(fetch.mock.calls.every(([, init]) => init.method === undefined && init.body === undefined)).toBe(true);
   });
 });

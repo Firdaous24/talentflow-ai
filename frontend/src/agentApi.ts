@@ -11,8 +11,6 @@ function options(session: string, body?: unknown): RequestInit {
 export const agentApi = {
   start: (session: string, body: AgentWorkflowStart) => request<AgentWorkflow>(base, options(session, body)),
   status: (session: string, id: string) => request<AgentWorkflow>(`${base}/${encodeURIComponent(id)}`, options(session)),
-  review: (session: string, id: string) => request<AgentWorkflow>(`${base}/${encodeURIComponent(id)}/review`, options(session)),
-  report: (session: string, id: string) => request<AgentWorkflow>(`${base}/${encodeURIComponent(id)}/report`, options(session)),
   resume: (session: string, id: string, body: AgentWorkflowResume) => request<AgentWorkflow>(`${base}/${encodeURIComponent(id)}/resume`, options(session, body)),
   cancel: (session: string, id: string) => request<AgentWorkflow>(`${base}/${encodeURIComponent(id)}/cancel`, { ...options(session), method: "POST" }),
 };
