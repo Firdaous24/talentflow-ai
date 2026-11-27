@@ -16,11 +16,30 @@ concurrency:
 
 jobs:
   backend:
-    name: Backend (ruff + pytest)
+    name: Backend (ruff + migrations + pytest)
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: backend
+    services:
+      # Disposable database for migrations and the /api/v2 tests (no secret: trust auth, job-local network).
+      postgres:
+        image: postgres:17.11-bookworm@sha256:3645570cccdfa447589da9f57dd740faa29b30938e861289a5574b6ca6b03826
+        env:
+          POSTGRES_DB: talentflow_test
+          POSTGRES_USER: talentflow_test
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U talentflow_test -d talentflow_test"
+          --health-interval 2s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      DATABASE_URL: postgresql+psycopg://talentflow_test@localhost:5432/talentflow_test
+      TEST_DATABASE_URL: postgresql+psycopg://talentflow_test@localhost:5432/talentflow_test
+      REQUIRE_DATABASE_TESTS: "1"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -37,7 +56,13 @@ jobs:
           python -m pip install -r requirements-dev.txt
           python -m pip check
       - name: Ruff
-        run: python -m ruff check app tests *.py
+        run: python -m ruff check app tests migrations *.py
+      - name: Migrations are reversible (upgrade, downgrade, upgrade)
+        run: |
+          python -m alembic upgrade head
+          python -m alembic downgrade base
+          python -m alembic upgrade head
+          python -m alembic check
       - name: Pytest
         run: python -m pytest -p no:cacheprovider -q
 
