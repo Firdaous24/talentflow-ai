@@ -1,5 +1,6 @@
 import { Link, useParams } from "react-router-dom";
-import { ArrowRight, ChevronRight, FileText, ShieldCheck, UsersRound, X } from "lucide-react";
+import { ArrowRight, ChevronRight, FileText, ShieldCheck, X } from "lucide-react";
+import { EmptyArt, StatusPill } from "../components/ui";
 import { ReviewProfile } from "../components/ReviewProfile";
 import { useSession } from "../session";
 
@@ -64,12 +65,10 @@ export function Candidates() {
                     · {entry.filename}
                   </p>
                 </div>
-                <span className="badge amber">Partial extraction</span>
-                <span
-                  className={`badge ${entry.confirmed ? "green" : "neutral"}`}
-                >
+                <StatusPill status="neutral">Partial extraction</StatusPill>
+                <StatusPill status={entry.confirmed ? "documented" : "needs_review"}>
                   {entry.confirmed ? "Confirmed" : "Review required"}
-                </span>
+                </StatusPill>
                 <time dateTime={entry.parsedAt}>
                   {new Date(entry.parsedAt).toLocaleString()}
                 </time>
@@ -78,10 +77,8 @@ export function Candidates() {
             ))}
           </div>
         ) : (
-          <div className="empty-state">
-            <span className="empty-icon">
-              <UsersRound size={28} />
-            </span>
+          <div className="ui-empty">
+            <EmptyArt />
             <h3>No candidates in this session</h3>
             <p>Upload a PDF to create your first candidate profile.</p>
             <Link to="/parser" className="button secondary">
@@ -115,12 +112,13 @@ export function CandidateDetail() {
       <ReviewProfile entry={entry} />
     </>
   ) : (
-    <>
+    <div className="ui-empty profile-unavailable">
+      <EmptyArt />
       <h1>Profile unavailable</h1>
       <p>This profile is no longer in the current session.</p>
       <Link to="/parser" className="button primary">
         Parse a CV
       </Link>
-    </>
+    </div>
   );
 }

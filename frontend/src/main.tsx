@@ -12,6 +12,7 @@ import "./styles.css";
 import "./theme/tokens.css";
 import "./theme/base.css";
 import "./theme/layout.css";
+import "./theme/pages.css";
 // Pages and their CSS load after the design system so page rules can refine it.
 import { App } from "./App";
 

@@ -1,14 +1,7 @@
 import { useRef, useState, useEffect } from "react";
 import type { ChangeEvent, DragEvent, FormEvent } from "react";
-import {
-  UploadCloud,
-  FileText,
-  ArrowRight,
-  LoaderCircle,
-  X,
-  ShieldCheck,
-  CheckCircle2,
-} from "lucide-react";
+import { UploadCloud, FileText, ArrowRight, X, ShieldCheck, CheckCircle2 } from "lucide-react";
+import { Skeleton } from "../components/ui";
 import { api, validatePdf } from "../api";
 import { useSession } from "../session";
 import type { SessionCandidate, ExtractionConfig } from "../types";
@@ -211,7 +204,7 @@ export function Parser() {
               >
                 {blocked ? (
                   <>
-                    <LoaderCircle size={18} className="spin" />
+                    <span className="busy-dot" aria-hidden="true" />
                     {busy ? "Extracting candidate profile…" : "Checking PDF…"}
                   </>
                 ) : (
@@ -252,9 +245,17 @@ export function Parser() {
                 )}
               </div>
               {busy && (
-                <p role="status" className="subtle text-center">
-                  Reading your document. This may take a moment.
-                </p>
+                <>
+                  <p role="status" className="subtle text-center">
+                    Reading your document. This may take a moment.
+                  </p>
+                  <div className="parser-skeleton skeleton-stack" aria-hidden="true">
+                    <Skeleton width="38%" height={22} />
+                    <Skeleton width="64%" />
+                    <Skeleton width="92%" />
+                    <Skeleton width="80%" />
+                  </div>
+                </>
               )}
             </form>
             <p className="privacy-note">

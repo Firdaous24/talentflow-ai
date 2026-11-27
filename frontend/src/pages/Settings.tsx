@@ -1,10 +1,19 @@
-import { Activity, Layers3, RefreshCw, ShieldCheck } from "lucide-react";
+import { Activity, Layers3, Monitor, Moon, Palette, RefreshCw, ShieldCheck, Sun } from "lucide-react";
+import { setThemePreference, useTheme } from "../theme/theme";
+import type { ThemePreference } from "../theme/theme";
+
+const themeOptions: { value: ThemePreference; label: string; Icon: typeof Sun }[] = [
+  { value: "system", label: "System", Icon: Monitor },
+  { value: "light", label: "Light", Icon: Sun },
+  { value: "dark", label: "Dark", Icon: Moon },
+];
 import { API_BASE_URL } from "../api";
 import { ConnectionBadge } from "../components/ConnectionBadge";
 import { useSession } from "../session";
 
 export function Settings() {
   const { connection, healthError, checkHealth } = useSession();
+  const { preference } = useTheme();
   return (
     <>
       <div className="page-heading">
@@ -59,12 +68,27 @@ export function Settings() {
             disabled={connection === "checking"}
             onClick={() => void checkHealth()}
           >
-            <RefreshCw
-              size={16}
-              className={connection === "checking" ? "spin" : ""}
-            />
+            <RefreshCw size={16} aria-hidden="true" />
             Check connection
           </button>
+        </section>
+        <section className="card settings-appearance">
+          <h2>
+            <Palette size={20} />
+            Appearance
+          </h2>
+          <p>
+            Warm paper or deep slate. System follows your device; a choice is
+            remembered in this browser only after you make it.
+          </p>
+          <div className="segmented" role="group" aria-label="Theme">
+            {themeOptions.map(({ value, label, Icon }) => (
+              <button key={value} type="button" aria-pressed={preference === value} onClick={() => setThemePreference(value)}>
+                <Icon size={16} aria-hidden="true" />
+                {label}
+              </button>
+            ))}
+          </div>
         </section>
         <section className="card">
           <h2>

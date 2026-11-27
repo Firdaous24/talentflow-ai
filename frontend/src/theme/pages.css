@@ -1,0 +1,346 @@
+/* Page refinements for CV Parser, review, profile, Candidates and Settings. Tokens only. */
+
+/* Shared section headings inside cards */
+.section-heading {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+.section-heading h2 {
+  font-size: var(--text-lg);
+}
+.section-heading p {
+  font-size: var(--text-sm);
+}
+.icon-box {
+  border: var(--rule) solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface-sunken);
+  color: var(--text-muted);
+}
+.step-number {
+  margin-left: auto;
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  line-height: 1;
+  color: var(--text-faint);
+}
+.back-link {
+  display: inline-flex;
+  margin-bottom: var(--space-4);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--accent-text);
+}
+.subtle {
+  font-size: var(--text-sm);
+  color: var(--text-faint);
+}
+
+/* CV Parser */
+.parser-grid {
+  gap: var(--space-6);
+}
+.upload-card,
+.parser-aside > .card {
+  padding: var(--space-6);
+}
+.dropzone {
+  border: 1.5px dashed var(--line-strong);
+  border-radius: var(--radius-lg);
+  background:
+    radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--accent) 5%, transparent), transparent 60%),
+    var(--surface-sunken);
+  transition: border-color var(--duration-fast) var(--ease-out), background-color var(--duration-fast) var(--ease-out);
+}
+.dropzone:hover,
+.dropzone.dragging {
+  border-color: var(--accent);
+  background-color: var(--accent-soft);
+}
+.dropzone h3 {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-regular);
+}
+.upload-symbol {
+  border: var(--rule) solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface-raised);
+  color: var(--accent-text);
+  box-shadow: var(--shadow-sm);
+}
+.upload-limits {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  color: var(--text-faint);
+}
+.selected-file {
+  border: var(--rule) solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface-raised);
+}
+.parse-button {
+  width: 100%;
+  min-height: 46px;
+}
+.provider-choice {
+  border: var(--rule) solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface-sunken);
+  font-size: var(--text-sm);
+}
+.provider-choice p {
+  font-size: var(--text-sm);
+}
+.consent-label {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+.parser-skeleton {
+  margin-top: var(--space-4);
+  padding: var(--space-5);
+  border: var(--rule) solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface-raised);
+}
+.privacy-note {
+  font-size: var(--text-xs);
+  color: var(--text-faint);
+}
+.parser-aside h2 {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-tight);
+}
+.process-list span {
+  border: var(--rule) solid var(--line-strong);
+  background: var(--surface);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+.success-bar {
+  border: var(--rule) solid var(--documented-line);
+  border-left: 3px solid var(--documented-solid);
+  border-radius: var(--radius-md);
+  background: var(--documented-bg);
+  color: var(--documented);
+}
+
+/* Profile and review */
+.profile-result,
+.review-banner,
+.review-editor,
+.profile-section {
+  border-color: var(--line);
+}
+.review-banner {
+  border-left: 3px solid var(--review-solid);
+}
+.review-banner h2,
+.review-editor > h2 {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-regular);
+}
+.review-field label {
+  font-size: var(--text-sm);
+  color: var(--text);
+}
+.review-field input,
+.review-field textarea,
+.review-field select {
+  border-color: var(--line-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface-raised);
+  color: var(--text);
+  font-size: var(--text-base);
+}
+.review-field input:focus-visible,
+.review-field textarea:focus-visible,
+.review-field select:focus-visible {
+  border-color: var(--accent);
+}
+.review-field details,
+.review-field blockquote small {
+  font-size: var(--text-xs);
+}
+.review-field blockquote {
+  border-left: 2px solid var(--accent-line);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  background: var(--surface-sunken);
+  font-size: var(--text-sm);
+}
+.review-record {
+  border-color: var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface-sunken);
+}
+.candidate-heading h2 {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-regular);
+}
+.tag {
+  border: var(--rule) solid var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--surface-sunken);
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+}
+
+/* Candidates */
+.candidate-list {
+  padding: var(--space-2);
+}
+.candidate-row {
+  border-radius: var(--radius-md);
+  color: var(--text);
+}
+.candidate-row:hover {
+  background: var(--surface-sunken);
+}
+.candidate-row h3 {
+  font-size: var(--text-md);
+}
+.candidate-row p {
+  font-size: var(--text-sm);
+}
+.candidate-row time {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  color: var(--text-faint);
+}
+.candidate-row .avatar {
+  border-radius: 50%;
+  background: var(--accent-soft);
+  border-color: var(--accent-line);
+  color: var(--accent-text);
+}
+.count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 22px;
+  padding: 0 6px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-sunken);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  color: var(--text-subtle);
+}
+.profile-unavailable h1 {
+  font-size: var(--text-2xl);
+}
+
+/* Settings */
+.settings-grid {
+  gap: var(--space-5);
+}
+.settings-grid .card {
+  padding: var(--space-6);
+}
+.settings-grid h2 {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-regular);
+}
+.settings-grid h2 svg {
+  color: var(--accent-text);
+}
+.settings-grid .card > p {
+  margin: var(--space-3) 0;
+  font-size: var(--text-sm);
+}
+.info-list {
+  margin: var(--space-4) 0;
+}
+.info-list > div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-2) 0;
+  border-top: var(--rule) solid var(--line);
+}
+.info-list dt {
+  font-size: var(--text-sm);
+  color: var(--text-subtle);
+}
+.info-list dd {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text);
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+.segmented {
+  display: inline-flex;
+  gap: 2px;
+  margin-top: var(--space-2);
+  padding: 3px;
+  border: var(--rule) solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface-sunken);
+}
+.segmented button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 36px;
+  padding: 0 var(--space-4);
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-subtle);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+}
+.segmented button:hover {
+  color: var(--text);
+}
+.segmented button[aria-pressed="true"] {
+  background: var(--surface-raised);
+  color: var(--text);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Job Analysis surfaces */
+.job-tabs button[aria-pressed="true"] {
+  border-color: var(--accent-line);
+  background: var(--accent-soft);
+  color: var(--accent-text);
+}
+.job-comparison-availability {
+  border: var(--rule) solid var(--line);
+  border-left: 3px solid var(--review-solid);
+  border-radius: var(--radius-md);
+  background: var(--surface-sunken);
+}
+.job-loading {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--text-subtle);
+}
+
+@media (max-width: 640px) {
+  .segmented {
+    display: flex;
+  }
+  .segmented button {
+    flex: 1;
+    justify-content: center;
+    padding: 0 var(--space-2);
+  }
+  .info-list > div {
+    flex-direction: column;
+    gap: 2px;
+  }
+  .info-list dd {
+    text-align: left;
+  }
+}
