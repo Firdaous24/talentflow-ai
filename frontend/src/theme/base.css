@@ -415,6 +415,93 @@ kbd,
   font-size: var(--text-sm);
 }
 
+/* Inline busy indicator for buttons (no spinner) */
+.busy-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: busy-breathe 1s var(--ease-in-out) infinite alternate;
+}
+@keyframes busy-breathe {
+  from {
+    opacity: 0.35;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+}
+
+/* Toasts */
+.toast-region {
+  position: fixed;
+  right: var(--space-5);
+  bottom: var(--space-5);
+  z-index: 80;
+  display: grid;
+  gap: var(--space-2);
+  width: min(380px, calc(100vw - 2 * var(--space-4)));
+}
+.toast {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-3) var(--space-3) var(--space-4);
+  border: var(--rule) solid var(--line);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius-md);
+  background: var(--surface-raised);
+  box-shadow: var(--shadow-lg);
+  animation: toast-in var(--duration-base) var(--ease-out) both;
+}
+.toast > svg {
+  margin-top: 2px;
+  color: var(--accent-text);
+}
+.toast p {
+  font-size: var(--text-sm);
+  color: var(--text);
+}
+.toast.success {
+  border-left-color: var(--documented-solid);
+}
+.toast.success > svg {
+  color: var(--documented);
+}
+.toast.error {
+  border-left-color: var(--danger);
+}
+.toast.error > svg {
+  color: var(--danger);
+}
+.toast .icon-button {
+  width: 28px;
+  height: 28px;
+  margin: -4px -4px 0 0;
+}
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+/* Counters roll in when they appear or change */
+.animated-number {
+  display: inline-block;
+  font-variant-numeric: tabular-nums;
+  animation: number-in var(--duration-slow) var(--ease-out) both;
+}
+@keyframes number-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.35em);
+  }
+}
+
 .visually-hidden {
   position: absolute;
   width: 1px;

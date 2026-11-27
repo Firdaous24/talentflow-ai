@@ -24,6 +24,7 @@ import {
 import type { LucideIcon } from "lucide-react";
 import { ConnectionBadge } from "./components/ConnectionBadge";
 import { ThemeToggle } from "./components/ThemeToggle";
+import { ToastProvider } from "./components/Toast";
 import { WorkflowStepper } from "./components/WorkflowStepper";
 import { SessionProvider } from "./session";
 import { Parser } from "./pages/Parser";
@@ -189,7 +190,9 @@ export function App() {
     <SessionProvider>
       <JobSessionProvider>
         <AgentSessionProvider>
-          <Layout />
+          <ToastProvider>
+            <Layout />
+          </ToastProvider>
         </AgentSessionProvider>
       </JobSessionProvider>
     </SessionProvider>

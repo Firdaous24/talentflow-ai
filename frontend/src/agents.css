@@ -128,24 +128,6 @@
   border-top: var(--rule) dashed var(--line);
   font-size: var(--text-xs);
 }
-.busy-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: currentColor;
-  animation: busy-breathe 1s var(--ease-in-out) infinite alternate;
-}
-@keyframes busy-breathe {
-  from {
-    opacity: 0.35;
-    transform: scale(0.8);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1.1);
-  }
-}
-
 /* Graph preview before the first run */
 .agent-preview {
   display: flex;

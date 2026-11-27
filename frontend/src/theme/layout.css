@@ -27,12 +27,13 @@
   gap: var(--space-3);
   padding: 0 var(--space-2);
   font-family: var(--font-display);
-  font-size: 26px;
+  font-size: var(--text-brand);
   line-height: 1;
   letter-spacing: -0.01em;
   color: var(--text);
 }
 .brand-icon {
+  flex-shrink: 0;
   display: grid;
   place-items: center;
   width: 36px;
@@ -52,10 +53,10 @@
 .brand small {
   display: block;
   margin-top: 6px;
-  font-family: var(--font-mono);
-  font-size: 9.5px;
-  font-weight: var(--weight-medium);
-  letter-spacing: 0.06em;
+  font-family: var(--font-sans);
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.03em;
   white-space: nowrap;
   color: var(--text-faint);
 }
@@ -70,6 +71,8 @@
   background: var(--surface-sunken);
   font-size: var(--text-sm);
   font-weight: var(--weight-semibold);
+  line-height: var(--leading-snug);
+  white-space: nowrap;
   color: var(--text);
 }
 .workspace-label small,
@@ -245,8 +248,12 @@
   color: var(--text-faint);
 }
 .breadcrumb strong {
+  min-width: 0;
+  overflow: hidden;
   color: var(--text);
   font-weight: var(--weight-semibold);
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .topbar-right {
   display: flex;
@@ -269,6 +276,7 @@
   color: var(--text-subtle);
   font-size: var(--text-xs);
   font-weight: var(--weight-medium);
+  white-space: nowrap;
 }
 .connection i {
   width: 7px;

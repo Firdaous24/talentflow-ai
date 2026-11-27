@@ -100,3 +100,12 @@ export function EmptyState({ title, children, action, art = "dossier" }: { title
     </div>
   );
 }
+
+/**
+ * A count that rolls in when it appears or changes. The final value is always
+ * the DOM text (tests and assistive technology never see intermediate numbers);
+ * the motion is CSS only and disabled by prefers-reduced-motion.
+ */
+export function AnimatedNumber({ value }: { value: number }) {
+  return <span key={value} className="animated-number">{value}</span>;
+}
