@@ -1,11 +1,14 @@
 import { useEffect, useId, useState } from "react";
 import {
   BookOpen,
+  Check,
   ChevronDown,
   FileSearch,
   HelpCircle,
+  Minus,
   ShieldCheck,
 } from "lucide-react";
+import { JobPassage, OffsetBadge, Passage, passageContext } from "./EvidencePassage";
 import type {
   CandidateRequirementEvidence,
   ComparisonStatus,
@@ -17,6 +20,8 @@ import type {
   TechnicalEvidence,
 } from "../jobTypes";
 import "../comparisonResults.css";
+// Loaded after the legacy results styles so the evidence view refines them.
+import "../evidence.css";
 
 const classificationLabels: Record<RequirementClassification, string> = {
   required: "Required",
@@ -139,9 +144,10 @@ function EvidenceNotes({ title, notes }: { title: string; notes: string[] }) {
   );
 }
 
-function ProfileEvidence({ evidence, technology }: {
+function ProfileEvidence({ evidence, technology, layout = "compact" }: {
   evidence: CandidateRequirementEvidence;
   technology?: string;
+  layout?: "compact" | "passage";
 }) {
   const span = evidence.excerpt;
   const source = Array.from(evidence.quote);
@@ -153,6 +159,26 @@ function ProfileEvidence({ evidence, technology }: {
     source.slice(span.start, span.end).join("") === span.quote;
   const quote = exact ? span.quote : evidence.quote;
   const shortened = exact && quote !== evidence.quote;
+  const fullField = shortened && (
+    <details className="comparison-full-field">
+      <summary>View full reviewed field</summary>
+      <p data-full-source>{evidence.quote}</p>
+    </details>
+  );
+  if (layout === "passage")
+    return (
+      <figure className="comparison-profile-evidence evidence-doc cv">
+        <figcaption className="evidence-doc-head"><span className="mono">{evidence.field}</span><OffsetBadge start={shortened ? span.start : undefined} end={shortened ? span.end : undefined} /></figcaption>
+        <Passage parts={shortened ? passageContext(evidence.quote, span.start, span.end) : undefined}>
+          <blockquote className="evidence-hit">
+            {quote}
+            <small className="visually-hidden">Profile field: {evidence.field}</small>
+            {shortened && <small className="visually-hidden">Field characters {span.start}–{span.end}</small>}
+          </blockquote>
+        </Passage>
+        {fullField}
+      </figure>
+    );
   return (
     <div className="comparison-profile-evidence">
       <blockquote>
@@ -162,12 +188,7 @@ function ProfileEvidence({ evidence, technology }: {
         <small>Profile field: {evidence.field}</small>
         {shortened && <small>Field characters {span.start}–{span.end}</small>}
       </blockquote>
-      {shortened && (
-        <details className="comparison-full-field">
-          <summary>View full reviewed field</summary>
-          <p data-full-source>{evidence.quote}</p>
-        </details>
-      )}
+      {fullField}
     </div>
   );
 }
@@ -337,7 +358,7 @@ export function ComparisonResults({
           {statuses.map(({ status, title, description, Icon }) => (
             <div key={status} className={`comparison-summary-item ${status}`}>
               <Icon size={17} aria-hidden="true" />
-              <strong>{counts[status]}</strong>
+              <strong key={`${status}-${counts[status]}`} className="animated-number">{counts[status]}</strong>
               <h4>{title}</h4>
               <p>{description}</p>
             </div>
@@ -635,32 +656,41 @@ export function ComparisonResults({
                         <h5>Interpretation</h5>
                         <p>{item.explanation}</p>
                       </div>
-                      <div className={`job-evidence-grid${item.candidate_evidence.length && item.job_evidence.length ? "" : " comparison-evidence-stack"}`}>
-                        <div>
+                      <div className={`evidence-pair ${item.status}${item.candidate_evidence.length && item.job_evidence.length ? "" : " comparison-evidence-stack"}`}>
+                        <div className="evidence-column job">
+                          <h5>Original job description evidence</h5>
+                          {item.job_evidence.map((evidence, index) => (
+                            <JobPassage
+                              key={index}
+                              quote={evidence.quote}
+                              start={evidence.start}
+                              end={evidence.end}
+                              source={analysis.job.text}
+                              label={`Job post · ${item.requirement_id}`}
+                            />
+                          ))}
+                        </div>
+                        <div className="evidence-bridge" aria-hidden="true">
+                          <span className={`evidence-bridge-mark ${item.status}`}>
+                            {item.status === "documented" ? <Check size={14} strokeWidth={2.5} /> : item.status === "not_documented" ? <Minus size={14} strokeWidth={2.5} /> : <HelpCircle size={14} strokeWidth={2.25} />}
+                          </span>
+                        </div>
+                        <div className="evidence-column cv">
                           <h5>Reviewed profile evidence · unverified</h5>
                           {item.candidate_evidence.length > 0 && <p className="comparison-source-label">Supporting CV mention found</p>}
                           {item.candidate_evidence.length ? (
                             item.candidate_evidence.map((evidence, index) => (
-                              <ProfileEvidence key={index} evidence={evidence} />
+                              <ProfileEvidence key={index} evidence={evidence} layout="passage" />
                             ))
                           ) : (
-                            <p className="comparison-empty-evidence">
-                              No supporting profile excerpt returned. This does
-                              not establish missing ability.
-                            </p>
+                            <div className="evidence-absent">
+                              <Minus size={16} aria-hidden="true" />
+                              <p className="comparison-empty-evidence">
+                                No supporting profile excerpt returned. This does
+                                not establish missing ability.
+                              </p>
+                            </div>
                           )}
-                        </div>
-                        <div>
-                          <h5>Original job description evidence</h5>
-                          {item.job_evidence.map((evidence, index) => (
-                            <blockquote key={index}>
-                              {evidence.quote}
-                              <small>
-                                Source characters {evidence.start}–
-                                {evidence.end}
-                              </small>
-                            </blockquote>
-                          ))}
                         </div>
                       </div>
                       <details className="comparison-detail-section comparison-evidence-notes">
