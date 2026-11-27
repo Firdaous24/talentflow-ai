@@ -1,7 +1,38 @@
 name: talentflow-ai
 
+# Phase 6: PostgreSQL is required. Every value below comes from .env (see
+# .env.example); Compose refuses to start when a required one is missing.
+x-database-environment: &database-environment
+  POSTGRES_HOST: db
+  POSTGRES_DB: ${POSTGRES_DB:?Set POSTGRES_DB in .env (see .env.example)}
+  POSTGRES_USER: ${POSTGRES_USER:?Set POSTGRES_USER in .env (see .env.example)}
+  POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env (see .env.example)}
+
+x-application-environment: &application-environment
+  <<: *database-environment
+  TALENTFLOW_SECRET_KEY: ${TALENTFLOW_SECRET_KEY:?Generate TALENTFLOW_SECRET_KEY in .env (see .env.example)}
+  SESSION_COOKIE_SECURE: ${SESSION_COOKIE_SECURE:-true}
+  APP_BASE_URL: ${APP_BASE_URL:-http://localhost:5173}
+  TALENTFLOW_ALLOWED_HOSTS: ${TALENTFLOW_ALLOWED_HOSTS:-}
+  EMAIL_BACKEND: smtp
+  SMTP_HOST: mailpit
+  SMTP_PORT: "1025"
+  MAIL_FROM: ${MAIL_FROM:-TalentFlow AI <no-reply@talentflow.example>}
+
+x-hardening: &hardening
+  security_opt:
+    - no-new-privileges:true
+  cap_drop:
+    - ALL
+  logging:
+    driver: json-file
+    options:
+      max-size: "10m"
+      max-file: "3"
+
 services:
   frontend:
+    <<: *hardening
     image: talentflow-ai-frontend:local
     build:
       context: ./frontend
@@ -15,58 +46,75 @@ services:
       backend:
         condition: service_healthy
     restart: unless-stopped
-    security_opt:
-      - no-new-privileges:true
-    cap_drop:
-      - ALL
-    logging:
-      driver: json-file
-      options:
-        max-size: "10m"
-        max-file: "3"
 
   backend:
+    <<: *hardening
     image: talentflow-ai-backend:local
     build:
       context: ./backend
       dockerfile: Dockerfile
       target: runtime
     environment:
+      <<: *application-environment
       LLM_PROVIDER: ${LLM_PROVIDER:-}
       LLM_BASE_URL: ${LLM_BASE_URL:-}
       LLM_MODEL: ${LLM_MODEL:-}
       LLM_API_KEY: ${LLM_API_KEY:-}
     ports:
       - "127.0.0.1:8000:8000"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      mailpit:
+        condition: service_healthy
     restart: unless-stopped
     init: true
-    security_opt:
-      - no-new-privileges:true
-    cap_drop:
-      - ALL
     healthcheck:
       test: ["CMD", "python", "-c", "import json, urllib.request; r = urllib.request.urlopen('http://127.0.0.1:8000/api/v1/health', timeout=3); assert r.status == 200 and json.load(r) == {'status': 'ok'}"]
       interval: 10s
       timeout: 5s
       start_period: 10s
       retries: 3
-    logging:
-      driver: json-file
-      options:
-        max-size: "10m"
-        max-file: "3"
 
-  # Optional: the application does not use PostgreSQL yet. Start it with
-  # `docker compose --profile db up -d`. Its data volume is always preserved.
-  db:
-    profiles: ["db"]
-    image: postgres:17.11-bookworm@sha256:3645570cccdfa447589da9f57dd740faa29b30938e861289a5574b6ca6b03826
-    # Values come from .env (see .env.example). Without POSTGRES_PASSWORD the
-    # official image refuses to initialize, so the optional profile fails safely.
+  # Applies Alembic migrations once, then exits; backend and worker wait for it.
+  migrate:
+    <<: *hardening
+    image: talentflow-ai-backend:local
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: runtime
+    command: ["python", "-m", "alembic", "upgrade", "head"]
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-}
-      POSTGRES_USER: ${POSTGRES_USER:-}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-}
+      <<: *database-environment
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+
+  # Retention housekeeping in phase 6; the import queue arrives in phase 8.
+  worker:
+    <<: *hardening
+    image: talentflow-ai-backend:local
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: runtime
+    command: ["python", "-m", "app.worker"]
+    environment:
+      <<: *application-environment
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    restart: unless-stopped
+    init: true
+
+  db:
+    image: postgres:17.11-bookworm@sha256:3645570cccdfa447589da9f57dd740faa29b30938e861289a5574b6ca6b03826
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:?Set POSTGRES_DB in .env (see .env.example)}
+      POSTGRES_USER: ${POSTGRES_USER:?Set POSTGRES_USER in .env (see .env.example)}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env (see .env.example)}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
@@ -81,6 +129,23 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+
+  # Local e-mail catcher (decision D8: no external provider in v1). Messages
+  # stay in the container; the inbox is at http://localhost:8025.
+  mailpit:
+    <<: *hardening
+    image: axllent/mailpit:v1.29@sha256:757f22b56c1da03570afdb3d259effe5091018008a81bbedc8158cee7e16fdbc
+    environment:
+      MP_MAX_MESSAGES: "500"
+    ports:
+      - "127.0.0.1:8025:8025"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "/mailpit", "readyz"]
+      interval: 10s
+      timeout: 5s
+      start_period: 5s
+      retries: 3
 
 volumes:
   postgres_data:

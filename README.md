@@ -2,11 +2,15 @@
 
 [![CI](https://github.com/Firdaous24/talentflow-ai/actions/workflows/ci.yml/badge.svg)](https://github.com/Firdaous24/talentflow-ai/actions/workflows/ci.yml)
 
-**A local-first recruitment assistant that turns CVs and job posts into source-grounded evidence, then leaves every judgement to a human reviewer.**
+**Evidence over scores: applications organised by documentary coverage, anonymous by default, where every number links to its proof and the decision stays human.**
 
 ## Why this project
 
-Screening tools often reduce a person to a match score. TalentFlow AI takes the opposite approach: it extracts what the documents actually say, links every statement to its exact source text, and shows a recruiter which job requirements are *documented*, *not documented* or *need human review*. Nothing is ranked, scored or decided automatically. A CV profile and the job requirements must both be reviewed and confirmed by a person before any comparison runs, the comparison only sees qualification fields (never identity, contact details, employers, locations or dates), and no external model is called without explicit configuration and per-upload consent.
+Screening tools often reduce a person to an opaque match score. **TalentFlow AI organises applications by documentary coverage, never by an opaque score.** Every position is explained by counted criteria (“5/6 required · 2/3 preferred”) and every number opens on the exact excerpt of the CV and of the job post. The ordering is anonymous by default, does not measure real competence, and neither rejects nor accepts anyone: the decision always belongs to the recruiter. On the candidate side, the same transparency shows what a CV already documents, what is missing and what still needs interpretation, without ever inventing a skill.
+
+Under the hood, it extracts what the documents actually say, links every statement to its exact source text, and marks each job requirement as *documented*, *not documented* or *needs human review*. There is no score, percentage or gauge, and nothing is decided automatically. A CV profile and the job requirements must both be reviewed and confirmed by a person before any comparison runs, the comparison only sees qualification fields (never identity, contact details, employers, locations or dates), and no external model is called without explicit configuration and per-upload consent. “Not documented” never means “not competent”.
+
+The v1 platform is designed for users in **Morocco only** (law 09-08); any online instance is a demo with fictional data or invited users. The full design, privacy and ordering rules are in [docs/V1_DESIGN.md](docs/V1_DESIGN.md); the coverage-based ordering itself ships with the recruiter space (phase 8).
 
 ## Preview
 
@@ -17,6 +21,8 @@ All screenshots use fictional documents against the local stack. Light and dark 
 | ![Dashboard hero with the "Try with fictional data" demo, session state and the six-step path](docs/images/dashboard.png) | ![Job clause on the left and CV excerpt on the right, exact spans highlighted from code-point offsets with "chars" badges](docs/images/evidence-side-by-side.png) |
 | **AI Agents — paused for human review** | **AI Agents — final report (dark theme)** |
 | ![Seven-node LangGraph visualization paused at the human_review interrupt](docs/images/agents-human-review.png) | ![Completed seven-node LangGraph workflow after an explicit review acknowledgment, in the dark theme](docs/images/agents-final-report.png) |
+| **Public home (French, demo warning)** | **Role choice at sign-up (dark theme)** |
+| ![Public home in French with the permanent “Version de démonstration · Maroc” banner, the evidence-over-scores headline and links to the demo and sign-up](docs/images/public-home.png) | ![Sign-up role choice with two cards, “Je suis candidat·e” and “Je recrute”, each explaining what the space allows, in the dark theme](docs/images/role-choice.png) |
 
 ## Architecture
 
@@ -44,28 +50,61 @@ Data flow: **PDF CV** → parsed profile with source evidence → human review a
 - **Source-grounded evidence.** Every job requirement and every CV excerpt carries its exact quote and `start`/`end` offsets in Unicode code points; the server re-checks them against a fresh analysis of the source before answering.
 - **Qualification-only projection.** Comparisons accept education, experience descriptions, skills, projects, certifications and languages only; identity, contact, employer, location and date fields are rejected by the schema.
 - **Real LangGraph interrupt/resume.** A seven-node `StateGraph` pauses at `interrupt()` and continues with `Command(resume=...)` after a human acknowledgment; evidence is verified again before the final report. No simulated progress.
-- **No scores, no automated decisions.** Three statuses only (`documented`, `not_documented`, `needs_review`), with explicit limitations attached to every result.
-- **Local-first and private by default.** Loopback-only ports, Host/Origin checks on every API route, bounded request bodies, no persistence of CVs, no external calls without consent.
+- **No opaque scores, no automated decisions.** Three statuses only (`documented`, `not_documented`, `needs_review`), with explicit limitations attached to every result; no percentage, gauge or automatic rejection.
+- **Accounts with roles (v0.8.0).** Candidate and recruiter accounts under `/api/v2`: argon2id passwords, server-side `HttpOnly` sessions, CSRF on every unsafe request, rate limits, versioned consents, account deletion and a pseudonymised append-only audit log in PostgreSQL. The `/api/v1` demo stays public and account-free.
+- **Local-first and private by default.** Loopback-only ports, Host/Origin checks on every API route, bounded request bodies, no persistence of CVs, no external calls without consent; e-mails are captured locally by Mailpit.
 - **Side-by-side evidence view.** The job clause and the CV excerpt sit next to each other, with the exact span highlighted from the API offsets and a `chars a–b` badge; “not documented” is shown as a neutral absence, never as a failure.
-- **Tested end to end.** 681 backend tests and 93 frontend tests, 10 real-browser Chromium workflows, ruff and ESLint, strict TypeScript, and GitHub Actions CI on every push.
+- **Tested end to end.** 769 backend tests (including reversible migrations and a generated authorization matrix), 103 frontend tests, 11 real-browser Chromium workflows, ruff and ESLint, strict TypeScript, and GitHub Actions CI with a PostgreSQL service on every push.
 
 ## Quick start
 
+A `.env` file is **required**: it holds the database credentials and the secret used to sign sessions and CSRF tokens. Never commit it.
+
 ```powershell
+Copy-Item .env.example .env
+# Generate the secret and set it as TALENTFLOW_SECRET_KEY in .env (at least 32 characters):
+python -c "import secrets; print(secrets.token_urlsafe(48))"
+# Keep SESSION_COOKIE_SECURE=false for local HTTP, and replace POSTGRES_PASSWORD.
 docker compose up -d --build --wait
 ```
 
-Open **http://localhost:5173** for the workspace and **http://127.0.0.1:8000/docs** for the API documentation. On the Dashboard, **Try with fictional data** generates a fictional CV and a sample job post in the browser and walks you through the full flow in under a minute; the demo profile still requires your review and confirmation, and nothing is stored. See [Docker workflow](#docker-workflow-primary) for details and [Run tests on the host](#run-tests-on-the-host-optional) for local checks.
+The backend refuses a secret shorter than 32 characters or starting with `change-me`. Compose starts `db` (PostgreSQL), `migrate` (applies Alembic migrations, then exits), `backend`, `worker`, `mailpit` and `frontend`. Then open:
+
+| URL | What |
+|---|---|
+| http://localhost:5173/welcome | Public home, sign-up and sign-in |
+| http://localhost:5173 | Account-free demo workspace |
+| http://localhost:8025 | Mailpit: verification and password e-mails are captured here, never sent out |
+| http://127.0.0.1:8000/docs | API documentation |
+
+On the Dashboard, **Try with fictional data** generates a fictional CV and a sample job post in the browser and walks you through the full flow in under a minute; the demo profile still requires your review and confirmation, and nothing is stored. See [Docker workflow](#docker-workflow-primary) for details and [Run tests on the host](#run-tests-on-the-host-optional) for local checks.
+
+## Accounts and roles
+
+Since v0.8.0 (phase 6 of the [v1 design](docs/V1_DESIGN.md)), people can open an account and choose its role at sign-up. One e-mail address has one role.
+
+| Role | Space | Today |
+|---|---|---|
+| **Visitor** | Public home, demo, legal pages | Account-free demo at `/`, home at `/welcome`, permanent demo warning (Morocco only) |
+| **Candidate** | Own data only | Candidate space, consents (separate, dated, versioned, withdrawable), language, account deletion; CV storage arrives in phase 7 |
+| **Recruiter** | Data of their organisations only | Minimal organisations (create, list, members), account deletion; job posts, imports and ordering arrive in phase 8 |
+
+The flow is: role choice → sign-up (terms accepted, marketing never pre-ticked) → e-mail verification (link in Mailpit) → sign-in → own space → sign-out or account deletion (password required). Public pages and account spaces are in French by default with English available; the choice is stored only when you click a language.
+
+Security in short: argon2id password hashing; a random session token whose SHA-256 alone is stored, in an `HttpOnly`, `SameSite=Lax` cookie (`Secure` and `__Host-` outside local HTTP), revoked at sign-out; a signed double-submit CSRF token on every unsafe request (403 `csrf_failed`); rate-limited sign-in, sign-up and e-mails; identical answers whether an address exists or not. Authorization is deny-by-default: no session → 401, another role's route → 403 `forbidden_role`, another organisation's resource → 404. A test generated from the OpenAPI schema fails if a new `/api/v2` route has no access policy. Deleting an account removes the user, sessions, tokens, consents and memberships, and leaves only a pseudonymised `account.deleted` audit entry; the audit log is append-only (PostgreSQL trigger) and kept 12 months.
+
+Routes, error codes and the retention worker are documented in [docs/accounts_phase6.md](docs/accounts_phase6.md).
 
 Release history and the validation recorded at each phase are in [docs/CHANGELOG.md](docs/CHANGELOG.md).
 
 ## Current status
 
-**Current release: v0.7.0.** **Phases 1 through 5 are implemented:** backend foundation, Docker infrastructure, React workspace, layout-aware French/English CV parsing, source evidence, human review, deterministic job analysis and document comparison, technical-environment provenance, compact evidence results, source-bound excerpts and bounded LangGraph orchestration. Optional CV model extraction requires backend configuration and per-upload consent; job analysis and the graph require no AI credentials. Validation for each phase is recorded in the [changelog](docs/CHANGELOG.md).
+**Current release: v0.8.0.** **Phases 1 through 6 are implemented:** backend foundation, Docker infrastructure, React workspace, layout-aware French/English CV parsing, source evidence, human review, deterministic job analysis and document comparison, technical-environment provenance, compact evidence results, source-bound excerpts, bounded LangGraph orchestration, and (phase 6) mandatory PostgreSQL with accounts, roles and consents. Optional CV model extraction requires backend configuration and per-upload consent; job analysis and the graph require no AI credentials. Validation for each phase is recorded in the [changelog](docs/CHANGELOG.md).
 
 Implemented:
 
-- Modular, typed FastAPI backend, version `0.6.0`.
+- Modular, typed FastAPI backend, version `0.8.0`.
+- PostgreSQL (SQLAlchemy 2, psycopg 3) with reversible Alembic migrations, candidate and recruiter accounts under `/api/v2`, a retention worker and local e-mail capture with Mailpit (see [Accounts and roles](#accounts-and-roles)).
 - Service information at `GET /` and liveness at `GET /api/v1/health`.
 - Swagger documentation at `/docs` and OpenAPI schema at `/openapi.json`.
 - Browser CORS access restricted to `http://localhost:5173` for GET and POST requests.
@@ -74,7 +113,7 @@ Implemented:
 - Pydantic v2 candidate schemas and deterministic extraction with explicit warnings.
 - Six fictional CV scenarios with PDFs generated in memory during tests.
 - Automated endpoint, PDF service, extraction, schema, upload-limit, and CORS tests.
-- Docker Compose workflow with a non-root backend, dedicated test image, and an optional internal PostgreSQL service (`db` profile).
+- Docker Compose workflow with a non-root backend, dedicated test image, and a required internal PostgreSQL service.
 - Responsive React interface with Dashboard, CV Parser, Candidates, and application information pages.
 - Layout-aware French/English section and entry extraction, expanded skill vocabulary and source evidence.
 - In-memory corrections/removal and explicit reviewed-profile confirmation.
@@ -89,15 +128,13 @@ Implemented:
 
 Planned:
 
+- Candidate space with encrypted CV versions, coverage reports and gap analysis (phase 7), then the recruiter space with job posts, bulk import and anonymous coverage ordering (phase 8), pipeline and reports (phase 9), discovery (phase 10), compliance hardening and Arabic interface (phase 11). See [V1_DESIGN.md §9](docs/V1_DESIGN.md).
 - Broader/complex CV layout support and OCR.
-- Broader graph workflows only where they add measurable value; the current graph is deterministic evidence orchestration.
-- Broader independent extraction/comparison holdouts and authenticated review records.
-- Application-level PostgreSQL persistence, ORM, and migrations (the local database service is provisioned).
-- Public production deployment, authentication, and durable candidate storage.
+- Broader independent extraction/comparison holdouts.
 
-The health endpoint checks application liveness only. CORS is a browser access policy, not authentication. Authentication, deployment configuration, and external dependency readiness checks remain future work.
+The health endpoint checks application liveness only. CORS is a browser access policy, not authentication. Public deployment remains out of scope: any online instance is a demo.
 
-Candidate and requirement confirmations are **unverified client workflow assertions**, not authenticated approvals. The API checks current snapshots and original source evidence, but has no authenticated identity or durable review history. Agent workflows additionally require a random browser-session capability for every action; this is local scoping, not multi-user authentication. “Documented” means an unverified profile statement is present; “not documented” does not establish lack of ability. Final interpretation remains with a human.
+In the `/api/v1` demo, candidate and requirement confirmations are **unverified client workflow assertions**, not authenticated approvals. The API checks current snapshots and original source evidence, but has no authenticated identity or durable review history. Agent workflows additionally require a random browser-session capability for every action; this is local scoping, not multi-user authentication. “Documented” means an unverified profile statement is present; “not documented” does not establish lack of ability. Final interpretation remains with a human.
 
 ## Technology stack
 
@@ -107,8 +144,9 @@ Candidate and requirement confirmations are **unverified client workflow asserti
 | Tests | pytest, httpx, FastAPI TestClient | Implemented |
 | CV ingestion and schemas | PyMuPDF, python-multipart, Pydantic v2 | Implemented |
 | AI orchestration | LangGraph 1.2.15 | Deterministic local evidence workflow with human interrupt/resume |
-| Database | PostgreSQL | Optional Compose profile `db`; application integration planned |
-| Frontend | React, TypeScript, Vite, Tailwind CSS, Lucide, React Router | Implemented |
+| Database | PostgreSQL 17, SQLAlchemy 2, psycopg 3, Alembic | Required; accounts, sessions, consents, organisations, audit log |
+| Accounts | argon2-cffi, server-side sessions, signed CSRF, Mailpit (local e-mail) | Implemented under `/api/v2` |
+| Frontend | React, TypeScript, Vite, Tailwind CSS, Lucide, React Router, i18next (FR/EN) | Implemented |
 | Packaging | Docker, Docker Compose | Implemented |
 
 ## Project structure
@@ -119,13 +157,19 @@ talentflow-ai/
 │   ├── app/
 │   │   ├── main.py              # FastAPI app, middlewares, routers, workflow lifespan
 │   │   ├── api/
-│   │   │   ├── local_boundary.py  # Loopback Host/Origin check and 1 MiB JSON limit on /api/v1
+│   │   │   ├── local_boundary.py  # Loopback Host/Origin check and 1 MiB JSON limit on /api/v1 and /api/v2
 │   │   │   ├── upload_limits.py   # 5 MiB multipart limit for CV uploads
-│   │   │   └── routes/            # health, candidates, jobs, agents
+│   │   │   ├── routes/            # /api/v1: health, candidates, jobs, agents
+│   │   │   └── v2/                # /api/v2: auth, account, spaces, CSRF middleware
+│   │   ├── auth/                # argon2id, tokens, CSRF, rate limiter, mailer
+│   │   ├── core/config.py       # Settings from the environment (secret, database, cookies, e-mail)
+│   │   ├── db/                  # SQLAlchemy models and sessions
+│   │   ├── worker.py            # Retention purges
 │   │   ├── models/              # Pydantic contracts: candidate.py, job.py
 │   │   ├── services/            # pdf, layout, sections, records, multilingual, extraction, llm (optional),
 │   │   │                        # jobs, job_formatting, job_vocabulary
 │   │   └── agents/              # LangGraph StateGraph, checkpoints, verification, boundary middleware
+│   ├── migrations/              # Alembic (reversible migrations, tested in CI)
 │   ├── tests/                   # pytest suites and fictional fixtures
 │   ├── evaluate*.py             # Offline evaluation scripts (CV, jobs, comparison accuracy)
 │   ├── requirements.txt / requirements.lock / requirements-dev.txt
@@ -135,6 +179,8 @@ talentflow-ai/
 │   ├── src/
 │   │   ├── App.tsx              # Layout, navigation and routes
 │   │   ├── pages/               # Dashboard, Parser, Candidates, JobAnalysis, AIAgents, Settings, NotFound
+│   │   ├── public/              # Public home, sign-up, sign-in, legal pages and account spaces
+│   │   ├── auth/ · i18n/        # /api/v2 client and session context · FR/EN messages
 │   │   ├── components/          # ReviewProfile, ComparisonResults, Profile, warnings, ConnectionBadge
 │   │   ├── *Session.tsx         # In-memory session state (CV, job, agents)
 │   │   ├── *Api.ts / api.ts     # Typed API clients
@@ -146,7 +192,7 @@ talentflow-ai/
 ├── docs/                        # Architecture notes, CHANGELOG, audit, screenshots (docs/images)
 ├── evaluation/                  # Recorded fictional evaluation results
 ├── .github/workflows/ci.yml     # Backend, frontend and Compose checks
-├── docker-compose.yml           # frontend + backend (+ optional db profile)
+├── docker-compose.yml           # db, migrate, backend, worker, mailpit, frontend
 ├── compose.dev.yaml / compose.test.yaml
 ├── .env.example
 ├── CLAUDE.md                    # Guide for coding agents
@@ -157,7 +203,7 @@ talentflow-ai/
 
 Install Docker Desktop for Windows with the WSL 2 backend, enable Linux containers, and start Docker Desktop. The workflow requires the Docker Compose plugin; host Python is unnecessary for container execution and testing. Run commands from `C:\Users\MSI\Desktop\talentflow-ai`.
 
-Initial setup (copy the example only if `.env` does not already exist):
+Initial setup (copy the example only if `.env` does not already exist, then set `TALENTFLOW_SECRET_KEY` as in the [Quick start](#quick-start)):
 
 ```powershell
 Set-Location C:\Users\MSI\Desktop\talentflow-ai
@@ -166,14 +212,14 @@ docker compose version
 docker info
 if (-not (Test-Path .env)) { Copy-Item .env.example .env }
 docker compose config --quiet
-docker compose up -d --build
+docker compose up -d --build --wait
 ```
 
-The example supplies safe, public local-development placeholders for `POSTGRES_DB`, `POSTGRES_USER`, and `POSTGRES_PASSWORD`. Replace the password before shared use. Keep `.env` out of Git; Compose passes database variables only to PostgreSQL; optional LLM variables go to the backend at runtime, never into image contents. Avoid sharing full `docker compose config` output because it contains resolved passwords; use `--quiet` for validation.
+`.env` is required. The example supplies public local-development placeholders for `POSTGRES_DB`, `POSTGRES_USER` and `POSTGRES_PASSWORD` (replace the password), a placeholder `TALENTFLOW_SECRET_KEY` that the backend refuses until you generate a real one, and `SESSION_COOKIE_SECURE=false` for local HTTP only. Compose stops with an explicit error if a required value is missing. Keep `.env` out of Git; secrets go to containers at runtime, never into image contents. Avoid sharing full `docker compose config` output because it contains resolved passwords; use `--quiet` for validation.
 
-Open **http://localhost:5173** for the application and **http://127.0.0.1:8000/docs** for Swagger. The Compose command builds and starts the frontend and API only; `.env` is not required for them. Initial image downloads/builds may take several minutes. Both HTTP services are published only on loopback, and every `/api/v1` route rejects non-local `Host`/`Origin` headers.
+Open **http://localhost:5173/welcome** for the public home, **http://localhost:5173** for the demo workspace, **http://localhost:8025** for Mailpit and **http://127.0.0.1:8000/docs** for Swagger. Initial image downloads/builds may take several minutes. HTTP services are published only on loopback (ports 5173, 8000 and 8025 must be free), and every `/api/v1` and `/api/v2` route rejects non-local `Host`/`Origin` headers.
 
-PostgreSQL is optional because the application does not use it yet. Start it explicitly with `docker compose --profile db up -d --wait` (it needs the `POSTGRES_*` values from `.env`; without a password the official image refuses to initialize). It is reachable from containers as `db:5432` and has no public port. The `postgres_data` volume is never removed by these commands. A database container started before the profile existed keeps running until you stop it with `docker compose --profile db stop db`.
+PostgreSQL is required. The `migrate` service runs `alembic upgrade head` before the backend and worker start. The database is reachable from containers as `db:5432` and has no public port. The `postgres_data` volume is never removed by these commands.
 
 Daily operations:
 
@@ -202,10 +248,10 @@ Build and run the full test suite inside the dedicated test image:
 
 ```powershell
 docker compose -f docker-compose.yml -f compose.test.yaml build backend
-docker compose -f docker-compose.yml -f compose.test.yaml run --rm --no-deps backend
+docker compose -f docker-compose.yml -f compose.test.yaml run --rm backend
 ```
 
-Tests run without host Python, a running API, PostgreSQL, or external services. Rebuild the test image after source/test changes. Docker installs `requirements.txt` constrained by the Linux-resolved `requirements.lock`; the Python and PostgreSQL images are pinned by digest. For ordinary rebuilds:
+Tests run without host Python, a running API or external services. Database tests use the `test-db` service from `compose.test.yaml`, held in tmpfs and distinct from `postgres_data`. Rebuild the test image after source/test changes. Docker installs `requirements.txt` constrained by the Linux-resolved `requirements.lock`; the Python and PostgreSQL images are pinned by digest. For ordinary rebuilds:
 
 ```powershell
 docker compose build backend
@@ -213,11 +259,11 @@ docker compose -f docker-compose.yml -f compose.test.yaml build backend
 docker compose up -d --wait
 ```
 
-Database persistence and reset: PostgreSQL data is held in the project-scoped `postgres_data` volume, normally named `talentflow-ai_postgres_data`. Initialization variables apply only to an empty volume; changing `.env` does not alter existing database credentials. Inspect project volumes with `docker volume ls --filter label=com.docker.compose.project=talentflow-ai`. After an explicit decision to discard all local database data and any necessary backup, the destructive reset command is `docker compose down --volumes`, followed by `docker compose --profile db up -d --wait`. This command is documented only; automated work must obtain explicit approval before running it. Never use a global prune to reset this project.
+Database persistence and reset: PostgreSQL data is held in the project-scoped `postgres_data` volume, normally named `talentflow-ai_postgres_data`. Initialization variables apply only to an empty volume; changing `.env` does not alter existing database credentials. Inspect project volumes with `docker volume ls --filter label=com.docker.compose.project=talentflow-ai`. After an explicit decision to discard all local database data and any necessary backup, the destructive reset command is `docker compose down --volumes`, followed by `docker compose up -d --wait`. This command is documented only; automated work must obtain explicit approval before running it. Never use a global prune to reset this project.
 
 Troubleshooting: if Docker reports a daemon/named-pipe connection error, start Docker Desktop and verify Linux-container mode and daemon access. If ports 8000 or 5173 are occupied, stop the conflicting service or change its loopback host port. Use `docker compose ps` and service logs to diagnose unhealthy containers. Initial pulls/builds require internet access. Direct browser requests to the backend support CORS from `http://localhost:5173`; the default frontend uses its same-origin proxy.
 
-The backend and frontend run as non-root users; no service is privileged, secrets are excluded from build contexts, and database ports are not published. Public deployment, secret management, TLS, authentication, and worker isolation remain future work. See [Docker architecture](docs/docker_architecture.md).
+The backend and frontend run as non-root users; no service is privileged, secrets are excluded from build contexts, and database ports are not published. Public deployment, managed secrets, TLS and worker isolation remain future work. See [Docker architecture](docs/docker_architecture.md).
 
 After intentionally editing `backend/requirements.txt`, refresh the lock in a container before rebuilding normally. This explicit opt-out resolves dependencies without the old lock; leave the running service alone until the reviewed lock and final builds are ready:
 
@@ -301,7 +347,7 @@ Set-Location C:\Users\MSI\Desktop\talentflow-ai
 .\backend\.venv\Scripts\python.exe -m pip install -r .\backend\requirements.txt
 ```
 
-For a fresh clone only, install Python 3.10 or later and create the environment with `py -m venv backend/.venv` before installing dependencies. This implementation was tested on Python 3.11. The API itself requires no API keys, database connection, or environment variables; `.env.example` now documents Docker Compose's local database configuration. Never commit credentials or real candidate CVs.
+For a fresh clone only, install Python 3.10 or later and create the environment with `py -m venv backend/.venv` before installing dependencies. This implementation was tested on Python 3.11. The `/api/v1` demo runs without a database or environment variables; `/api/v2` answers 503 `service_not_configured` until `DATABASE_URL` (or `POSTGRES_*`) and `TALENTFLOW_SECRET_KEY` are set and migrations are applied (`.venv\Scripts\python.exe -m alembic upgrade head`). Never commit credentials or real candidate CVs.
 
 ## Run the backend on the host (optional)
 
@@ -329,7 +375,7 @@ Set-Location backend
 .\.venv\Scripts\python.exe -m pytest
 ```
 
-Tests use FastAPI TestClient and do not require a running server or external services.
+Tests use FastAPI TestClient and do not require a running server or external services. The 88 database tests (`/api/v2`, migrations, worker) run only when `TEST_DATABASE_URL` points to a **disposable** PostgreSQL database, because their fixtures downgrade and truncate it; without it they are skipped. See [docs/accounts_phase6.md](docs/accounts_phase6.md#tests) for a one-line throwaway container.
 
 ## Parse a CV
 
@@ -429,11 +475,11 @@ See [agent workflow testing](docs/agent_workflow_testing.md) for actual results,
 
 ## Quality checks and CI
 
-- **Lint:** `ruff check app tests *.py` in `backend/` (rules E/F/I/B/UP, `backend/ruff.toml`; dev tools in `backend/requirements-dev.txt`) and `npm run lint` in `frontend/`.
+- **Lint:** `ruff check app tests migrations *.py` in `backend/` (rules E/F/I/B/UP, `backend/ruff.toml`; dev tools in `backend/requirements-dev.txt`) and `npm run lint` in `frontend/`.
 - **Types and tests:** `npx tsc --noEmit`, `npx vitest run` and `npm run build` in `frontend/`; `pytest` in `backend/`.
-- **CI:** `.github/workflows/ci.yml` runs on pushes and pull requests to `main`: backend (lock-constrained install, ruff, pytest), frontend (Node 22: lint, tsc, vitest, build) and Compose configuration validation. It uses no secrets and deploys nothing.
-- **End-to-end:** ten real-API Chromium scripts in `frontend/e2e/` (including the demo mode); see [agent workflow testing](docs/agent_workflow_testing.md).
+- **CI:** `.github/workflows/ci.yml` runs on pushes and pull requests to `main`: backend (lock-constrained install, ruff, Alembic `upgrade` → `downgrade base` → `upgrade` → `check` against a disposable PostgreSQL service, then pytest with database tests required), frontend (Node 22: lint, tsc, vitest, build) and Compose configuration validation. It uses no secrets and deploys nothing.
+- **End-to-end:** eleven real-API Chromium scripts in `frontend/e2e/`, including the demo mode and `auth-smoke.mjs` (sign-up with role choice, e-mail verification through Mailpit, sign-in, sign-out, CSRF and account deletion, in French and English); see [agent workflow testing](docs/agent_workflow_testing.md).
 
 ## Roadmap
 
-Next, broaden independently authored CV/job holdouts and target prose, negation, cross-language qualification and layout failures. Add authenticated, auditable review records with purpose-limited persistence before shared deployment, then evaluate any optional job model against the same evidence boundaries using fictional data. Public deployment remains future work; candidate ranking and employment decisions remain outside this tool's purpose.
+The v1 platform is delivered in phases, each tagged with a green CI ([V1_DESIGN.md §9](docs/V1_DESIGN.md)): accounts and roles (v0.8.0, done), candidate space (v0.9.0), recruiter space with anonymous coverage ordering (v0.10.0), pipeline and evidence reports (v0.11.0), discovery (v0.12.0), then compliance, hardening and the Arabic interface (v1.0.0). The ordering only counts documented criteria, never produces a score, and never triggers an automatic decision; hiring decisions remain outside this tool's purpose.

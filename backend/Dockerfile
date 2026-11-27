@@ -13,6 +13,8 @@ COPY requirements.txt requirements.lock ./
 ARG LOCK_FILE=requirements.lock
 RUN python -m pip install --only-binary=:all: -r requirements.txt -c "${LOCK_FILE}" && python -m pip check
 COPY --chown=app:app app ./app
+COPY --chown=app:app alembic.ini ./alembic.ini
+COPY --chown=app:app migrations ./migrations
 USER app
 RUN python -c "from app.main import app; assert app.title == 'TalentFlow AI'"
 

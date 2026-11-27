@@ -1,10 +1,34 @@
-# Override backend itself, so test runs need neither a running API nor PostgreSQL.
+# Run the backend test suite in its image. The account tests get their own
+# disposable PostgreSQL (tmpfs, no published port, no volume): they never touch
+# the application's postgres_data database.
 services:
+  test-db:
+    image: postgres:17.11-bookworm@sha256:3645570cccdfa447589da9f57dd740faa29b30938e861289a5574b6ca6b03826
+    environment:
+      POSTGRES_DB: talentflow_test
+      POSTGRES_USER: talentflow_test
+      # Disposable, network-internal test database: no credential to manage.
+      POSTGRES_HOST_AUTH_METHOD: trust
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U talentflow_test -d talentflow_test"]
+      interval: 2s
+      timeout: 5s
+      retries: 15
+
   backend:
     image: talentflow-ai-backend-test:local
     build:
       target: test
     command: ["python", "-m", "pytest", "-p", "no:cacheprovider"]
+    environment:
+      TEST_DATABASE_URL: postgresql+psycopg://talentflow_test@test-db:5432/talentflow_test
+      REQUIRE_DATABASE_TESTS: "1"
+    depends_on: !override
+      test-db:
+        condition: service_healthy
+    ports: !reset []
     restart: "no"
     healthcheck:
       disable: true

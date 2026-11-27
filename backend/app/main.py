@@ -17,6 +17,8 @@ from app.api.routes.candidates import router as candidates_router
 from app.api.routes.health import router as health_router
 from app.api.routes.jobs import router as jobs_router
 from app.api.upload_limits import UploadLimitMiddleware
+from app.api.v2 import router as v2_router
+from app.api.v2.middleware import AccountBoundaryMiddleware
 
 
 @asynccontextmanager
@@ -39,14 +41,16 @@ async def lifespan(application: FastAPI):
 
 app = FastAPI(
     title="TalentFlow AI",
-    version="0.7.0",
+    version="0.8.0",
     description="AI-powered recruitment intelligence platform API.",
     docs_url="/docs",
     lifespan=lifespan,
 )
 
-# Last added runs first: CORS -> agents boundary -> /api/v1 local boundary -> upload limit.
+# Last added runs first: CORS -> agents boundary -> /api/v1 + /api/v2 local boundary
+# -> /api/v2 CSRF and headers -> upload limit.
 app.add_middleware(UploadLimitMiddleware)
+app.add_middleware(AccountBoundaryMiddleware)
 app.add_middleware(LocalBoundaryMiddleware)
 app.add_middleware(AgentBoundaryMiddleware)
 
@@ -62,6 +66,7 @@ app.include_router(health_router, prefix="/api/v1")
 app.include_router(candidates_router, prefix="/api/v1")
 app.include_router(jobs_router, prefix="/api/v1")
 app.include_router(agents_router, prefix="/api/v1")
+app.include_router(v2_router)
 
 
 @app.exception_handler(RequestValidationError)
@@ -73,6 +78,12 @@ async def validation_error(request: Request, error: RequestValidationError):
             "code": "workflow_validation", "message": "Check the workflow request fields and current reviewed documents.",
             "errors": [{"loc": list(item["loc"]), "type": item["type"]} for item in error.errors()],
         }}, headers={"Cache-Control": "no-store"})
+    if request.url.path.startswith("/api/v2/"):
+        # Never echo submitted values: they can contain passwords or tokens.
+        return JSONResponse(status_code=422, content={"detail": {
+            "code": "validation_error", "message": "Check the highlighted fields.",
+            "errors": [{"loc": list(item["loc"]), "type": item["type"]} for item in error.errors()],
+        }})
     return await request_validation_exception_handler(request, error)
 
 

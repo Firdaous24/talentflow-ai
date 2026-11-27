@@ -12,5 +12,7 @@ COPY real-world-comparison-smoke.mjs ./
 COPY final-job-accuracy-smoke.mjs ./
 COPY agents-smoke.mjs ./
 COPY demo-smoke.mjs ./
+COPY auth-smoke.mjs ./
+COPY screenshots-phase6.mjs ./
 COPY native-select.mjs ./
 CMD ["node", "smoke.mjs"]
