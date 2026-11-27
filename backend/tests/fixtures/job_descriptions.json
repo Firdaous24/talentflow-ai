@@ -1,0 +1,155 @@
+{
+  "dataset_version": "fictional-jobs-v1",
+  "annotation_method": "Independently authored qualification clauses, source excerpts, classifications and synthetic profile statuses; expected annotations were written before executing the job analyzer. Company descriptions and responsibilities are deliberately not qualifications.",
+  "cases": [
+    {
+      "id": "junior_python_en",
+      "scenario": "Junior Python Developer",
+      "text": "Job title: Junior Python Developer\nCompany: Cedar Lantern Labs\nLocation: Remote\nEmployment type: Full-time\nAbout us\nOur fictional company maintains Docker services.\nResponsibilities\nBuild internal tools and prepare SQL reports.\nRequired Skills\n- Python\n- Git\nPreferred Qualifications\n- Flask\n",
+      "expected_job": {"title": "Junior Python Developer", "company": "Cedar Lantern Labs", "location": "Remote", "employment_type": "Full-time"},
+      "expected_responsibilities": ["Build internal tools and prepare SQL reports."],
+      "candidate": {"technical_skills": [{"name": "Python", "category": "programming_language"}, {"name": "Git", "category": "tool"}]},
+      "expected_requirements": [
+        {"key": "python", "category": "technical_skill", "classification": "required", "skills": ["Python"], "evidence": "Python", "status": "documented"},
+        {"key": "git", "category": "technical_skill", "classification": "required", "skills": ["Git"], "evidence": "Git", "status": "documented"},
+        {"key": "flask", "category": "technical_skill", "classification": "preferred", "skills": ["Flask"], "evidence": "Flask", "status": "not_documented"}
+      ],
+      "excluded_evidence": ["Our fictional company maintains Docker services.", "Build internal tools and prepare SQL reports."]
+    },
+    {
+      "id": "backend_engineer_fr",
+      "scenario": "Backend Engineer",
+      "text": "Intitulé du poste : Ingénieur Backend\nEntreprise : Atelier Aster\nLieu : Lyon\nType de contrat : CDI\nMissions\nMaintenir des API et surveiller les services.\nCompétences requises\n- Python\n- FastAPI\n- Postgres\nExpérience\n- Au moins 3 ans d'expérience en développement backend sont obligatoires.\nAtouts\n- Docker\n",
+      "expected_job": {"title": "Ingénieur Backend", "company": "Atelier Aster", "location": "Lyon", "employment_type": "CDI"},
+      "expected_responsibilities": ["Maintenir des API et surveiller les services."],
+      "candidate": {"technical_skills": [{"name": "Python", "category": "programming_language"}, {"name": "FastAPI", "category": "framework"}], "projects": [{"name": "Service de démonstration", "technologies": ["Docker"]}], "experience": [{"job_title": "Développeur Backend", "description": "Développement d'API internes."}]},
+      "expected_requirements": [
+        {"key": "python", "category": "technical_skill", "classification": "required", "skills": ["Python"], "evidence": "Python", "status": "documented"},
+        {"key": "fastapi", "category": "technical_skill", "classification": "required", "skills": ["FastAPI"], "evidence": "FastAPI", "status": "documented"},
+        {"key": "postgresql", "category": "technical_skill", "classification": "required", "skills": ["PostgreSQL"], "evidence": "Postgres", "status": "not_documented"},
+        {"key": "years", "category": "experience", "classification": "required", "skills": [], "evidence": "Au moins 3 ans d'expérience en développement backend sont obligatoires.", "status": "needs_review"},
+        {"key": "docker", "category": "technical_skill", "classification": "preferred", "skills": ["Docker"], "evidence": "Docker", "status": "documented"}
+      ],
+      "excluded_evidence": ["Maintenir des API et surveiller les services."]
+    },
+    {
+      "id": "data_analyst_en",
+      "scenario": "Data Analyst",
+      "text": "Job title: Data Analyst\nCompany: Willow Metrics Studio\nAbout us\nOur platform is written in Python.\nResponsibilities\nProduce Power BI dashboards for the reporting team.\nRequirements\n- SQL is required.\n- pandas is required.\nNice to Have\n- Excel\n",
+      "expected_job": {"title": "Data Analyst", "company": "Willow Metrics Studio", "location": null, "employment_type": null},
+      "expected_responsibilities": ["Produce Power BI dashboards for the reporting team."],
+      "candidate": {"technical_skills": [{"name": "SQL", "category": "programming_language"}], "projects": [{"name": "Synthetic reporting exercise", "description": "Cleaned fictional tabular data with pandas.", "technologies": ["pandas"]}]},
+      "expected_requirements": [
+        {"key": "sql", "category": "technical_skill", "classification": "required", "skills": ["SQL"], "evidence": "SQL is required.", "status": "documented"},
+        {"key": "pandas", "category": "technical_skill", "classification": "required", "skills": ["pandas"], "evidence": "pandas is required.", "status": "documented"},
+        {"key": "excel", "category": "technical_skill", "classification": "preferred", "skills": ["Excel"], "evidence": "Excel", "status": "not_documented"}
+      ],
+      "excluded_evidence": ["Our platform is written in Python.", "Produce Power BI dashboards for the reporting team."]
+    },
+    {
+      "id": "bi_analyst_fr",
+      "scenario": "Business Intelligence Analyst",
+      "text": "Poste : Analyste Business Intelligence\nEntreprise : Studio Prisme\nResponsabilités\nConcevoir des tableaux de bord pour des données fictives.\nCritères obligatoires\n- Power BI\n- DAX\n- Certification PL-300 obligatoire.\nFormation\n- Master en informatique obligatoire.\nCompétences souhaitées\n- Tableau\n",
+      "expected_job": {"title": "Analyste Business Intelligence", "company": "Studio Prisme", "location": null, "employment_type": null},
+      "expected_responsibilities": ["Concevoir des tableaux de bord pour des données fictives."],
+      "candidate": {"technical_skills": [{"name": "Power BI", "category": "tool"}, {"name": "DAX", "category": "tool"}], "education": [{"degree": "Master", "field_of_study": "informatique"}], "certifications": [{"name": "PL-300"}]},
+      "expected_requirements": [
+        {"key": "power_bi", "category": "technical_skill", "classification": "required", "skills": ["Power BI"], "evidence": "Power BI", "status": "documented"},
+        {"key": "dax", "category": "technical_skill", "classification": "required", "skills": ["DAX"], "evidence": "DAX", "status": "documented"},
+        {"key": "certification", "category": "certification", "classification": "required", "skills": [], "evidence": "Certification PL-300 obligatoire.", "status": "documented"},
+        {"key": "education", "category": "education", "classification": "required", "skills": [], "evidence": "Master en informatique obligatoire.", "status": "documented"},
+        {"key": "tableau", "category": "technical_skill", "classification": "preferred", "skills": ["Tableau"], "evidence": "Tableau", "status": "not_documented"}
+      ],
+      "excluded_evidence": ["Concevoir des tableaux de bord pour des données fictives."]
+    },
+    {
+      "id": "machine_learning_en",
+      "scenario": "Machine Learning Engineer",
+      "text": "Job title: Machine Learning Engineer\nCompany: Juniper Model Works\nResponsibilities\nEvaluate models and report their limitations.\nMust Have\n- Python\n- sklearn\n- PyTorch\n- Bachelor's degree in Computer Science required.\nExperience\n- At least 2 years of machine learning experience is required.\nDesired Skills\n- TensorFlow\n",
+      "expected_job": {"title": "Machine Learning Engineer", "company": "Juniper Model Works", "location": null, "employment_type": null},
+      "expected_responsibilities": ["Evaluate models and report their limitations."],
+      "candidate": {"technical_skills": [{"name": "Python", "category": "programming_language"}, {"name": "scikit-learn", "category": "ai_ml"}, {"name": "PyTorch", "category": "ai_ml"}], "education": [{"degree": "Bachelor", "field_of_study": "Computer Science"}], "experience": [{"job_title": "Machine Learning Engineer", "description": "Developed fictional classification demonstrations.", "technologies": ["PyTorch"]}]},
+      "expected_requirements": [
+        {"key": "python", "category": "technical_skill", "classification": "required", "skills": ["Python"], "evidence": "Python", "status": "documented"},
+        {"key": "sklearn", "category": "technical_skill", "classification": "required", "skills": ["scikit-learn"], "evidence": "sklearn", "status": "documented"},
+        {"key": "pytorch", "category": "technical_skill", "classification": "required", "skills": ["PyTorch"], "evidence": "PyTorch", "status": "documented"},
+        {"key": "education", "category": "education", "classification": "required", "skills": [], "evidence": "Bachelor's degree in Computer Science required.", "status": "documented"},
+        {"key": "years", "category": "experience", "classification": "required", "skills": ["Machine Learning"], "evidence": "At least 2 years of machine learning experience is required.", "status": "needs_review"},
+        {"key": "tensorflow", "category": "technical_skill", "classification": "preferred", "skills": ["TensorFlow"], "evidence": "TensorFlow", "status": "not_documented"}
+      ],
+      "excluded_evidence": ["Evaluate models and report their limitations."]
+    },
+    {
+      "id": "generative_ai_fr",
+      "scenario": "Generative AI Engineer",
+      "text": "Poste : Ingénieur IA générative\nEntreprise : Laboratoire Saule\nMissions\nExplorer LangGraph dans des prototypes internes.\nCompétences requises\n- RAG\n- LangChain\n- LLMs\nAtouts\n- LlamaIndex\n- Prompt Engineering\n",
+      "expected_job": {"title": "Ingénieur IA générative", "company": "Laboratoire Saule", "location": null, "employment_type": null},
+      "expected_responsibilities": ["Explorer LangGraph dans des prototypes internes."],
+      "candidate": {"technical_skills": [{"name": "LangChain", "category": "ai_ml"}], "projects": [{"name": "Synthetic assistant", "description": "Built a fictional demonstration with LLMs.", "technologies": ["LLMs"]}]},
+      "expected_requirements": [
+        {"key": "rag", "category": "technical_skill", "classification": "required", "skills": ["RAG"], "evidence": "RAG", "status": "not_documented"},
+        {"key": "langchain", "category": "technical_skill", "classification": "required", "skills": ["LangChain"], "evidence": "LangChain", "status": "documented"},
+        {"key": "llms", "category": "technical_skill", "classification": "required", "skills": ["LLMs"], "evidence": "LLMs", "status": "documented"},
+        {"key": "llamaindex", "category": "technical_skill", "classification": "preferred", "skills": ["LlamaIndex"], "evidence": "LlamaIndex", "status": "not_documented"},
+        {"key": "prompt", "category": "technical_skill", "classification": "preferred", "skills": ["Prompt Engineering"], "evidence": "Prompt Engineering", "status": "not_documented"}
+      ],
+      "excluded_evidence": ["Explorer LangGraph dans des prototypes internes."]
+    },
+    {
+      "id": "mixed_required_preferred_en",
+      "scenario": "Mixed required and preferred criteria",
+      "text": "Job title: Integration Developer\nCompany: Harbor Paper Systems\nRequirements\n- Python is required; SQL is preferred.\n- NodeJS is mandatory.\n- k8s is a nice to have.\nResponsibilities\nMaintain a small integration service.\n",
+      "expected_job": {"title": "Integration Developer", "company": "Harbor Paper Systems", "location": null, "employment_type": null},
+      "expected_responsibilities": ["Maintain a small integration service."],
+      "candidate": {"technical_skills": [{"name": "SQL", "category": "programming_language"}, {"name": "Node.js", "category": "framework"}]},
+      "expected_requirements": [
+        {"key": "python", "category": "technical_skill", "classification": "required", "skills": ["Python"], "evidence": "Python is required", "status": "not_documented"},
+        {"key": "sql", "category": "technical_skill", "classification": "preferred", "skills": ["SQL"], "evidence": "SQL is preferred.", "status": "documented"},
+        {"key": "node", "category": "technical_skill", "classification": "required", "skills": ["Node.js"], "evidence": "NodeJS is mandatory.", "status": "documented"},
+        {"key": "kubernetes", "category": "technical_skill", "classification": "preferred", "skills": ["Kubernetes"], "evidence": "k8s is a nice to have.", "status": "not_documented"}
+      ],
+      "excluded_evidence": ["Maintain a small integration service."]
+    },
+    {
+      "id": "ambiguous_requirements_fr",
+      "scenario": "Ambiguous requirements",
+      "text": "Poste : Développeur polyvalent\nEntreprise : Atelier Brume\nProfil recherché\n- Maîtrise de Python souhaitée.\n- Expérience solide en ingénierie des données.\n- Connaissance de systèmes modernes.\nResponsabilités\nDocumenter les interfaces internes.\n",
+      "expected_job": {"title": "Développeur polyvalent", "company": "Atelier Brume", "location": null, "employment_type": null},
+      "expected_responsibilities": ["Documenter les interfaces internes."],
+      "candidate": {"technical_skills": [{"name": "Python", "category": "programming_language"}], "experience": [{"job_title": "Ingénieur données", "description": "Réalisation d'exercices sur des données fictives."}]},
+      "expected_requirements": [
+        {"key": "proficiency", "category": "technical_skill", "classification": "preferred", "skills": ["Python"], "evidence": "Maîtrise de Python souhaitée.", "status": "needs_review"},
+        {"key": "experience", "category": "experience", "classification": "unspecified", "skills": [], "evidence": "Expérience solide en ingénierie des données.", "status": "needs_review"},
+        {"key": "systems", "category": "other", "classification": "unspecified", "skills": [], "evidence": "Connaissance de systèmes modernes.", "status": "needs_review"}
+      ],
+      "excluded_evidence": ["Documenter les interfaces internes."]
+    },
+    {
+      "id": "no_education_en",
+      "scenario": "No explicit education requirement",
+      "text": "Job title: Research Platform Engineer\nCompany: Oak Fictional Services\nResponsibilities\nSupport researchers and publish technical documentation.\nRequired Skills\n- Django\n- JavaScript\nPreferred Qualifications\n- Redis\nWe do not require a degree or a minimum number of years of experience.\n",
+      "expected_job": {"title": "Research Platform Engineer", "company": "Oak Fictional Services", "location": null, "employment_type": null},
+      "expected_responsibilities": ["Support researchers and publish technical documentation."],
+      "candidate": {"technical_skills": [{"name": "Django", "category": "framework"}, {"name": "JavaScript", "category": "programming_language"}, {"name": "Redis", "category": "database"}]},
+      "expected_requirements": [
+        {"key": "django", "category": "technical_skill", "classification": "required", "skills": ["Django"], "evidence": "Django", "status": "documented"},
+        {"key": "javascript", "category": "technical_skill", "classification": "required", "skills": ["JavaScript"], "evidence": "JavaScript", "status": "documented"},
+        {"key": "redis", "category": "technical_skill", "classification": "preferred", "skills": ["Redis"], "evidence": "Redis", "status": "documented"}
+      ],
+      "excluded_evidence": ["Support researchers and publish technical documentation.", "We do not require a degree or a minimum number of years of experience."]
+    },
+    {
+      "id": "protected_irrelevant_fr",
+      "scenario": "Protected and irrelevant language",
+      "text": "Poste : Développeur outils\nEntreprise : Studio Érable Imaginaire\nCritères obligatoires\n- Python\n- Sexe masculin requis.\n- Âge inférieur à 30 ans obligatoire.\n- Nationalité française exigée.\n- Photo de profil obligatoire.\n- Religion catholique obligatoire.\n- Habiter dans un quartier proche du dirigeant.\nAtouts\n- SQL\nResponsabilités\nMaintenir les outils internes.\n",
+      "expected_job": {"title": "Développeur outils", "company": "Studio Érable Imaginaire", "location": null, "employment_type": null},
+      "expected_responsibilities": ["Maintenir les outils internes."],
+      "candidate": {"technical_skills": [{"name": "Python", "category": "programming_language"}]},
+      "expected_requirements": [
+        {"key": "python", "category": "technical_skill", "classification": "required", "skills": ["Python"], "evidence": "Python", "status": "documented"},
+        {"key": "sql", "category": "technical_skill", "classification": "preferred", "skills": ["SQL"], "evidence": "SQL", "status": "not_documented"}
+      ],
+      "excluded_evidence": ["Sexe masculin requis.", "Âge inférieur à 30 ans obligatoire.", "Nationalité française exigée.", "Photo de profil obligatoire.", "Religion catholique obligatoire.", "Habiter dans un quartier proche du dirigeant.", "Maintenir les outils internes."]
+    }
+  ]
+}

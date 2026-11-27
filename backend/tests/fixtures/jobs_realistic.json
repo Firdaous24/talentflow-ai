@@ -1,0 +1,184 @@
+{
+  "dataset_version": "fictional-realistic-jobs-v1",
+  "annotation_method": "Static, independently authored source-clause expectations written before running either analyzer. These are fictional development examples, not copied advertisements or a representative real-world benchmark. Environment mentions are not candidate qualifications.",
+  "cases": [
+    {
+      "id": "ai_architect_fr",
+      "scenario": "French AI Architect post with the reported six-list formatting and inline hybrid schedule",
+      "text": "📣 Notre société fictive recrute !\nPoste : Architecte IA\nEntreprise : Atelier Azur Fictif\nRabat/Technopolis ➡ Contrat: CDI ➡ Mode de travail: Le premier mois sera principalement réalisé en présentiel. À partir du deuxième mois, fonctionnement hybride.\n🧩 Environnement technique :\n• AI / GenAI / LLM / OpenAI\n• Microsoft Azure / Azure AI / Azure OpenAI\n• RAG / AI Agents / AI Workflows\n• Machine Learning / MLOps / MLflow\n• Cloud / architectures applicatives / Data / AI\n• API / Microservices / HLD / LLD\nMissions\nConcevoir les architectures applicatives et accompagner les équipes.\nEnvoyez votre CV à recrutement@atelier-azur.example.com\n#Hiring #Recruitment #AIArchitect #Morocco\n",
+      "expected_job": {"title": "Architecte IA", "company": "Atelier Azur Fictif", "location": "Rabat/Technopolis", "employment_type": "CDI", "work_mode": "Hybrid"},
+      "expected_metadata_evidence": {"title": "Architecte IA", "company": "Atelier Azur Fictif", "location": "Rabat/Technopolis", "employment_type": "CDI", "work_mode": "Le premier mois sera principalement réalisé en présentiel. À partir du deuxième mois, fonctionnement hybride."},
+      "expected_requirements": [
+        {"key": "genai_stack", "category": "technical_skill", "classification": "unspecified", "origin": "technical_environment", "skills": ["AI", "Generative AI", "LLMs", "OpenAI"], "evidence": "AI / GenAI / LLM / OpenAI"},
+        {"key": "azure_stack", "category": "technical_skill", "classification": "unspecified", "origin": "technical_environment", "skills": ["Azure", "Azure AI", "Azure OpenAI"], "evidence": "Microsoft Azure / Azure AI / Azure OpenAI"},
+        {"key": "agent_stack", "category": "technical_skill", "classification": "unspecified", "origin": "technical_environment", "skills": ["RAG", "AI Agents", "AI Workflows"], "evidence": "RAG / AI Agents / AI Workflows"},
+        {"key": "ml_stack", "category": "technical_skill", "classification": "unspecified", "origin": "technical_environment", "skills": ["Machine Learning", "MLOps", "MLflow"], "evidence": "Machine Learning / MLOps / MLflow"},
+        {"key": "cloud_stack", "category": "technical_skill", "classification": "unspecified", "origin": "technical_environment", "skills": ["Cloud Computing", "AI"], "evidence": "Cloud / architectures applicatives / Data / AI"},
+        {"key": "architecture_stack", "category": "technical_skill", "classification": "unspecified", "origin": "technical_environment", "skills": ["API", "Microservices", "HLD", "LLD"], "evidence": "API / Microservices / HLD / LLD"}
+      ],
+      "negative_clauses": ["Concevoir les architectures applicatives et accompagner les équipes.", "Envoyez votre CV à recrutement@atelier-azur.example.com", "#Hiring #Recruitment #AIArchitect #Morocco"]
+    },
+    {
+      "id": "azure_ai_engineer_en",
+      "scenario": "Azure AI services must remain distinct from Azure and OpenAI",
+      "text": "Job title: Azure AI Engineer\nCompany: Juniper Signal Fictional\nLocation: Bristol | Contract: Permanent | Work mode: Hybrid\nTECHNOLOGY STACK\nAzure AI / Azure OpenAI / Azure\nRequired Skills:\nPython / REST APIs\nPreferred Skills\nRAG\nResponsibilities\nDeliver demonstrations using OpenAI and present results to colleagues.\nApply by email: jobs@juniper-signal.example.com\n",
+      "expected_job": {"title": "Azure AI Engineer", "company": "Juniper Signal Fictional", "location": "Bristol", "employment_type": "Permanent", "work_mode": "Hybrid"},
+      "expected_metadata_evidence": {"title": "Azure AI Engineer", "company": "Juniper Signal Fictional", "location": "Bristol", "employment_type": "Permanent", "work_mode": "Hybrid"},
+      "expected_requirements": [
+        {"key": "services", "category": "technical_skill", "classification": "unspecified", "origin": "technical_environment", "skills": ["Azure AI", "Azure OpenAI", "Azure"], "evidence": "Azure AI / Azure OpenAI / Azure"},
+        {"key": "required_tools", "category": "technical_skill", "classification": "required", "origin": "qualification", "skills": ["Python", "REST APIs"], "evidence": "Python / REST APIs"},
+        {"key": "retrieval", "category": "technical_skill", "classification": "preferred", "origin": "qualification", "skills": ["RAG"], "evidence": "RAG"}
+      ],
+      "negative_clauses": ["Deliver demonstrations using OpenAI and present results to colleagues.", "Apply by email: jobs@juniper-signal.example.com"]
+    },
+    {
+      "id": "generative_ai_engineer_en",
+      "scenario": "Generative AI aliases, uppercase acronym and preferred MLOps tools",
+      "text": "Job title: Generative AI Engineer\nCompany: Lantern Orchard Fictional\nWork mode: Remote\nMust Have:\nGenerative AI, LLM, OpenAI\nTools and Technologies:\nRAG | AI Agents | AI Workflows\nNice to Have:\nMLOps / MLflow\nAbout the company\nOur research team uses TensorFlow for internal experiments.\n",
+      "expected_job": {"title": "Generative AI Engineer", "company": "Lantern Orchard Fictional", "location": null, "employment_type": null, "work_mode": "Remote"},
+      "expected_metadata_evidence": {"title": "Generative AI Engineer", "company": "Lantern Orchard Fictional", "work_mode": "Remote"},
+      "expected_requirements": [
+        {"key": "generation", "category": "technical_skill", "classification": "required", "origin": "qualification", "skills": ["Generative AI", "LLMs", "OpenAI"], "evidence": "Generative AI, LLM, OpenAI"},
+        {"key": "orchestration", "category": "technical_skill", "classification": "unspecified", "origin": "technical_environment", "skills": ["RAG", "AI Agents", "AI Workflows"], "evidence": "RAG | AI Agents | AI Workflows"},
+        {"key": "operations", "category": "technical_skill", "classification": "preferred", "origin": "qualification", "skills": ["MLOps", "MLflow"], "evidence": "MLOps / MLflow"}
+      ],
+      "negative_clauses": ["Our research team uses TensorFlow for internal experiments."]
+    },
+    {
+      "id": "cloud_architect_fr",
+      "scenario": "French accented headings, inline environment and explicit mandatory skills",
+      "text": "Poste : Architecte Cloud\nEntreprise : Nuage Papier Fictif\nLieu : Nantes\nContrat : CDI\nMode de travail : Présentiel\nCompétences obligatoires :\nCloud Computing / Microsoft Azure / Microservices\nStack technique: Docker, Kubernetes\nResponsabilités\nDéfinir des architectures et produire les documents HLD.\nÀ propos de nous\nNous comparons AWS et Azure dans nos études commerciales.\n",
+      "expected_job": {"title": "Architecte Cloud", "company": "Nuage Papier Fictif", "location": "Nantes", "employment_type": "CDI", "work_mode": "On-site"},
+      "expected_metadata_evidence": {"title": "Architecte Cloud", "company": "Nuage Papier Fictif", "location": "Nantes", "employment_type": "CDI", "work_mode": "Présentiel"},
+      "expected_requirements": [
+        {"key": "architecture", "category": "technical_skill", "classification": "required", "origin": "qualification", "skills": ["Cloud Computing", "Azure", "Microservices"], "evidence": "Cloud Computing / Microsoft Azure / Microservices"},
+        {"key": "containers", "category": "technical_skill", "classification": "unspecified", "origin": "technical_environment", "skills": ["Docker", "Kubernetes"], "evidence": "Docker, Kubernetes"}
+      ],
+      "negative_clauses": ["Définir des architectures et produire les documents HLD.", "Nous comparons AWS et Azure dans nos études commerciales."]
+    },
+    {
+      "id": "data_engineer_en",
+      "scenario": "Pipe-separated existing vocabulary and a quantified experience criterion",
+      "text": "Job title: Data Engineer\nCompany: Fable River Systems\nTools and Technologies\nPython | SQL | PostgreSQL\nRequirements\nTwo years of experience with SQL is required.\nDesired Qualifications:\nPySpark\nResponsibilities\nBuild reliable pipelines using Python.\nNo degree is required.\n",
+      "expected_job": {"title": "Data Engineer", "company": "Fable River Systems", "location": null, "employment_type": null, "work_mode": null},
+      "expected_metadata_evidence": {"title": "Data Engineer", "company": "Fable River Systems"},
+      "expected_requirements": [
+        {"key": "pipeline_stack", "category": "technical_skill", "classification": "unspecified", "origin": "technical_environment", "skills": ["Python", "SQL", "PostgreSQL"], "evidence": "Python | SQL | PostgreSQL"},
+        {"key": "experience", "category": "experience", "classification": "required", "origin": "qualification", "skills": ["SQL"], "evidence": "Two years of experience with SQL is required."},
+        {"key": "distributed", "category": "technical_skill", "classification": "preferred", "origin": "qualification", "skills": ["PySpark"], "evidence": "PySpark"}
+      ],
+      "negative_clauses": ["Build reliable pipelines using Python.", "No degree is required."]
+    },
+    {
+      "id": "machine_learning_engineer_fr",
+      "scenario": "Distinct AI and machine-learning concepts across profile and preferred sections",
+      "text": "Poste : Ingénieur Machine Learning\nEntreprise : Studio Galet Fictif\nVotre profil\nPython / Machine Learning\nCompétences souhaitées\nMLOps, MLflow\nTechnologies utilisées :\nAI / TensorFlow / PyTorch\nMissions\nÉvaluer les modèles sur des données synthétiques.\nPython n'est pas obligatoire pour la mission de support.\n",
+      "expected_job": {"title": "Ingénieur Machine Learning", "company": "Studio Galet Fictif", "location": null, "employment_type": null, "work_mode": null},
+      "expected_metadata_evidence": {"title": "Ingénieur Machine Learning", "company": "Studio Galet Fictif"},
+      "expected_requirements": [
+        {"key": "profile", "category": "technical_skill", "classification": "unspecified", "origin": "qualification", "skills": ["Python", "Machine Learning"], "evidence": "Python / Machine Learning"},
+        {"key": "preferred_operations", "category": "technical_skill", "classification": "preferred", "origin": "qualification", "skills": ["MLOps", "MLflow"], "evidence": "MLOps, MLflow"},
+        {"key": "frameworks", "category": "technical_skill", "classification": "unspecified", "origin": "technical_environment", "skills": ["AI", "TensorFlow", "PyTorch"], "evidence": "AI / TensorFlow / PyTorch"}
+      ],
+      "negative_clauses": ["Évaluer les modèles sur des données synthétiques.", "Python n'est pas obligatoire pour la mission de support."]
+    },
+    {
+      "id": "linkedin_informal_fr",
+      "scenario": "Copied LinkedIn-style introduction, emojis, contact and hashtags",
+      "text": "🚀 Une nouvelle aventure chez une entreprise imaginaire !\nPoste: Ingénieur IA\nEntreprise: Feuille Rouge Fictive\n📍 Lieu: Casablanca\n🛠 OUTILS ET TECHNOLOGIES :\n• GenAI / RAG / Azure OpenAI\n✅ Prérequis\n• Python obligatoire\n🌱 Atouts\n• Docker\n📩 Pour postuler, envoyez votre CV à hello@feuille-rouge.example.com\n#Hiring #Recruitment #Python #Azure\n",
+      "expected_job": {"title": "Ingénieur IA", "company": "Feuille Rouge Fictive", "location": "Casablanca", "employment_type": null, "work_mode": null},
+      "expected_metadata_evidence": {"title": "Ingénieur IA", "company": "Feuille Rouge Fictive", "location": "Casablanca"},
+      "expected_requirements": [
+        {"key": "environment", "category": "technical_skill", "classification": "unspecified", "origin": "technical_environment", "skills": ["Generative AI", "RAG", "Azure OpenAI"], "evidence": "GenAI / RAG / Azure OpenAI"},
+        {"key": "python", "category": "technical_skill", "classification": "required", "origin": "qualification", "skills": ["Python"], "evidence": "Python obligatoire"},
+        {"key": "containers", "category": "technical_skill", "classification": "preferred", "origin": "qualification", "skills": ["Docker"], "evidence": "Docker"}
+      ],
+      "negative_clauses": ["Pour postuler, envoyez votre CV à hello@feuille-rouge.example.com", "#Hiring #Recruitment #Python #Azure"]
+    },
+    {
+      "id": "mixed_language_profile",
+      "scenario": "Mixed French and English headings without invented required status",
+      "text": "Poste: Backend AI Engineer\nEntreprise: Atelier Silver Fictif\nProfil recherché:\nPython / FastAPI\nPreferred Skills:\nRAG / REST APIs\nExigences\n3 ans d'expérience en développement backend requis.\nTECH STACK:\nAzure AI | AI Workflows\nMissions\nMaintenir les services et rédiger la documentation.\n",
+      "expected_job": {"title": "Backend AI Engineer", "company": "Atelier Silver Fictif", "location": null, "employment_type": null, "work_mode": null},
+      "expected_metadata_evidence": {"title": "Backend AI Engineer", "company": "Atelier Silver Fictif"},
+      "expected_requirements": [
+        {"key": "profile", "category": "technical_skill", "classification": "unspecified", "origin": "qualification", "skills": ["Python", "FastAPI"], "evidence": "Python / FastAPI"},
+        {"key": "optional", "category": "technical_skill", "classification": "preferred", "origin": "qualification", "skills": ["RAG", "REST APIs"], "evidence": "RAG / REST APIs"},
+        {"key": "duration", "category": "experience", "classification": "required", "origin": "qualification", "skills": [], "evidence": "3 ans d'expérience en développement backend requis."},
+        {"key": "environment", "category": "technical_skill", "classification": "unspecified", "origin": "technical_environment", "skills": ["Azure AI", "AI Workflows"], "evidence": "Azure AI | AI Workflows"}
+      ],
+      "negative_clauses": ["Maintenir les services et rédiger la documentation."]
+    },
+    {
+      "id": "slash_boundaries_en",
+      "scenario": "Overlapping service phrases and API versus REST APIs stay distinct",
+      "text": "Job title: Integration Architect\nCompany: Paper Kite Fictional\nTechnical Environment:\nAzure OpenAI / OpenAI / Azure AI / Azure\nAPI / Microservices / REST APIs / HLD / LLD\nAI / Machine Learning / LLM / RAG\nAbout us\nOur brochure mentions OpenAIs, microservicesque and ragtime music.\n",
+      "expected_job": {"title": "Integration Architect", "company": "Paper Kite Fictional", "location": null, "employment_type": null, "work_mode": null},
+      "expected_metadata_evidence": {"title": "Integration Architect", "company": "Paper Kite Fictional"},
+      "expected_requirements": [
+        {"key": "services", "category": "technical_skill", "classification": "unspecified", "origin": "technical_environment", "skills": ["Azure OpenAI", "OpenAI", "Azure AI", "Azure"], "evidence": "Azure OpenAI / OpenAI / Azure AI / Azure"},
+        {"key": "architecture", "category": "technical_skill", "classification": "unspecified", "origin": "technical_environment", "skills": ["API", "Microservices", "REST APIs", "HLD", "LLD"], "evidence": "API / Microservices / REST APIs / HLD / LLD"},
+        {"key": "concepts", "category": "technical_skill", "classification": "unspecified", "origin": "technical_environment", "skills": ["AI", "Machine Learning", "LLMs", "RAG"], "evidence": "AI / Machine Learning / LLM / RAG"}
+      ],
+      "negative_clauses": ["Our brochure mentions OpenAIs, microservicesque and ragtime music."]
+    },
+    {
+      "id": "environment_only_en",
+      "scenario": "No explicit mandatory qualifications, technical environment only",
+      "text": "Job title: Prototype Engineer\nCompany: Cedar Sketch Fictional\nTech Stack\nPython, GenAI, RAG\nQualifications\nPython is not required.\nNo education requirement applies.\nResponsibilities\nExplore ideas with the research team.\nHow to apply\nSend a CV to prototypes@cedar-sketch.example.com\n",
+      "expected_job": {"title": "Prototype Engineer", "company": "Cedar Sketch Fictional", "location": null, "employment_type": null, "work_mode": null},
+      "expected_metadata_evidence": {"title": "Prototype Engineer", "company": "Cedar Sketch Fictional"},
+      "expected_requirements": [
+        {"key": "environment", "category": "technical_skill", "classification": "unspecified", "origin": "technical_environment", "skills": ["Python", "Generative AI", "RAG"], "evidence": "Python, GenAI, RAG"}
+      ],
+      "negative_clauses": ["Python is not required.", "No education requirement applies.", "Explore ideas with the research team.", "Send a CV to prototypes@cedar-sketch.example.com"]
+    },
+    {
+      "id": "inline_hybrid_en",
+      "scenario": "Inline metadata and conflicting classification remain explicit and reviewable",
+      "text": "Job title: Application Architect\nCompany: Birch Window Fictional\nLocation: Dublin ➜ Employment type: Fixed-term ➜ Work mode: On-site for the first month, then hybrid.\nRequirements\nPython is required and preferred.\nTechnology Stack: Microservices / API\nResponsibilities\nWrite design documents for application teams.\n",
+      "expected_job": {"title": "Application Architect", "company": "Birch Window Fictional", "location": "Dublin", "employment_type": "Fixed-term", "work_mode": "Hybrid"},
+      "expected_metadata_evidence": {"title": "Application Architect", "company": "Birch Window Fictional", "location": "Dublin", "employment_type": "Fixed-term", "work_mode": "On-site for the first month, then hybrid."},
+      "expected_requirements": [
+        {"key": "conflict", "category": "technical_skill", "classification": "unspecified", "origin": "qualification", "skills": ["Python"], "evidence": "Python is required and preferred."},
+        {"key": "environment", "category": "technical_skill", "classification": "unspecified", "origin": "technical_environment", "skills": ["Microservices", "API"], "evidence": "Microservices / API"}
+      ],
+      "negative_clauses": ["Write design documents for application teams."]
+    },
+    {
+      "id": "contacts_hashtags_protected_fr",
+      "scenario": "Contact, hashtag and protected-language exclusions inside qualification area",
+      "text": "Poste: Ingénieur Logiciel\nEntreprise: Étoile Inventée\nCompétences techniques\nPython\nEnvoyez votre CV à Python@etoile-inventee.example.com\n#Python #AzureOpenAI #Recruitment\nUne photo et la nationalité française sont obligatoires.\nÊtre jeune et maîtriser Java est obligatoire.\nVotre adresse personnelle est requise.\nMissions\nDévelopper les services internes.\n",
+      "expected_job": {"title": "Ingénieur Logiciel", "company": "Étoile Inventée", "location": null, "employment_type": null, "work_mode": null},
+      "expected_metadata_evidence": {"title": "Ingénieur Logiciel", "company": "Étoile Inventée"},
+      "expected_requirements": [
+        {"key": "python", "category": "technical_skill", "classification": "unspecified", "origin": "qualification", "skills": ["Python"], "evidence": "Python"}
+      ],
+      "negative_clauses": ["Envoyez votre CV à Python@etoile-inventee.example.com", "#Python #AzureOpenAI #Recruitment", "Une photo et la nationalité française sont obligatoires.", "Être jeune et maîtriser Java est obligatoire.", "Votre adresse personnelle est requise.", "Développer les services internes."]
+    },
+    {
+      "id": "ordinary_prose_not_heading",
+      "scenario": "Heading words in ordinary company prose must not alter section boundaries",
+      "text": "Job title: Platform Engineer\nCompany: Copper Leaf Fictional\nRequired Skills\nDocker\nAbout us\nTechnology Stack is the title of our internal brochure about Azure.\nRequirements are discussed in our Python product manual.\nOur offices overlook a park.\nPreferred Skills\nKubernetes\nResponsibilities\nUse the Technology Stack brochure when writing internal guidance.\n",
+      "expected_job": {"title": "Platform Engineer", "company": "Copper Leaf Fictional", "location": null, "employment_type": null, "work_mode": null},
+      "expected_metadata_evidence": {"title": "Platform Engineer", "company": "Copper Leaf Fictional"},
+      "expected_requirements": [
+        {"key": "required", "category": "technical_skill", "classification": "required", "origin": "qualification", "skills": ["Docker"], "evidence": "Docker"},
+        {"key": "preferred", "category": "technical_skill", "classification": "preferred", "origin": "qualification", "skills": ["Kubernetes"], "evidence": "Kubernetes"}
+      ],
+      "negative_clauses": ["Technology Stack is the title of our internal brochure about Azure.", "Requirements are discussed in our Python product manual.", "Our offices overlook a park.", "Use the Technology Stack brochure when writing internal guidance."]
+    },
+    {
+      "id": "partial_unknown_and_negative_fr",
+      "scenario": "Unknown environment words, French ai verb and ambiguous work arrangement stay conservative",
+      "text": "Poste: Développeur Applications\nEntreprise: Atelier Delta Imaginaire\nLieu: Rennes\nMode de travail: À discuter avec l'équipe.\nTechnologies\nAzure AI / API\nVotre profil\nJ'ai participé à une réunion de présentation.\nLa plateforme Xylotron figure dans notre brochure interne.\nPython ou Java\nMissions\nAccompagner le lancement de la plateforme.\nPour postuler, précisez votre ville dans le CV.\n",
+      "expected_job": {"title": "Développeur Applications", "company": "Atelier Delta Imaginaire", "location": "Rennes", "employment_type": null, "work_mode": null},
+      "expected_metadata_evidence": {"title": "Développeur Applications", "company": "Atelier Delta Imaginaire", "location": "Rennes"},
+      "expected_requirements": [
+        {"key": "environment", "category": "technical_skill", "classification": "unspecified", "origin": "technical_environment", "skills": ["Azure AI", "API"], "evidence": "Azure AI / API"},
+        {"key": "alternative", "category": "technical_skill", "classification": "unspecified", "origin": "qualification", "skills": ["Python", "Java"], "evidence": "Python ou Java"}
+      ],
+      "negative_clauses": ["J'ai participé à une réunion de présentation.", "La plateforme Xylotron figure dans notre brochure interne.", "Accompagner le lancement de la plateforme.", "Pour postuler, précisez votre ville dans le CV."]
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "description": "Fictional French Data Business Analyst copied-post regression; all profile data is fictional.",
+  "copied_job": "Poste : Data Business Analyst\nEntreprise : Atelier Azur Fictif\nPROFIL RECHERCHÉ:\\\n\n- Minimum 5 ans d'expérience sur un poste similaire (Business Analyst, Chargé d'Études Data ou Product Owner Data).\\\n\n- Maîtrise des méthodologies de recueil de besoins, de modélisation et de rédaction de spécifications fonctionnelles.\\\n\n- Solide background Data avec une maîtrise avancée et indispensable du langage SQL.\\\n\n- Capacité à intervenir techniquement sur la partie développement et connaissance de la stack technique (GCP, Teradata, Airflow, etc.).\\\n\n- Une expérience préalable dans le secteur des Télécoms constitue un atout majeur.\\\n\n- Excellent relationnel, esprit de synthèse, curiosité technique et sens de la vulgarisation.\\\n\n\\\n",
+  "candidate_with_business_evidence": {
+    "technical_skills": [{"name": "SQL", "category": "programming_language"}],
+    "experience": [{
+      "job_title": "Stagiaire Business Analyst",
+      "description": "Présentation de résultats sur des données fictives.\nRecueil de besoins auprès des utilisateurs.\nAnalyse des besoins métier pour un outil fictif.\nModélisation des processus avec UML.\nRédaction de spécifications fonctionnelles et de cahiers des charges.\nRequêtes SQL pour vérifier des données de démonstration."
+    }],
+    "projects": [{"description": "Orchestration de données fictives avec Apache Airflow."}]
+  },
+  "candidate_without_business_evidence": {
+    "technical_skills": [{"name": "SQL", "category": "programming_language"}],
+    "experience": [{
+      "job_title": "Stagiaire Data Analyst",
+      "description": "Requêtes SQL pour vérifier des données de démonstration.\nCréation de tableaux de bord et organisation de réunions.\nConfiguration de réseaux et de téléphonie VoIP."
+    }]
+  }
+}

@@ -1,0 +1,928 @@
+{
+  "dataset": "comparison-accuracy-v1",
+  "fixture_sha256": "9d945092e74ee40ce4d742513e3d614cac7105629f7187fda8840a5b239154c1",
+  "current_app_fingerprint": {
+    "app/__init__.py": "c7ec0bad880f3e191bac503c69a5d06232a4e768aa096e63390ebf136388707a",
+    "app/api/__init__.py": "c5e79b75137811726e30acef2fa5cfc649514fce1c86da771535b368f43238c0",
+    "app/api/routes/__init__.py": "51bf83470168d705beb38744164cc071189699478cdb8ceebd28fd927f332148",
+    "app/api/routes/candidates.py": "7369305bef0c613db2942ef518a3223be30c4d74aa28cf28a992ebaef7c6761b",
+    "app/api/routes/health.py": "75dc67f6abee7087ee9f238c5311deda6537e8e285d44de38f90b118bf6b788f",
+    "app/api/routes/jobs.py": "c689e2ffd4615cb7791904593b730c841ede26846b2188220a3bc91c0f9f3bc0",
+    "app/api/upload_limits.py": "c3c72ae3a2fd0665345f81465d8399421ae78a5388f99bb23c61219a8d0a805f",
+    "app/main.py": "f71b9fb27f401e246d643cc0e17d9150963438a59cf2b95080c8fa4b32403d0c",
+    "app/models/__init__.py": "67e2d12442c40eebabe5ec1fd4bf971810be0be5f859de8a4d228a5caf38bec1",
+    "app/models/candidate.py": "d4d7095fb2e57271d7c37176a4af6ebb2fbd7607fe880a2311d660b256dde51b",
+    "app/models/job.py": "9266eaff82e740c0a0463adc9dbee0a8eed254647d469de976502d05a50f8f23",
+    "app/services/__init__.py": "367e04f028652db23a2cfe61a0d5793f400a79635862c97c1f40df97a024819a",
+    "app/services/extraction.py": "ee93f37609badb8ec44458b83bdddbd3c6fd1cd1d46a230e6ed37cf83c04248b",
+    "app/services/job_formatting.py": "c65460955b3d1256b71d62409925ca38d73dc2bba39ce94b37466fe09c7f5d21",
+    "app/services/job_vocabulary.py": "bf43bcc89d0012506f65e434a1eed677d6bb0941147d1343b9ad835a342f4468",
+    "app/services/jobs.py": "e3c5083baa030127a908b0c56e57f9335e05279538329b40b096334d067e21e9",
+    "app/services/layout.py": "7f0eaa24c6a552727f94dd493996240d27a80c9177086e35f3356ceb50d8a4e6",
+    "app/services/llm.py": "ba0088975ceef360de817b2e6adbf55e813ba28331d9568d15cafaf0f4c0315d",
+    "app/services/multilingual.py": "5fc32fc49b408a538ca3c5ccd45a46da5022c748e659c469b58d4ef4e360971c",
+    "app/services/pdf.py": "ef8b67f0ed893d3a843ba7a0ea96ebc181dfb5a4d76d983b387ec1da7cfee50d",
+    "app/services/records.py": "6ce8c9910de1434be825a03280b0dedc9fd69593e35cf2ffc013c1eb756bc69d",
+    "app/services/sections.py": "8cb90e56f9c7af5f3f5ceca2058c5546b00a2bcd80a7e29768c21d979f9d0d36"
+  },
+  "methodology": {
+    "independence": "Static annotations were frozen and SHA-256 recorded before executing this corpus or tuning production code.",
+    "isolation": "Baseline and current app imports run in separate interpreter processes; neither engine generates expected labels.",
+    "technology_unit": "Canonical technology per independently annotated source clause, preserving repeated source references.",
+    "classification_and_status_denominators": "All independently annotated clauses, including extraction misses; classifications include unspecified environment context.",
+    "source_evidence": "Job quotes and Unicode offsets must lie within independently annotated clauses. Candidate field/quote and optional excerpt offsets must match submitted source.",
+    "evidence_unit": "Unique field/excerpt per clause, unioning checklist and source-referenced technical overview evidence. Full-field excerpts can earn relevance credit but lose boundary credit.",
+    "evidence_recall": "All independently expected supporting excerpts remain in the denominator even when a requirement or all evidence is missing.",
+    "segmentation": "Four independent realistic plain-text CVs test exact entry counts, title/employer/project associations and required/forbidden description content, without conflating PDF geometry.",
+    "privacy": "Reserved-domain fictional canaries must not appear in outputs; identity/contact fields must be rejected by the qualification-only schema.",
+    "review": "Synthetic unverified workflow assertions, never authenticated human approvals."
+  },
+  "current": {
+    "dataset_size": 16,
+    "counts": {
+      "technology_correct": 48,
+      "technology_predicted": 48,
+      "technology_expected": 48,
+      "classification_correct": 45,
+      "classification_expected": 46,
+      "origin_correct": 46,
+      "origin_expected": 46,
+      "job_source_correct": 46,
+      "job_source_predicted": 46,
+      "comparison_source_correct": 46,
+      "comparison_source_predicted": 46,
+      "overview_source_correct": 48,
+      "overview_source_predicted": 48,
+      "overview_mentions_correct": 48,
+      "overview_mentions_expected": 48,
+      "candidate_source_correct": 36,
+      "candidate_source_predicted": 36,
+      "segmentation_correct": 41,
+      "segmentation_expected": 60,
+      "segmented_cvs_correct": 2,
+      "segmented_cvs_expected": 4,
+      "relevant_evidence": 36,
+      "evidence_predicted": 36,
+      "evidence_expected": 39,
+      "evidence_recalled": 36,
+      "excerpt_boundaries_correct": 36,
+      "unsupported_evidence": 0,
+      "privacy_correct": 6,
+      "privacy_expected": 6,
+      "status_correct": 43,
+      "status_expected": 46,
+      "requirements_matched": 46,
+      "requirements_expected": 46,
+      "requirements_predicted": 46
+    },
+    "metrics": {
+      "technology_mention_precision": 1.0,
+      "technology_mention_recall": 1.0,
+      "qualification_classification_accuracy": 0.9782608695652174,
+      "source_origin_accuracy": 1.0,
+      "job_source_evidence_correctness": 1.0,
+      "comparison_source_citation_correctness": 1.0,
+      "technical_overview_citation_correctness": 1.0,
+      "technical_overview_mention_recall": 1.0,
+      "candidate_source_evidence_correctness": 1.0,
+      "cv_segmentation_assertion_accuracy": 0.6833333333333333,
+      "cv_complete_segmentation_rate": 0.5,
+      "evidence_relevance_precision": 1.0,
+      "evidence_relevance_recall": 0.9230769230769231,
+      "excerpt_boundary_correctness": 1.0,
+      "unsupported_evidence_rate": 0.0,
+      "privacy_exclusion_accuracy": 1.0,
+      "comparison_status_correctness": 0.9347826086956522,
+      "requirement_recall": 1.0
+    },
+    "cases": [
+      {
+        "id": "data_ba_fr",
+        "scenario": "French Data Business Analyst composite qualifications",
+        "matched_requirements": {
+          "duration": "req-001",
+          "business": "req-002",
+          "sql": "req-003",
+          "stack": "req-004",
+          "sector": "req-005"
+        },
+        "differences": [
+          {
+            "key": "duration",
+            "kind": "classification",
+            "expected": "unspecified",
+            "actual": "required"
+          },
+          {
+            "key": "sector",
+            "kind": "status",
+            "expected": "needs_review",
+            "actual": "not_documented"
+          }
+        ],
+        "passed": false
+      },
+      {
+        "id": "data_engineer_en",
+        "scenario": "English mandatory cloud data pipeline skills",
+        "matched_requirements": {
+          "gcp": "req-001",
+          "airflow": "req-002",
+          "teradata": "req-003",
+          "python": "req-004"
+        },
+        "differences": [],
+        "passed": true
+      },
+      {
+        "id": "ai_engineer_fr",
+        "scenario": "French AI composites and graph technology distinctions",
+        "matched_requirements": {
+          "retrieval": "req-001",
+          "python": "req-002",
+          "langchain": "req-003"
+        },
+        "differences": [],
+        "passed": true
+      },
+      {
+        "id": "ml_engineer_en",
+        "scenario": "ML years remain reviewable and projects do not become employment",
+        "matched_requirements": {
+          "years": "req-001",
+          "sklearn": "req-002",
+          "pytorch": "req-003"
+        },
+        "differences": [
+          {
+            "kind": "cv_segmentation",
+            "details": [
+              {
+                "collection": "experience",
+                "kind": "entry_count",
+                "expected": 1,
+                "actual": 0
+              },
+              {
+                "collection": "experience",
+                "index": 0,
+                "field": "job_title",
+                "expected": "Software Intern",
+                "actual": null
+              },
+              {
+                "collection": "experience",
+                "index": 0,
+                "field": "company",
+                "expected": "Fictional Copper Models",
+                "actual": null
+              },
+              {
+                "collection": "experience",
+                "index": 0,
+                "kind": "contains",
+                "phrase": "Python validation scripts"
+              },
+              {
+                "collection": "experience",
+                "index": 0,
+                "kind": "excludes",
+                "phrase": "Academic classifier"
+              },
+              {
+                "collection": "experience",
+                "index": 0,
+                "kind": "excludes",
+                "phrase": "Trained a PyTorch model"
+              },
+              {
+                "collection": "experience",
+                "index": 0,
+                "kind": "excludes",
+                "phrase": "Bachelor"
+              }
+            ]
+          }
+        ],
+        "passed": false
+      },
+      {
+        "id": "cloud_engineer_en",
+        "scenario": "Cloud aliases do not imply equivalent providers",
+        "matched_requirements": {
+          "gcp": "req-001",
+          "kubernetes": "req-002",
+          "azure": "req-003"
+        },
+        "differences": [],
+        "passed": true
+      },
+      {
+        "id": "bi_analyst_fr",
+        "scenario": "BI evidence and second experience boundaries",
+        "matched_requirements": {
+          "powerbi": "req-001",
+          "dax": "req-002",
+          "sql": "req-003"
+        },
+        "differences": [],
+        "passed": true
+      },
+      {
+        "id": "business_technical_en",
+        "scenario": "Mixed business mastery retrieves business evidence",
+        "matched_requirements": {
+          "business": "req-001",
+          "sql": "req-002"
+        },
+        "differences": [],
+        "passed": true
+      },
+      {
+        "id": "technical_environment_fr",
+        "scenario": "Unspecified environment does not become mandatory",
+        "matched_requirements": {
+          "environment": "req-001",
+          "python": "req-002"
+        },
+        "differences": [],
+        "passed": true
+      },
+      {
+        "id": "linkedin_stack_en",
+        "scenario": "Informal stack list and explicit preferred qualifiers",
+        "matched_requirements": {
+          "python": "req-001",
+          "sql": "req-002",
+          "stack": "req-003"
+        },
+        "differences": [],
+        "passed": true
+      },
+      {
+        "id": "ambiguous_acronyms_en",
+        "scenario": "Good Clinical Practice acronym is not Google Cloud",
+        "matched_requirements": {
+          "clinical": "req-001",
+          "ventilation": "req-002",
+          "sql": "req-003"
+        },
+        "differences": [],
+        "passed": true
+      },
+      {
+        "id": "negative_hypothetical_fr",
+        "scenario": "Negated and future hypothetical stacks are not requirements",
+        "matched_requirements": {
+          "python": "req-001"
+        },
+        "differences": [],
+        "passed": true
+      },
+      {
+        "id": "negative_candidate_en",
+        "scenario": "Negative and hypothetical CV mentions are not supporting evidence",
+        "matched_requirements": {
+          "sql": "req-001",
+          "airflow": "req-002",
+          "gcp": "req-003"
+        },
+        "differences": [
+          {
+            "key": "sql",
+            "kind": "status",
+            "expected": "documented",
+            "actual": "not_documented"
+          },
+          {
+            "key": "sql",
+            "kind": "missing_supporting_excerpt",
+            "expected": {
+              "field": "experience.0.description",
+              "quote": "Used SQL for synthetic reporting tables."
+            }
+          }
+        ],
+        "passed": false
+      },
+      {
+        "id": "overlap_names_en",
+        "scenario": "Overlapping names retain exact canonical boundaries",
+        "matched_requirements": {
+          "java": "req-001",
+          "rag": "req-002",
+          "sql": "req-003",
+          "graphrag": "req-004"
+        },
+        "differences": [],
+        "passed": true
+      },
+      {
+        "id": "privacy_canary_fr",
+        "scenario": "Fictional privacy canaries stay out of evidence",
+        "matched_requirements": {
+          "sql": "req-001",
+          "python": "req-002"
+        },
+        "differences": [
+          {
+            "key": "sql",
+            "kind": "missing_supporting_excerpt",
+            "expected": {
+              "field": "experience.0.description",
+              "quote": "Exécuté des requêtes SQL sur des données fictives."
+            }
+          },
+          {
+            "key": "python",
+            "kind": "status",
+            "expected": "documented",
+            "actual": "not_documented"
+          },
+          {
+            "key": "python",
+            "kind": "missing_supporting_excerpt",
+            "expected": {
+              "field": "experience.0.description",
+              "quote": "Automatisé des contrôles avec Python."
+            }
+          }
+        ],
+        "passed": false
+      },
+      {
+        "id": "entry_boundaries_en",
+        "scenario": "Two jobs and an academic project retain separate evidence",
+        "matched_requirements": {
+          "experience": "req-001",
+          "python": "req-002"
+        },
+        "differences": [
+          {
+            "kind": "cv_segmentation",
+            "details": [
+              {
+                "collection": "experience",
+                "kind": "entry_count",
+                "expected": 2,
+                "actual": 0
+              },
+              {
+                "collection": "experience",
+                "index": 0,
+                "field": "job_title",
+                "expected": "Data Intern",
+                "actual": null
+              },
+              {
+                "collection": "experience",
+                "index": 0,
+                "field": "company",
+                "expected": "Fictional Maple Automation",
+                "actual": null
+              },
+              {
+                "collection": "experience",
+                "index": 0,
+                "kind": "contains",
+                "phrase": "Airflow demonstration"
+              },
+              {
+                "collection": "experience",
+                "index": 0,
+                "kind": "excludes",
+                "phrase": "JavaScript interfaces"
+              },
+              {
+                "collection": "experience",
+                "index": 0,
+                "kind": "excludes",
+                "phrase": "Academic scheduler"
+              },
+              {
+                "collection": "experience",
+                "index": 1,
+                "field": "job_title",
+                "expected": "Web Intern",
+                "actual": null
+              },
+              {
+                "collection": "experience",
+                "index": 1,
+                "field": "company",
+                "expected": "Fictional Reed Interfaces",
+                "actual": null
+              },
+              {
+                "collection": "experience",
+                "index": 1,
+                "kind": "contains",
+                "phrase": "JavaScript interfaces"
+              },
+              {
+                "collection": "experience",
+                "index": 1,
+                "kind": "excludes",
+                "phrase": "Airflow demonstration"
+              },
+              {
+                "collection": "experience",
+                "index": 1,
+                "kind": "excludes",
+                "phrase": "Academic scheduler"
+              },
+              {
+                "collection": "experience",
+                "index": 1,
+                "kind": "excludes",
+                "phrase": "Python task scheduler"
+              }
+            ]
+          }
+        ],
+        "passed": false
+      },
+      {
+        "id": "classification_context_fr",
+        "scenario": "Mandatory, preferred and descriptive environment remain distinct",
+        "matched_requirements": {
+          "sql": "req-001",
+          "airflow": "req-002",
+          "environment": "req-003"
+        },
+        "differences": [],
+        "passed": true
+      }
+    ]
+  },
+  "limitations": [
+    "Sixteen small authored development scenarios do not represent real-world recruitment accuracy or population performance.",
+    "Strict frozen status taxonomy expects needs_review for an unsupported telecom-sector interpretation; product policy may reasonably use not_documented. This discrepancy remains visible rather than relabeled.",
+    "Conservative privacy filtering may omit safe lines when a complete reviewed source field also contains personal data; evidence recall exposes this tradeoff.",
+    "Exact clause and concise-excerpt annotations can penalize alternative valid grouping or evidence choices; detailed differences require human inspection.",
+    "Plain-text segmentation isolates section/entry logic; separate PDF/layout tests and Chromium workflows cover file ingestion and rendering.",
+    "These are document evidence tests, not measurements of ability, proficiency, industry equivalence, suitability or employment outcomes."
+  ],
+  "baseline": {
+    "dataset_size": 16,
+    "counts": {
+      "technology_correct": 48,
+      "technology_predicted": 48,
+      "technology_expected": 48,
+      "classification_correct": 46,
+      "classification_expected": 46,
+      "origin_correct": 46,
+      "origin_expected": 46,
+      "job_source_correct": 46,
+      "job_source_predicted": 46,
+      "comparison_source_correct": 46,
+      "comparison_source_predicted": 46,
+      "overview_source_correct": 48,
+      "overview_source_predicted": 48,
+      "overview_mentions_correct": 48,
+      "overview_mentions_expected": 48,
+      "candidate_source_correct": 36,
+      "candidate_source_predicted": 36,
+      "segmentation_correct": 41,
+      "segmentation_expected": 60,
+      "segmented_cvs_correct": 2,
+      "segmented_cvs_expected": 4,
+      "relevant_evidence": 36,
+      "evidence_predicted": 36,
+      "evidence_expected": 39,
+      "evidence_recalled": 36,
+      "excerpt_boundaries_correct": 36,
+      "unsupported_evidence": 0,
+      "privacy_correct": 6,
+      "privacy_expected": 6,
+      "status_correct": 43,
+      "status_expected": 46,
+      "requirements_matched": 46,
+      "requirements_expected": 46,
+      "requirements_predicted": 46
+    },
+    "metrics": {
+      "technology_mention_precision": 1.0,
+      "technology_mention_recall": 1.0,
+      "qualification_classification_accuracy": 1.0,
+      "source_origin_accuracy": 1.0,
+      "job_source_evidence_correctness": 1.0,
+      "comparison_source_citation_correctness": 1.0,
+      "technical_overview_citation_correctness": 1.0,
+      "technical_overview_mention_recall": 1.0,
+      "candidate_source_evidence_correctness": 1.0,
+      "cv_segmentation_assertion_accuracy": 0.6833333333333333,
+      "cv_complete_segmentation_rate": 0.5,
+      "evidence_relevance_precision": 1.0,
+      "evidence_relevance_recall": 0.9230769230769231,
+      "excerpt_boundary_correctness": 1.0,
+      "unsupported_evidence_rate": 0.0,
+      "privacy_exclusion_accuracy": 1.0,
+      "comparison_status_correctness": 0.9347826086956522,
+      "requirement_recall": 1.0
+    },
+    "cases": [
+      {
+        "id": "data_ba_fr",
+        "scenario": "French Data Business Analyst composite qualifications",
+        "matched_requirements": {
+          "duration": "req-001",
+          "business": "req-002",
+          "sql": "req-003",
+          "stack": "req-004",
+          "sector": "req-005"
+        },
+        "differences": [
+          {
+            "key": "sector",
+            "kind": "status",
+            "expected": "needs_review",
+            "actual": "not_documented"
+          }
+        ],
+        "passed": false
+      },
+      {
+        "id": "data_engineer_en",
+        "scenario": "English mandatory cloud data pipeline skills",
+        "matched_requirements": {
+          "gcp": "req-001",
+          "airflow": "req-002",
+          "teradata": "req-003",
+          "python": "req-004"
+        },
+        "differences": [],
+        "passed": true
+      },
+      {
+        "id": "ai_engineer_fr",
+        "scenario": "French AI composites and graph technology distinctions",
+        "matched_requirements": {
+          "retrieval": "req-001",
+          "python": "req-002",
+          "langchain": "req-003"
+        },
+        "differences": [],
+        "passed": true
+      },
+      {
+        "id": "ml_engineer_en",
+        "scenario": "ML years remain reviewable and projects do not become employment",
+        "matched_requirements": {
+          "years": "req-001",
+          "sklearn": "req-002",
+          "pytorch": "req-003"
+        },
+        "differences": [
+          {
+            "kind": "cv_segmentation",
+            "details": [
+              {
+                "collection": "experience",
+                "kind": "entry_count",
+                "expected": 1,
+                "actual": 0
+              },
+              {
+                "collection": "experience",
+                "index": 0,
+                "field": "job_title",
+                "expected": "Software Intern",
+                "actual": null
+              },
+              {
+                "collection": "experience",
+                "index": 0,
+                "field": "company",
+                "expected": "Fictional Copper Models",
+                "actual": null
+              },
+              {
+                "collection": "experience",
+                "index": 0,
+                "kind": "contains",
+                "phrase": "Python validation scripts"
+              },
+              {
+                "collection": "experience",
+                "index": 0,
+                "kind": "excludes",
+                "phrase": "Academic classifier"
+              },
+              {
+                "collection": "experience",
+                "index": 0,
+                "kind": "excludes",
+                "phrase": "Trained a PyTorch model"
+              },
+              {
+                "collection": "experience",
+                "index": 0,
+                "kind": "excludes",
+                "phrase": "Bachelor"
+              }
+            ]
+          }
+        ],
+        "passed": false
+      },
+      {
+        "id": "cloud_engineer_en",
+        "scenario": "Cloud aliases do not imply equivalent providers",
+        "matched_requirements": {
+          "gcp": "req-001",
+          "kubernetes": "req-002",
+          "azure": "req-003"
+        },
+        "differences": [],
+        "passed": true
+      },
+      {
+        "id": "bi_analyst_fr",
+        "scenario": "BI evidence and second experience boundaries",
+        "matched_requirements": {
+          "powerbi": "req-001",
+          "dax": "req-002",
+          "sql": "req-003"
+        },
+        "differences": [],
+        "passed": true
+      },
+      {
+        "id": "business_technical_en",
+        "scenario": "Mixed business mastery retrieves business evidence",
+        "matched_requirements": {
+          "business": "req-001",
+          "sql": "req-002"
+        },
+        "differences": [],
+        "passed": true
+      },
+      {
+        "id": "technical_environment_fr",
+        "scenario": "Unspecified environment does not become mandatory",
+        "matched_requirements": {
+          "environment": "req-001",
+          "python": "req-002"
+        },
+        "differences": [],
+        "passed": true
+      },
+      {
+        "id": "linkedin_stack_en",
+        "scenario": "Informal stack list and explicit preferred qualifiers",
+        "matched_requirements": {
+          "python": "req-001",
+          "sql": "req-002",
+          "stack": "req-003"
+        },
+        "differences": [],
+        "passed": true
+      },
+      {
+        "id": "ambiguous_acronyms_en",
+        "scenario": "Good Clinical Practice acronym is not Google Cloud",
+        "matched_requirements": {
+          "clinical": "req-001",
+          "ventilation": "req-002",
+          "sql": "req-003"
+        },
+        "differences": [],
+        "passed": true
+      },
+      {
+        "id": "negative_hypothetical_fr",
+        "scenario": "Negated and future hypothetical stacks are not requirements",
+        "matched_requirements": {
+          "python": "req-001"
+        },
+        "differences": [],
+        "passed": true
+      },
+      {
+        "id": "negative_candidate_en",
+        "scenario": "Negative and hypothetical CV mentions are not supporting evidence",
+        "matched_requirements": {
+          "sql": "req-001",
+          "airflow": "req-002",
+          "gcp": "req-003"
+        },
+        "differences": [
+          {
+            "key": "sql",
+            "kind": "status",
+            "expected": "documented",
+            "actual": "not_documented"
+          },
+          {
+            "key": "sql",
+            "kind": "missing_supporting_excerpt",
+            "expected": {
+              "field": "experience.0.description",
+              "quote": "Used SQL for synthetic reporting tables."
+            }
+          }
+        ],
+        "passed": false
+      },
+      {
+        "id": "overlap_names_en",
+        "scenario": "Overlapping names retain exact canonical boundaries",
+        "matched_requirements": {
+          "java": "req-001",
+          "rag": "req-002",
+          "sql": "req-003",
+          "graphrag": "req-004"
+        },
+        "differences": [],
+        "passed": true
+      },
+      {
+        "id": "privacy_canary_fr",
+        "scenario": "Fictional privacy canaries stay out of evidence",
+        "matched_requirements": {
+          "sql": "req-001",
+          "python": "req-002"
+        },
+        "differences": [
+          {
+            "key": "sql",
+            "kind": "missing_supporting_excerpt",
+            "expected": {
+              "field": "experience.0.description",
+              "quote": "Exécuté des requêtes SQL sur des données fictives."
+            }
+          },
+          {
+            "key": "python",
+            "kind": "status",
+            "expected": "documented",
+            "actual": "not_documented"
+          },
+          {
+            "key": "python",
+            "kind": "missing_supporting_excerpt",
+            "expected": {
+              "field": "experience.0.description",
+              "quote": "Automatisé des contrôles avec Python."
+            }
+          }
+        ],
+        "passed": false
+      },
+      {
+        "id": "entry_boundaries_en",
+        "scenario": "Two jobs and an academic project retain separate evidence",
+        "matched_requirements": {
+          "experience": "req-001",
+          "python": "req-002"
+        },
+        "differences": [
+          {
+            "kind": "cv_segmentation",
+            "details": [
+              {
+                "collection": "experience",
+                "kind": "entry_count",
+                "expected": 2,
+                "actual": 0
+              },
+              {
+                "collection": "experience",
+                "index": 0,
+                "field": "job_title",
+                "expected": "Data Intern",
+                "actual": null
+              },
+              {
+                "collection": "experience",
+                "index": 0,
+                "field": "company",
+                "expected": "Fictional Maple Automation",
+                "actual": null
+              },
+              {
+                "collection": "experience",
+                "index": 0,
+                "kind": "contains",
+                "phrase": "Airflow demonstration"
+              },
+              {
+                "collection": "experience",
+                "index": 0,
+                "kind": "excludes",
+                "phrase": "JavaScript interfaces"
+              },
+              {
+                "collection": "experience",
+                "index": 0,
+                "kind": "excludes",
+                "phrase": "Academic scheduler"
+              },
+              {
+                "collection": "experience",
+                "index": 1,
+                "field": "job_title",
+                "expected": "Web Intern",
+                "actual": null
+              },
+              {
+                "collection": "experience",
+                "index": 1,
+                "field": "company",
+                "expected": "Fictional Reed Interfaces",
+                "actual": null
+              },
+              {
+                "collection": "experience",
+                "index": 1,
+                "kind": "contains",
+                "phrase": "JavaScript interfaces"
+              },
+              {
+                "collection": "experience",
+                "index": 1,
+                "kind": "excludes",
+                "phrase": "Airflow demonstration"
+              },
+              {
+                "collection": "experience",
+                "index": 1,
+                "kind": "excludes",
+                "phrase": "Academic scheduler"
+              },
+              {
+                "collection": "experience",
+                "index": 1,
+                "kind": "excludes",
+                "phrase": "Python task scheduler"
+              }
+            ]
+          }
+        ],
+        "passed": false
+      },
+      {
+        "id": "classification_context_fr",
+        "scenario": "Mandatory, preferred and descriptive environment remain distinct",
+        "matched_requirements": {
+          "sql": "req-001",
+          "airflow": "req-002",
+          "environment": "req-003"
+        },
+        "differences": [],
+        "passed": true
+      }
+    ]
+  },
+  "baseline_provenance": {
+    "label": "Phase 4.3 before Phase 4.3.1 final accuracy fixes",
+    "date": "2026-10-15",
+    "manifest_sha256": "e5ad9cdaf0a662dc437c93ccd2d785efda82b4801b0e8b6c6d235898b5311f4b",
+    "verified_python_files": 22,
+    "files": {
+      "app/__init__.py": "c7ec0bad880f3e191bac503c69a5d06232a4e768aa096e63390ebf136388707a",
+      "app/api/__init__.py": "c5e79b75137811726e30acef2fa5cfc649514fce1c86da771535b368f43238c0",
+      "app/api/routes/__init__.py": "51bf83470168d705beb38744164cc071189699478cdb8ceebd28fd927f332148",
+      "app/api/routes/candidates.py": "7369305bef0c613db2942ef518a3223be30c4d74aa28cf28a992ebaef7c6761b",
+      "app/api/routes/health.py": "75dc67f6abee7087ee9f238c5311deda6537e8e285d44de38f90b118bf6b788f",
+      "app/api/routes/jobs.py": "c689e2ffd4615cb7791904593b730c841ede26846b2188220a3bc91c0f9f3bc0",
+      "app/api/upload_limits.py": "c3c72ae3a2fd0665345f81465d8399421ae78a5388f99bb23c61219a8d0a805f",
+      "app/main.py": "f71b9fb27f401e246d643cc0e17d9150963438a59cf2b95080c8fa4b32403d0c",
+      "app/models/__init__.py": "67e2d12442c40eebabe5ec1fd4bf971810be0be5f859de8a4d228a5caf38bec1",
+      "app/models/candidate.py": "d4d7095fb2e57271d7c37176a4af6ebb2fbd7607fe880a2311d660b256dde51b",
+      "app/models/job.py": "9266eaff82e740c0a0463adc9dbee0a8eed254647d469de976502d05a50f8f23",
+      "app/services/__init__.py": "367e04f028652db23a2cfe61a0d5793f400a79635862c97c1f40df97a024819a",
+      "app/services/extraction.py": "ee93f37609badb8ec44458b83bdddbd3c6fd1cd1d46a230e6ed37cf83c04248b",
+      "app/services/job_formatting.py": "4fdc3e891d88fa7ac53d01f395b4a7d40be0bb48bce449cdc23c438b02e3f992",
+      "app/services/job_vocabulary.py": "bf43bcc89d0012506f65e434a1eed677d6bb0941147d1343b9ad835a342f4468",
+      "app/services/jobs.py": "bbef2cf085ea11e3b60ba8f03ebedc5e2ada45ecac0a3bd7816a3a75b609c727",
+      "app/services/layout.py": "7f0eaa24c6a552727f94dd493996240d27a80c9177086e35f3356ceb50d8a4e6",
+      "app/services/llm.py": "ba0088975ceef360de817b2e6adbf55e813ba28331d9568d15cafaf0f4c0315d",
+      "app/services/multilingual.py": "5fc32fc49b408a538ca3c5ccd45a46da5022c748e659c469b58d4ef4e360971c",
+      "app/services/pdf.py": "ef8b67f0ed893d3a843ba7a0ea96ebc181dfb5a4d76d983b387ec1da7cfee50d",
+      "app/services/records.py": "6ce8c9910de1434be825a03280b0dedc9fd69593e35cf2ffc013c1eb756bc69d",
+      "app/services/sections.py": "8cb90e56f9c7af5f3f5ceca2058c5546b00a2bcd80a7e29768c21d979f9d0d36"
+    }
+  },
+  "metric_delta": {
+    "technology_mention_precision": 0.0,
+    "technology_mention_recall": 0.0,
+    "qualification_classification_accuracy": -0.021739130434782594,
+    "source_origin_accuracy": 0.0,
+    "job_source_evidence_correctness": 0.0,
+    "comparison_source_citation_correctness": 0.0,
+    "technical_overview_citation_correctness": 0.0,
+    "technical_overview_mention_recall": 0.0,
+    "candidate_source_evidence_correctness": 0.0,
+    "cv_segmentation_assertion_accuracy": 0.0,
+    "cv_complete_segmentation_rate": 0.0,
+    "evidence_relevance_precision": 0.0,
+    "evidence_relevance_recall": 0.0,
+    "excerpt_boundary_correctness": 0.0,
+    "unsupported_evidence_rate": 0.0,
+    "privacy_exclusion_accuracy": 0.0,
+    "comparison_status_correctness": 0.0,
+    "requirement_recall": 0.0
+  }
+}

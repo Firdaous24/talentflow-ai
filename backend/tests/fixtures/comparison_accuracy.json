@@ -1,0 +1,189 @@
+{
+  "version": "comparison-accuracy-v1",
+  "annotation_policy": "Authored before predictions or tuning. Fictional companies and profiles only. Expected technology sets, classifications, origins, source clauses, statuses and concise evidence excerpts are independent static annotations. Do not revise labels after observing predictions merely to improve metrics.",
+  "cases": [
+    {
+      "id": "data_ba_fr",
+      "scenario": "French Data Business Analyst composite qualifications",
+      "job_text": "Poste : Data Business Analyst\nEntreprise : Atelier Nacre Fictif\nLieu : Rabat\nContrat : CDI\nMissions\nRecueillir les besoins et coordonner les équipes Data.\nProfil recherché\n- Minimum 5 ans d'expérience sur un poste similaire de Business Analyst.\n- Maîtrise du recueil des besoins, de la modélisation des processus et de la rédaction des spécifications fonctionnelles.\n- Solide background Data avec une maîtrise avancée et indispensable du langage SQL.\n- Capacité à intervenir techniquement sur la partie développement et connaissance de la stack technique (GCP, Teradata, Airflow, etc.).\n- Une expérience dans le secteur des télécommunications est un atout.\n",
+      "profile": {"technical_skills": [{"name": "SQL", "category": "programming_language"}], "experience": [{"job_title": "Business Analyst", "description": "Recueil des besoins et modélisation des processus UML.\nExtraction SQL de données fictives.\nPlanification de pipelines avec Airflow.\nConfiguration de réseaux et de téléphonie VoIP."}]},
+      "requirements": [
+        {"key": "duration", "quote": "Minimum 5 ans d'expérience sur un poste similaire de Business Analyst.", "technologies": [], "classification": "unspecified", "origin": "qualification", "status": "needs_review", "evidence": [{"field": "experience.0.job_title", "quote": "Business Analyst"}]},
+        {"key": "business", "quote": "Maîtrise du recueil des besoins, de la modélisation des processus et de la rédaction des spécifications fonctionnelles.", "technologies": [], "classification": "unspecified", "origin": "qualification", "status": "needs_review", "evidence": [{"field": "experience.0.description", "quote": "Recueil des besoins et modélisation des processus UML."}]},
+        {"key": "sql", "quote": "Solide background Data avec une maîtrise avancée et indispensable du langage SQL.", "technologies": ["SQL"], "classification": "required", "origin": "qualification", "status": "needs_review", "evidence": [{"field": "technical_skills.0.name", "quote": "SQL"}, {"field": "experience.0.description", "quote": "Extraction SQL de données fictives."}]},
+        {"key": "stack", "quote": "Capacité à intervenir techniquement sur la partie développement et connaissance de la stack technique (GCP, Teradata, Airflow, etc.).", "technologies": ["GCP", "Teradata", "Airflow"], "classification": "unspecified", "origin": "qualification", "status": "needs_review", "evidence": [{"field": "experience.0.description", "quote": "Planification de pipelines avec Airflow."}]},
+        {"key": "sector", "quote": "Une expérience dans le secteur des télécommunications est un atout.", "technologies": [], "classification": "preferred", "origin": "qualification", "status": "needs_review", "evidence": [], "forbidden_evidence": ["Configuration de réseaux et de téléphonie VoIP."]}
+      ],
+      "cv_text": "EXPÉRIENCES PROFESSIONNELLES\nBusiness Analyst | Atelier Nacre Fictif\nJanv. 2022 - Déc. 2023\n- Recueil des besoins et modélisation des processus UML.\n- Extraction SQL de données fictives.\nPROJETS ACADÉMIQUES\nAssistant de démonstration : Prototype RAG sur données fictives.\nTechnologies : Python, RAG\nFORMATION\nMaster | Université Imaginaire\n2020 - 2022\n",
+      "segmentation": {"experience": [{"job_title": "Business Analyst", "company": "Atelier Nacre Fictif", "contains": ["Recueil des besoins", "Extraction SQL"], "excludes": ["Assistant de démonstration", "Prototype RAG", "FORMATION"]}], "projects": [{"name": "Assistant de démonstration", "contains": ["Prototype RAG"], "excludes": ["Recueil des besoins", "Master"]}]}
+    },
+    {
+      "id": "data_engineer_en",
+      "scenario": "English mandatory cloud data pipeline skills",
+      "job_text": "Job title: Data Engineer\nCompany: Fictional Alder Pipelines\nRequired Skills\n- Google Cloud Platform\n- Apache Airflow\n- Teradata\nPreferred Qualifications\n- Python\nResponsibilities\nMaintain the synthetic reporting platform.\n",
+      "profile": {"technical_skills": [{"name": "Python", "category": "programming_language"}], "experience": [{"job_title": "Data Engineer", "description": "Orchestrated synthetic pipelines with Apache Airflow.\nMaintained example reporting documentation."}]},
+      "requirements": [
+        {"key": "gcp", "quote": "Google Cloud Platform", "technologies": ["GCP"], "classification": "required", "origin": "qualification", "status": "not_documented", "evidence": []},
+        {"key": "airflow", "quote": "Apache Airflow", "technologies": ["Airflow"], "classification": "required", "origin": "qualification", "status": "documented", "evidence": [{"field": "experience.0.description", "quote": "Orchestrated synthetic pipelines with Apache Airflow."}]},
+        {"key": "teradata", "quote": "Teradata", "technologies": ["Teradata"], "classification": "required", "origin": "qualification", "status": "not_documented", "evidence": []},
+        {"key": "python", "quote": "Python", "technologies": ["Python"], "classification": "preferred", "origin": "qualification", "status": "documented", "evidence": [{"field": "technical_skills.0.name", "quote": "Python"}]}
+      ]
+    },
+    {
+      "id": "ai_engineer_fr",
+      "scenario": "French AI composites and graph technology distinctions",
+      "job_text": "Poste : Ingénieur IA\nEntreprise : Studio Sauge Fictif\nCompétences requises\n- Maîtrise de RAG et GraphRAG indispensable.\n- Python\nCompétences souhaitées\n- LangChain\n",
+      "profile": {"technical_skills": [{"name": "RAG", "category": "ai_ml"}, {"name": "Python", "category": "programming_language"}], "projects": [{"name": "Assistant fictif", "description": "Construit un prototype RAG avec LangChain.\nRédigé la documentation du projet."}]},
+      "requirements": [
+        {"key": "retrieval", "quote": "Maîtrise de RAG et GraphRAG indispensable.", "technologies": ["RAG", "GraphRAG"], "classification": "required", "origin": "qualification", "status": "needs_review", "evidence": [{"field": "technical_skills.0.name", "quote": "RAG"}, {"field": "projects.0.description", "quote": "Construit un prototype RAG avec LangChain."}]},
+        {"key": "python", "quote": "Python", "technologies": ["Python"], "classification": "required", "origin": "qualification", "status": "documented", "evidence": [{"field": "technical_skills.1.name", "quote": "Python"}]},
+        {"key": "langchain", "quote": "LangChain", "technologies": ["LangChain"], "classification": "preferred", "origin": "qualification", "status": "documented", "evidence": [{"field": "projects.0.description", "quote": "Construit un prototype RAG avec LangChain."}]}
+      ]
+    },
+    {
+      "id": "ml_engineer_en",
+      "scenario": "ML years remain reviewable and projects do not become employment",
+      "job_text": "Job title: ML Engineer\nCompany: Fictional Copper Models\nRequirements\n- At least 5 years of professional Python experience is required.\nRequired Skills\n- scikit-learn\nPreferred Qualifications\n- PyTorch\n",
+      "profile": {"technical_skills": [{"name": "scikit-learn", "category": "ai_ml"}], "experience": [{"job_title": "Software Intern", "description": "Built Python validation scripts for fictional records.\nMaintained team documentation."}], "projects": [{"name": "Academic classifier", "description": "Trained a PyTorch model on synthetic records."}]},
+      "requirements": [
+        {"key": "years", "quote": "At least 5 years of professional Python experience is required.", "technologies": ["Python"], "classification": "required", "origin": "qualification", "status": "needs_review", "evidence": [{"field": "experience.0.description", "quote": "Built Python validation scripts for fictional records."}], "forbidden_evidence": ["Trained a PyTorch model on synthetic records."]},
+        {"key": "sklearn", "quote": "scikit-learn", "technologies": ["scikit-learn"], "classification": "required", "origin": "qualification", "status": "documented", "evidence": [{"field": "technical_skills.0.name", "quote": "scikit-learn"}]},
+        {"key": "pytorch", "quote": "PyTorch", "technologies": ["PyTorch"], "classification": "preferred", "origin": "qualification", "status": "documented", "evidence": [{"field": "projects.0.description", "quote": "Trained a PyTorch model on synthetic records."}]}
+      ],
+      "cv_text": "PROFESSIONAL EXPERIENCE\nSoftware Intern | Fictional Copper Models\nJun. 2024 - Aug. 2024\n- Built Python validation scripts for fictional records.\n- Maintained team documentation.\nACADEMIC PROJECTS\nAcademic classifier : Trained a PyTorch model on synthetic records.\nTechnologies: PyTorch\nEDUCATION\nBachelor | Imaginary College\n2021 - 2024\n",
+      "segmentation": {"experience": [{"job_title": "Software Intern", "company": "Fictional Copper Models", "contains": ["Python validation scripts"], "excludes": ["Academic classifier", "Trained a PyTorch model", "Bachelor"]}], "projects": [{"name": "Academic classifier", "contains": ["Trained a PyTorch model"], "excludes": ["Maintained team documentation", "Bachelor"]}]}
+    },
+    {
+      "id": "cloud_engineer_en",
+      "scenario": "Cloud aliases do not imply equivalent providers",
+      "job_text": "Job title: Cloud Engineer\nCompany: Fictional Birch Cloud\nMust Have\n- GCP\n- Kubernetes\nNice to Have\n- Azure\n",
+      "profile": {"technical_skills": [{"name": "Azure", "category": "cloud_devops"}], "experience": [{"job_title": "Platform Engineer", "description": "Operated a k8s demonstration cluster.\nWrote incident exercises for fictional systems."}]},
+      "requirements": [
+        {"key": "gcp", "quote": "GCP", "technologies": ["GCP"], "classification": "required", "origin": "qualification", "status": "not_documented", "evidence": []},
+        {"key": "kubernetes", "quote": "Kubernetes", "technologies": ["Kubernetes"], "classification": "required", "origin": "qualification", "status": "documented", "evidence": [{"field": "experience.0.description", "quote": "Operated a k8s demonstration cluster."}]},
+        {"key": "azure", "quote": "Azure", "technologies": ["Azure"], "classification": "preferred", "origin": "qualification", "status": "documented", "evidence": [{"field": "technical_skills.0.name", "quote": "Azure"}]}
+      ]
+    },
+    {
+      "id": "bi_analyst_fr",
+      "scenario": "BI evidence and second experience boundaries",
+      "job_text": "Poste : Analyste BI\nEntreprise : Atelier Orme Fictif\nCompétences requises\n- Power BI\n- DAX\nAtouts\n- SQL\n",
+      "profile": {"experience": [{"job_title": "Analyste BI", "description": "Créé des tableaux de bord Power BI.\nRédigé des mesures DAX pour des données fictives."}, {"job_title": "Stagiaire Data", "description": "Préparé des extractions SQL.\nPrésenté les résultats de démonstration."}]},
+      "requirements": [
+        {"key": "powerbi", "quote": "Power BI", "technologies": ["Power BI"], "classification": "required", "origin": "qualification", "status": "documented", "evidence": [{"field": "experience.0.description", "quote": "Créé des tableaux de bord Power BI."}]},
+        {"key": "dax", "quote": "DAX", "technologies": ["DAX"], "classification": "required", "origin": "qualification", "status": "documented", "evidence": [{"field": "experience.0.description", "quote": "Rédigé des mesures DAX pour des données fictives."}]},
+        {"key": "sql", "quote": "SQL", "technologies": ["SQL"], "classification": "preferred", "origin": "qualification", "status": "documented", "evidence": [{"field": "experience.1.description", "quote": "Préparé des extractions SQL."}]}
+      ],
+      "cv_text": "EXPÉRIENCE PROFESSIONNELLE\nAnalyste BI | Atelier Orme Fictif\n2024 - 2025\n- Créé des tableaux de bord Power BI.\n- Rédigé des mesures DAX pour des données fictives.\nStagiaire Data | Studio Papier Fictif\n2023 - 2024\n- Préparé des extractions SQL.\n- Présenté les résultats de démonstration.\nPROJETS UNIVERSITAIRES\nCatalogue fictif : Interface React pour données de démonstration.\nCOMPÉTENCES TECHNIQUES\nSQL, Power BI, DAX, React\n",
+      "segmentation": {"experience": [{"job_title": "Analyste BI", "company": "Atelier Orme Fictif", "contains": ["Power BI", "mesures DAX"], "excludes": ["Préparé des extractions SQL", "Catalogue fictif"]}, {"job_title": "Stagiaire Data", "company": "Studio Papier Fictif", "contains": ["Préparé des extractions SQL"], "excludes": ["Créé des tableaux de bord", "Catalogue fictif", "Interface React"]}], "projects": [{"name": "Catalogue fictif", "contains": ["Interface React"], "excludes": ["Présenté les résultats", "COMPÉTENCES TECHNIQUES"]}]}
+    },
+    {
+      "id": "business_technical_en",
+      "scenario": "Mixed business mastery retrieves business evidence",
+      "job_text": "Job title: Business Systems Analyst\nCompany: Fictional Lantern Workflows\nQualifications\n- Mastery of requirements gathering and process modeling is required.\n- SQL is preferred.\n",
+      "profile": {"experience": [{"job_title": "Business Analyst", "description": "Facilitated requirements gathering workshops.\nModeled business processes with UML.\nAutomated fictional CRM workflows.\nMaintained SQL reporting queries."}]},
+      "requirements": [
+        {"key": "business", "quote": "Mastery of requirements gathering and process modeling is required.", "technologies": [], "classification": "required", "origin": "qualification", "status": "needs_review", "evidence": [{"field": "experience.0.description", "quote": "Facilitated requirements gathering workshops."}, {"field": "experience.0.description", "quote": "Modeled business processes with UML."}]},
+        {"key": "sql", "quote": "SQL is preferred.", "technologies": ["SQL"], "classification": "preferred", "origin": "qualification", "status": "documented", "evidence": [{"field": "experience.0.description", "quote": "Maintained SQL reporting queries."}]}
+      ]
+    },
+    {
+      "id": "technical_environment_fr",
+      "scenario": "Unspecified environment does not become mandatory",
+      "job_text": "Poste : Développeur Data\nEntreprise : Studio Galet Fictif\nEnvironnement technique\nGCP / Teradata / Airflow\nCompétences requises\nPython\n",
+      "profile": {"technical_skills": [{"name": "Python", "category": "programming_language"}], "projects": [{"name": "Démonstration", "description": "Orchestration de données fictives avec Airflow."}]},
+      "requirements": [
+        {"key": "environment", "quote": "GCP / Teradata / Airflow", "technologies": ["GCP", "Teradata", "Airflow"], "classification": "unspecified", "origin": "technical_environment", "status": "needs_review", "evidence": [{"field": "projects.0.description", "quote": "Orchestration de données fictives avec Airflow."}]},
+        {"key": "python", "quote": "Python", "technologies": ["Python"], "classification": "required", "origin": "qualification", "status": "documented", "evidence": [{"field": "technical_skills.0.name", "quote": "Python"}]}
+      ]
+    },
+    {
+      "id": "linkedin_stack_en",
+      "scenario": "Informal stack list and explicit preferred qualifiers",
+      "job_text": "🚀 Hiring: Data Platform Developer\nCompany: Fictional Pebble Systems\nRequired Skills\n• Python\n• SQL\nPreferred Qualifications\n• Cloud stack familiarity (Google Cloud Platform, Teradata, Apache Airflow).\n",
+      "profile": {"technical_skills": [{"name": "SQL", "category": "programming_language"}], "experience": [{"job_title": "Data Developer", "description": "Built Python transformations.\nUsed Google Cloud Platform for a fictional sandbox."}]},
+      "requirements": [
+        {"key": "python", "quote": "Python", "technologies": ["Python"], "classification": "required", "origin": "qualification", "status": "documented", "evidence": [{"field": "experience.0.description", "quote": "Built Python transformations."}]},
+        {"key": "sql", "quote": "SQL", "technologies": ["SQL"], "classification": "required", "origin": "qualification", "status": "documented", "evidence": [{"field": "technical_skills.0.name", "quote": "SQL"}]},
+        {"key": "stack", "quote": "Cloud stack familiarity (Google Cloud Platform, Teradata, Apache Airflow).", "technologies": ["GCP", "Teradata", "Airflow"], "classification": "preferred", "origin": "qualification", "status": "needs_review", "evidence": [{"field": "experience.0.description", "quote": "Used Google Cloud Platform for a fictional sandbox."}]}
+      ]
+    },
+    {
+      "id": "ambiguous_acronyms_en",
+      "scenario": "Good Clinical Practice acronym is not Google Cloud",
+      "job_text": "Job title: Clinical Reporting Coordinator\nCompany: Fictional Clinical Paperwork\nRequirements\n- Knowledge of GCP (Good Clinical Practice) is required.\n- Familiarity with a natural airflow ventilation study is preferred.\nRequired Skills\n- SQL\n",
+      "profile": {"technical_skills": [{"name": "SQL", "category": "programming_language"}], "experience": [{"job_title": "Reporting Coordinator", "description": "Maintained SQL extracts for synthetic records."}]},
+      "requirements": [
+        {"key": "clinical", "quote": "Knowledge of GCP (Good Clinical Practice) is required.", "technologies": [], "classification": "required", "origin": "qualification", "status": "needs_review", "evidence": []},
+        {"key": "ventilation", "quote": "Familiarity with a natural airflow ventilation study is preferred.", "technologies": [], "classification": "preferred", "origin": "qualification", "status": "needs_review", "evidence": []},
+        {"key": "sql", "quote": "SQL", "technologies": ["SQL"], "classification": "required", "origin": "qualification", "status": "documented", "evidence": [{"field": "technical_skills.0.name", "quote": "SQL"}, {"field": "experience.0.description", "quote": "Maintained SQL extracts for synthetic records."}]}
+      ]
+    },
+    {
+      "id": "negative_hypothetical_fr",
+      "scenario": "Negated and future hypothetical stacks are not requirements",
+      "job_text": "Poste : Développeur services\nEntreprise : Atelier Aube Fictif\nProfil recherché\n- Aucune expérience GCP n'est requise.\n- Teradata n'est pas nécessaire.\n- Nous pourrions envisager Airflow à l'avenir, sans exigence actuelle.\nCompétences requises\n- Python\n",
+      "profile": {"technical_skills": [{"name": "Python", "category": "programming_language"}]},
+      "requirements": [{"key": "python", "quote": "Python", "technologies": ["Python"], "classification": "required", "origin": "qualification", "status": "documented", "evidence": [{"field": "technical_skills.0.name", "quote": "Python"}]}],
+      "excluded_job_clauses": ["Aucune expérience GCP n'est requise.", "Teradata n'est pas nécessaire.", "Nous pourrions envisager Airflow à l'avenir, sans exigence actuelle."]
+    },
+    {
+      "id": "negative_candidate_en",
+      "scenario": "Negative and hypothetical CV mentions are not supporting evidence",
+      "job_text": "Job title: Data Tools Engineer\nCompany: Fictional Fir Tools\nRequired Skills\n- SQL\n- Airflow\n- GCP\n",
+      "profile": {"experience": [{"job_title": "Software Developer", "description": "I have no experience with Airflow.\nI would like to learn GCP in the future.\nUsed SQL for synthetic reporting tables.\nMaintained a fictional task tracker."}]},
+      "requirements": [
+        {"key": "sql", "quote": "SQL", "technologies": ["SQL"], "classification": "required", "origin": "qualification", "status": "documented", "evidence": [{"field": "experience.0.description", "quote": "Used SQL for synthetic reporting tables."}]},
+        {"key": "airflow", "quote": "Airflow", "technologies": ["Airflow"], "classification": "required", "origin": "qualification", "status": "not_documented", "evidence": []},
+        {"key": "gcp", "quote": "GCP", "technologies": ["GCP"], "classification": "required", "origin": "qualification", "status": "not_documented", "evidence": []}
+      ]
+    },
+    {
+      "id": "overlap_names_en",
+      "scenario": "Overlapping names retain exact canonical boundaries",
+      "job_text": "Job title: Data Application Developer\nCompany: Fictional Rowan Apps\nRequired Skills\n- Java\n- RAG\n- SQL\nPreferred Qualifications\n- GraphRAG\n",
+      "profile": {"technical_skills": [{"name": "JavaScript", "category": "programming_language"}, {"name": "GraphRAG", "category": "ai_ml"}, {"name": "PostgreSQL", "category": "database"}], "projects": [{"name": "Fictional graph demo", "description": "Built GraphRAG demonstrations with JavaScript and PostgreSQL."}]},
+      "requirements": [
+        {"key": "java", "quote": "Java", "technologies": ["Java"], "classification": "required", "origin": "qualification", "status": "not_documented", "evidence": []},
+        {"key": "rag", "quote": "RAG", "technologies": ["RAG"], "classification": "required", "origin": "qualification", "status": "not_documented", "evidence": []},
+        {"key": "sql", "quote": "SQL", "technologies": ["SQL"], "classification": "required", "origin": "qualification", "status": "not_documented", "evidence": []},
+        {"key": "graphrag", "quote": "GraphRAG", "technologies": ["GraphRAG"], "classification": "preferred", "origin": "qualification", "status": "documented", "evidence": [{"field": "technical_skills.1.name", "quote": "GraphRAG"}, {"field": "projects.0.description", "quote": "Built GraphRAG demonstrations with JavaScript and PostgreSQL."}]}
+      ]
+    },
+    {
+      "id": "privacy_canary_fr",
+      "scenario": "Fictional privacy canaries stay out of evidence",
+      "job_text": "Poste : Analyste données\nEntreprise : Studio Lichen Fictif\nCompétences requises\n- SQL\n- Python\n",
+      "profile": {"technical_skills": [{"name": "SQL", "category": "programming_language"}], "experience": [{"job_title": "Analyste données", "description": "Contact SQL : candidate@example.invalid\nAdresse Python : PRIVATE_ADDRESS_43\nExécuté des requêtes SQL sur des données fictives.\nAutomatisé des contrôles avec Python."}]},
+      "requirements": [
+        {"key": "sql", "quote": "SQL", "technologies": ["SQL"], "classification": "required", "origin": "qualification", "status": "documented", "evidence": [{"field": "technical_skills.0.name", "quote": "SQL"}, {"field": "experience.0.description", "quote": "Exécuté des requêtes SQL sur des données fictives."}]},
+        {"key": "python", "quote": "Python", "technologies": ["Python"], "classification": "required", "origin": "qualification", "status": "documented", "evidence": [{"field": "experience.0.description", "quote": "Automatisé des contrôles avec Python."}]}
+      ],
+      "privacy_canaries": ["candidate@example.invalid", "PRIVATE_ADDRESS_43"],
+      "forbidden_profile_fields": {"full_name": "PRIVATE_NAME_43", "email": "candidate@example.invalid", "phone": "+15550100000", "address": "PRIVATE_ADDRESS_43"}
+    },
+    {
+      "id": "entry_boundaries_en",
+      "scenario": "Two jobs and an academic project retain separate evidence",
+      "job_text": "Job title: Workflow Engineer\nCompany: Fictional Maple Automation\nRequirements\n- Professional Airflow experience is required.\nPreferred Qualifications\n- Python\n",
+      "profile": {"experience": [{"job_title": "Data Intern", "description": "Created Airflow demonstration pipelines.\nDocumented the fictional deployment."}, {"job_title": "Web Intern", "description": "Built JavaScript interfaces.\nWrote UI documentation."}], "projects": [{"name": "Academic scheduler", "description": "Built a Python task scheduler for a class exercise."}]},
+      "requirements": [
+        {"key": "experience", "quote": "Professional Airflow experience is required.", "technologies": ["Airflow"], "classification": "required", "origin": "qualification", "status": "needs_review", "evidence": [{"field": "experience.0.description", "quote": "Created Airflow demonstration pipelines."}], "forbidden_evidence": ["Built JavaScript interfaces.", "Built a Python task scheduler for a class exercise."]},
+        {"key": "python", "quote": "Python", "technologies": ["Python"], "classification": "preferred", "origin": "qualification", "status": "documented", "evidence": [{"field": "projects.0.description", "quote": "Built a Python task scheduler for a class exercise."}]}
+      ],
+      "cv_text": "WORK EXPERIENCE\nData Intern | Fictional Maple Automation\n2024 - 2025\n- Created Airflow demonstration pipelines.\n- Documented the fictional deployment.\nWeb Intern | Fictional Reed Interfaces\n2023 - 2024\n- Built JavaScript interfaces.\n- Wrote UI documentation.\nACADEMIC PROJECTS\nAcademic scheduler : Built a Python task scheduler for a class exercise.\nTechnologies: Python\nEDUCATION\nBachelor | Imaginary College\n2020 - 2023\n",
+      "segmentation": {"experience": [{"job_title": "Data Intern", "company": "Fictional Maple Automation", "contains": ["Airflow demonstration"], "excludes": ["JavaScript interfaces", "Academic scheduler"]}, {"job_title": "Web Intern", "company": "Fictional Reed Interfaces", "contains": ["JavaScript interfaces"], "excludes": ["Airflow demonstration", "Academic scheduler", "Python task scheduler"]}], "projects": [{"name": "Academic scheduler", "contains": ["Python task scheduler"], "excludes": ["Wrote UI documentation", "Bachelor"]}]}
+    },
+    {
+      "id": "classification_context_fr",
+      "scenario": "Mandatory, preferred and descriptive environment remain distinct",
+      "job_text": "Poste : Ingénieur intégration\nEntreprise : Atelier Brindille Fictif\nCompétences requises\n- SQL\nAtouts\n- Airflow\nEnvironnement technique\n- GCP, Teradata\n",
+      "profile": {"technical_skills": [{"name": "SQL", "category": "programming_language"}, {"name": "Azure", "category": "cloud_devops"}]},
+      "requirements": [
+        {"key": "sql", "quote": "SQL", "technologies": ["SQL"], "classification": "required", "origin": "qualification", "status": "documented", "evidence": [{"field": "technical_skills.0.name", "quote": "SQL"}]},
+        {"key": "airflow", "quote": "Airflow", "technologies": ["Airflow"], "classification": "preferred", "origin": "qualification", "status": "not_documented", "evidence": []},
+        {"key": "environment", "quote": "GCP, Teradata", "technologies": ["GCP", "Teradata"], "classification": "unspecified", "origin": "technical_environment", "status": "needs_review", "evidence": []}
+      ]
+    }
+  ]
+}

@@ -1,0 +1,248 @@
+{
+  "job": {
+    "title": "Architecte IA",
+    "company": "Atelier Azur Fictif",
+    "location": "Rabat/Technopolis",
+    "employment_type": "CDI",
+    "work_mode": "Hybrid",
+    "metadata_evidence": {
+      "title": [
+        {
+          "quote": "Architecte IA",
+          "start": 42,
+          "end": 55
+        }
+      ],
+      "company": [
+        {
+          "quote": "Atelier Azur Fictif",
+          "start": 69,
+          "end": 88
+        }
+      ],
+      "employment_type": [
+        {
+          "quote": "CDI",
+          "start": 118,
+          "end": 121
+        }
+      ],
+      "work_mode": [
+        {
+          "quote": "Le premier mois sera principalement réalisé en présentiel. À partir du deuxième mois, fonctionnement hybride.",
+          "start": 141,
+          "end": 250
+        }
+      ],
+      "location": [
+        {
+          "quote": "Rabat/Technopolis",
+          "start": 89,
+          "end": 106
+        }
+      ]
+    },
+    "text": "📣 Notre société fictive recrute !\nPoste : Architecte IA\nEntreprise : Atelier Azur Fictif\nRabat/Technopolis ➡ Contrat: CDI ➡ Mode de travail: Le premier mois sera principalement réalisé en présentiel. À partir du deuxième mois, fonctionnement hybride.\n🧩 Environnement technique :\n• AI / GenAI / LLM / OpenAI\n• Microsoft Azure / Azure AI / Azure OpenAI\n• RAG / AI Agents / AI Workflows\n• Machine Learning / MLOps / MLflow\n• Cloud / architectures applicatives / Data / AI\n• API / Microservices / HLD / LLD\nMissions\nConcevoir les architectures applicatives et accompagner les équipes.\nEnvoyez votre CV à recrutement@atelier-azur.example.com\n#Hiring #Recruitment #AIArchitect #Morocco\n",
+    "responsibilities": [
+      "Concevoir les architectures applicatives et accompagner les équipes."
+    ]
+  },
+  "requirements": [
+    {
+      "id": "req-001",
+      "text": "AI / GenAI / LLM / OpenAI",
+      "category": "technical_skill",
+      "classification": "unspecified",
+      "origin": "technical_environment",
+      "technical_skills": [
+        {
+          "name": "LLMs",
+          "category": "ai_ml"
+        },
+        {
+          "name": "AI",
+          "category": "ai_ml"
+        },
+        {
+          "name": "Generative AI",
+          "category": "ai_ml"
+        },
+        {
+          "name": "OpenAI",
+          "category": "ai_ml"
+        }
+      ],
+      "evidence": [
+        {
+          "quote": "AI / GenAI / LLM / OpenAI",
+          "start": 281,
+          "end": 306
+        }
+      ],
+      "warnings": [
+        "This technology appears in the job's technical environment only; no mandatory or preferred candidate qualification is stated."
+      ]
+    },
+    {
+      "id": "req-002",
+      "text": "Microsoft Azure / Azure AI / Azure OpenAI",
+      "category": "technical_skill",
+      "classification": "unspecified",
+      "origin": "technical_environment",
+      "technical_skills": [
+        {
+          "name": "Azure AI",
+          "category": "ai_ml"
+        },
+        {
+          "name": "Azure OpenAI",
+          "category": "ai_ml"
+        },
+        {
+          "name": "Azure",
+          "category": "cloud_devops"
+        }
+      ],
+      "evidence": [
+        {
+          "quote": "Microsoft Azure / Azure AI / Azure OpenAI",
+          "start": 309,
+          "end": 350
+        }
+      ],
+      "warnings": [
+        "This technology appears in the job's technical environment only; no mandatory or preferred candidate qualification is stated."
+      ]
+    },
+    {
+      "id": "req-003",
+      "text": "RAG / AI Agents / AI Workflows",
+      "category": "technical_skill",
+      "classification": "unspecified",
+      "origin": "technical_environment",
+      "technical_skills": [
+        {
+          "name": "RAG",
+          "category": "ai_ml"
+        },
+        {
+          "name": "AI Agents",
+          "category": "ai_ml"
+        },
+        {
+          "name": "AI Workflows",
+          "category": "ai_ml"
+        }
+      ],
+      "evidence": [
+        {
+          "quote": "RAG / AI Agents / AI Workflows",
+          "start": 353,
+          "end": 383
+        }
+      ],
+      "warnings": [
+        "This technology appears in the job's technical environment only; no mandatory or preferred candidate qualification is stated."
+      ]
+    },
+    {
+      "id": "req-004",
+      "text": "Machine Learning / MLOps / MLflow",
+      "category": "technical_skill",
+      "classification": "unspecified",
+      "origin": "technical_environment",
+      "technical_skills": [
+        {
+          "name": "MLflow",
+          "category": "ai_ml"
+        },
+        {
+          "name": "Machine Learning",
+          "category": "ai_ml"
+        },
+        {
+          "name": "MLOps",
+          "category": "ai_ml"
+        }
+      ],
+      "evidence": [
+        {
+          "quote": "Machine Learning / MLOps / MLflow",
+          "start": 386,
+          "end": 419
+        }
+      ],
+      "warnings": [
+        "This technology appears in the job's technical environment only; no mandatory or preferred candidate qualification is stated."
+      ]
+    },
+    {
+      "id": "req-005",
+      "text": "Cloud / architectures applicatives / Data / AI",
+      "category": "technical_skill",
+      "classification": "unspecified",
+      "origin": "technical_environment",
+      "technical_skills": [
+        {
+          "name": "AI",
+          "category": "ai_ml"
+        },
+        {
+          "name": "Cloud Computing",
+          "category": "cloud_devops"
+        }
+      ],
+      "evidence": [
+        {
+          "quote": "Cloud / architectures applicatives / Data / AI",
+          "start": 422,
+          "end": 468
+        }
+      ],
+      "warnings": [
+        "This technology appears in the job's technical environment only; no mandatory or preferred candidate qualification is stated."
+      ]
+    },
+    {
+      "id": "req-006",
+      "text": "API / Microservices / HLD / LLD",
+      "category": "technical_skill",
+      "classification": "unspecified",
+      "origin": "technical_environment",
+      "technical_skills": [
+        {
+          "name": "Microservices",
+          "category": "tool"
+        },
+        {
+          "name": "API",
+          "category": "tool"
+        },
+        {
+          "name": "HLD",
+          "category": "tool"
+        },
+        {
+          "name": "LLD",
+          "category": "tool"
+        }
+      ],
+      "evidence": [
+        {
+          "quote": "API / Microservices / HLD / LLD",
+          "start": 471,
+          "end": 502
+        }
+      ],
+      "warnings": [
+        "This technology appears in the job's technical environment only; no mandatory or preferred candidate qualification is stated."
+      ]
+    }
+  ],
+  "warnings": [
+    "Technical environment mentions were extracted, but no mandatory candidate qualifications were explicitly stated. Review them as contextual technology information.",
+    "Deterministic French/English extraction can omit or misinterpret wording; review every requirement and its original source.",
+    "A mention of a skill does not establish proficiency. No education or experience duration is inferred from a job title."
+  ],
+  "method": "deterministic-v1"
+}

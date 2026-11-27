@@ -1,0 +1,7 @@
+﻿{
+    "fixture":  "backend/tests/fixtures/comparison_accuracy.json",
+    "sha256":  "9d945092e74ee40ce4d742513e3d614cac7105629f7187fda8840a5b239154c1",
+    "cases":  16,
+    "annotation_state":  "Frozen before this corpus was executed against either baseline or current analyzer.",
+    "policy":  "Do not change expected labels after predictions merely to improve metrics."
+}

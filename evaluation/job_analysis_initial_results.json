@@ -1,0 +1,372 @@
+{
+  "dataset": "fictional-jobs-v1",
+  "dataset_size": 10,
+  "methodology": {
+    "source": "tests\\fixtures\\job_descriptions.json",
+    "expected_annotations": "Authored before analyzer execution; synthetic profiles and companies only.",
+    "pairing": "One-to-one category, canonical skill set and independently annotated source excerpt; no generated IDs used as labels.",
+    "skill_unit": "Unique canonical skill names per job across qualification clauses.",
+    "classification_denominator": "All independently annotated required/preferred clauses, including extraction misses.",
+    "evidence_denominator": "All extracted requirements; unsupported requirements cannot receive evidence credit.",
+    "comparison_denominator": "All expected qualification clauses, including extraction misses.",
+    "review": "Synthetic unverified client workflow assertions, not authenticated approvals."
+  },
+  "counts": {
+    "skill_correct": 33,
+    "skill_predicted": 33,
+    "skill_expected": 33,
+    "requirements_matched": 39,
+    "requirements_predicted": 41,
+    "requirements_expected": 39,
+    "classification_correct": 37,
+    "classification_expected": 37,
+    "evidence_correct": 39,
+    "evidence_predicted": 41,
+    "unsupported_requirements": 2,
+    "comparison_correct": 38,
+    "comparison_expected": 39,
+    "metadata_correct": 40,
+    "metadata_expected": 40,
+    "responsibilities_correct": 10,
+    "responsibilities_expected": 10,
+    "excluded_clause_leaks": 2
+  },
+  "metrics": {
+    "skill_precision": 1.0,
+    "skill_recall": 1.0,
+    "required_preferred_classification_accuracy": 1.0,
+    "evidence_correctness": 0.9512195121951219,
+    "unsupported_requirement_rate": 0.04878048780487805,
+    "comparison_status_correctness": 0.9743589743589743,
+    "requirement_recall": 1.0,
+    "explicit_job_metadata_correctness": 1.0
+  },
+  "limitations": [
+    "Ten small fictional, primarily heading-based job descriptions are a development regression corpus, not a representative employment benchmark.",
+    "The same deterministic engine authors predictions only; expected annotations are static and must not be changed merely to improve metrics.",
+    "Exact source-bound clause pairing can penalize alternative grouping of valid requirements; inspect every reported difference.",
+    "Synthetic comparison labels evaluate documented mentions and conservative review behavior, not candidate ability, eligibility or hiring outcomes.",
+    "A clean result on these examples does not establish accuracy for arbitrary prose, other languages, degree equivalence, complex alternatives or protected-language variants."
+  ],
+  "cases": [
+    {
+      "id": "junior_python_en",
+      "scenario": "Junior Python Developer",
+      "expected_requirements": 3,
+      "predicted_requirements": 3,
+      "matched_requirements": 3,
+      "expected_skills": [
+        "Flask",
+        "Git",
+        "Python"
+      ],
+      "predicted_skills": [
+        "Flask",
+        "Git",
+        "Python"
+      ],
+      "comparison_statuses": {
+        "req-001": "documented",
+        "req-002": "documented",
+        "req-003": "not_documented"
+      },
+      "differences": [],
+      "passed": true
+    },
+    {
+      "id": "backend_engineer_fr",
+      "scenario": "Backend Engineer",
+      "expected_requirements": 5,
+      "predicted_requirements": 5,
+      "matched_requirements": 5,
+      "expected_skills": [
+        "Docker",
+        "FastAPI",
+        "PostgreSQL",
+        "Python"
+      ],
+      "predicted_skills": [
+        "Docker",
+        "FastAPI",
+        "PostgreSQL",
+        "Python"
+      ],
+      "comparison_statuses": {
+        "req-001": "documented",
+        "req-002": "documented",
+        "req-003": "not_documented",
+        "req-004": "needs_review",
+        "req-005": "documented"
+      },
+      "differences": [],
+      "passed": true
+    },
+    {
+      "id": "data_analyst_en",
+      "scenario": "Data Analyst",
+      "expected_requirements": 3,
+      "predicted_requirements": 3,
+      "matched_requirements": 3,
+      "expected_skills": [
+        "Excel",
+        "SQL",
+        "pandas"
+      ],
+      "predicted_skills": [
+        "Excel",
+        "SQL",
+        "pandas"
+      ],
+      "comparison_statuses": {
+        "req-001": "documented",
+        "req-002": "documented",
+        "req-003": "not_documented"
+      },
+      "differences": [],
+      "passed": true
+    },
+    {
+      "id": "bi_analyst_fr",
+      "scenario": "Business Intelligence Analyst",
+      "expected_requirements": 5,
+      "predicted_requirements": 5,
+      "matched_requirements": 5,
+      "expected_skills": [
+        "DAX",
+        "Power BI",
+        "Tableau"
+      ],
+      "predicted_skills": [
+        "DAX",
+        "Power BI",
+        "Tableau"
+      ],
+      "comparison_statuses": {
+        "req-001": "documented",
+        "req-002": "documented",
+        "req-003": "documented",
+        "req-004": "documented",
+        "req-005": "not_documented"
+      },
+      "differences": [],
+      "passed": true
+    },
+    {
+      "id": "machine_learning_en",
+      "scenario": "Machine Learning Engineer",
+      "expected_requirements": 6,
+      "predicted_requirements": 6,
+      "matched_requirements": 6,
+      "expected_skills": [
+        "Machine Learning",
+        "PyTorch",
+        "Python",
+        "TensorFlow",
+        "scikit-learn"
+      ],
+      "predicted_skills": [
+        "Machine Learning",
+        "PyTorch",
+        "Python",
+        "TensorFlow",
+        "scikit-learn"
+      ],
+      "comparison_statuses": {
+        "req-001": "documented",
+        "req-002": "documented",
+        "req-003": "documented",
+        "req-004": "not_documented",
+        "req-005": "needs_review",
+        "req-006": "not_documented"
+      },
+      "differences": [
+        {
+          "requirement": "education",
+          "kind": "comparison_status",
+          "expected": "documented",
+          "actual": "not_documented"
+        }
+      ],
+      "passed": false
+    },
+    {
+      "id": "generative_ai_fr",
+      "scenario": "Generative AI Engineer",
+      "expected_requirements": 5,
+      "predicted_requirements": 5,
+      "matched_requirements": 5,
+      "expected_skills": [
+        "LLMs",
+        "LangChain",
+        "LlamaIndex",
+        "Prompt Engineering",
+        "RAG"
+      ],
+      "predicted_skills": [
+        "LLMs",
+        "LangChain",
+        "LlamaIndex",
+        "Prompt Engineering",
+        "RAG"
+      ],
+      "comparison_statuses": {
+        "req-001": "not_documented",
+        "req-002": "documented",
+        "req-003": "documented",
+        "req-004": "not_documented",
+        "req-005": "not_documented"
+      },
+      "differences": [],
+      "passed": true
+    },
+    {
+      "id": "mixed_required_preferred_en",
+      "scenario": "Mixed required and preferred criteria",
+      "expected_requirements": 4,
+      "predicted_requirements": 4,
+      "matched_requirements": 4,
+      "expected_skills": [
+        "Kubernetes",
+        "Node.js",
+        "Python",
+        "SQL"
+      ],
+      "predicted_skills": [
+        "Kubernetes",
+        "Node.js",
+        "Python",
+        "SQL"
+      ],
+      "comparison_statuses": {
+        "req-001": "not_documented",
+        "req-002": "documented",
+        "req-003": "documented",
+        "req-004": "not_documented"
+      },
+      "differences": [],
+      "passed": true
+    },
+    {
+      "id": "ambiguous_requirements_fr",
+      "scenario": "Ambiguous requirements",
+      "expected_requirements": 3,
+      "predicted_requirements": 3,
+      "matched_requirements": 3,
+      "expected_skills": [
+        "Python"
+      ],
+      "predicted_skills": [
+        "Python"
+      ],
+      "comparison_statuses": {
+        "req-001": "needs_review",
+        "req-002": "needs_review",
+        "req-003": "needs_review"
+      },
+      "differences": [],
+      "passed": true
+    },
+    {
+      "id": "no_education_en",
+      "scenario": "No explicit education requirement",
+      "expected_requirements": 3,
+      "predicted_requirements": 4,
+      "matched_requirements": 3,
+      "expected_skills": [
+        "Django",
+        "JavaScript",
+        "Redis"
+      ],
+      "predicted_skills": [
+        "Django",
+        "JavaScript",
+        "Redis"
+      ],
+      "comparison_statuses": {
+        "req-001": "documented",
+        "req-002": "documented",
+        "req-003": "documented",
+        "req-004": "needs_review"
+      },
+      "differences": [
+        {
+          "kind": "unsupported_requirement",
+          "actual": {
+            "id": "req-004",
+            "text": "We do not require a degree or a minimum number of years of experience.",
+            "category": "education",
+            "classification": "preferred",
+            "technical_skills": [],
+            "evidence": [
+              {
+                "quote": "We do not require a degree or a minimum number of years of experience.",
+                "start": 215,
+                "end": 285
+              }
+            ],
+            "warnings": [
+              "This clause combines qualification categories; split or interpret it during review.",
+              "Alternatives or qualitative proficiency wording require human interpretation."
+            ]
+          }
+        },
+        {
+          "kind": "excluded_clause_leak",
+          "actual": [
+            "We do not require a degree or a minimum number of years of experience."
+          ]
+        }
+      ],
+      "passed": false
+    },
+    {
+      "id": "protected_irrelevant_fr",
+      "scenario": "Protected and irrelevant language",
+      "expected_requirements": 2,
+      "predicted_requirements": 3,
+      "matched_requirements": 2,
+      "expected_skills": [
+        "Python",
+        "SQL"
+      ],
+      "predicted_skills": [
+        "Python",
+        "SQL"
+      ],
+      "comparison_statuses": {
+        "req-001": "documented",
+        "req-002": "needs_review",
+        "req-003": "not_documented"
+      },
+      "differences": [
+        {
+          "kind": "unsupported_requirement",
+          "actual": {
+            "id": "req-002",
+            "text": "Habiter dans un quartier proche du dirigeant.",
+            "category": "other",
+            "classification": "required",
+            "technical_skills": [],
+            "evidence": [
+              {
+                "quote": "Habiter dans un quartier proche du dirigeant.",
+                "start": 258,
+                "end": 303
+              }
+            ],
+            "warnings": [
+              "The deterministic analyzer has no supported qualification rule for this wording."
+            ]
+          }
+        },
+        {
+          "kind": "excluded_clause_leak",
+          "actual": [
+            "Habiter dans un quartier proche du dirigeant."
+          ]
+        }
+      ],
+      "passed": false
+    }
+  ]
+}

@@ -1,0 +1,1563 @@
+{
+  "dataset": "fictional-realistic-jobs-v1",
+  "dataset_size": 14,
+  "fixture_sha256": "67fbc89de6cf3d68278a8d2c9de3610441be8f3b6f61c5d032c45ae12e1ee492",
+  "baseline": "Frozen Phase 4 app, isolated import; exact source file SHA256 fingerprints included.",
+  "before": {
+    "dataset": "fictional-realistic-jobs-v1",
+    "dataset_size": 14,
+    "fixture_sha256": "67fbc89de6cf3d68278a8d2c9de3610441be8f3b6f61c5d032c45ae12e1ee492",
+    "methodology": {
+      "annotations": "Independent static clauses, canonical names, all three classifications, origins, metadata and negative examples were written before analyzer execution.",
+      "technical_mention_unit": "A unique canonical name on each independently annotated source clause. The same name on a different clause is another unit; aliases within one clause are one unit.",
+      "technical_pairing": "One-to-one canonical names anchored to independently positive source spans, independent of predicted classification/category.",
+      "classification_and_origin_denominator": "All expected clauses, including required, preferred, unspecified and extraction misses. Missing baseline origin is qualification.",
+      "metadata": "Exact title/company/location/employment_type/work_mode across all cases. Explicit-value and expected-null checks are additionally reported separately, avoiding a majority-null headline.",
+      "source_evidence": "Predicted requirements must have exact original Unicode offsets and quotes contained within their independently positive clause. Oversized quotes spanning unrelated text receive no evidence credit. Metadata evidence has its own explicit-field denominator; missing baseline evidence is incorrect.",
+      "false_positive_denominator": "All independently annotated excluded clauses, not predicted skills or requirements. A negative clause leaking into any requirement is one false positive.",
+      "unsupported_requirement": "A predicted row with no independently positive source clause, a source/category/technical-fact error, or an environment-only mention promoted to a qualification or required/preferred status.",
+      "baseline_isolation": "Frozen app imported by --app-root in a separate interpreter, with no current app model or vocabulary imports."
+    },
+    "counts": {
+      "technical_mentions_correct": 19,
+      "technical_mentions_predicted": 20,
+      "technical_mentions_expected": 87,
+      "requirements_matched": 17,
+      "requirements_predicted": 27,
+      "requirements_expected": 38,
+      "classification_correct": 12,
+      "classification_expected": 38,
+      "origin_correct": 13,
+      "origin_expected": 38,
+      "metadata_correct": 58,
+      "metadata_expected": 70,
+      "explicit_metadata_correct": 31,
+      "explicit_metadata_expected": 43,
+      "absent_metadata_correct": 27,
+      "absent_metadata_expected": 27,
+      "metadata_evidence_correct": 0,
+      "metadata_evidence_expected": 43,
+      "requirement_evidence_correct": 16,
+      "requirement_evidence_predicted": 27,
+      "negative_clauses_leaked": 2,
+      "negative_clauses_expected": 35,
+      "unsupported_requirements": 14
+    },
+    "metrics": {
+      "technical_mention_precision": 0.95,
+      "technical_mention_recall": 0.21839080459770116,
+      "classification_accuracy": 0.3157894736842105,
+      "origin_accuracy": 0.34210526315789475,
+      "metadata_accuracy": 0.8285714285714286,
+      "explicit_metadata_accuracy": 0.7209302325581395,
+      "absent_metadata_accuracy": 1.0,
+      "metadata_evidence_correctness": 0.0,
+      "source_evidence_correctness": 0.5925925925925926,
+      "false_positive_rate": 0.05714285714285714,
+      "unsupported_requirement_rate": 0.5185185185185185,
+      "requirement_recall": 0.4473684210526316
+    },
+    "limitations": [
+      "Fourteen fictional posts are development regressions, not representative real-world performance, independent holdouts or employment outcome evidence.",
+      "The same expectations score before and after. New tests intentionally guide implementation; expectations must not be changed just to obtain passing metrics.",
+      "Source-bound clause grouping can penalize a valid alternative extraction grouping; inspect per-case differences.",
+      "False-positive rates apply only to the explicitly annotated negative clauses and cannot be extrapolated to arbitrary job advertisements."
+    ],
+    "cases": [
+      {
+        "id": "ai_architect_fr",
+        "scenario": "French AI Architect post with the reported six-list formatting and inline hybrid schedule",
+        "expected_requirements": 6,
+        "predicted_requirements": 0,
+        "matched_requirements": 0,
+        "technical_mentions": {
+          "correct": 0,
+          "predicted": 0,
+          "expected": 19
+        },
+        "expected_job": {
+          "title": "Architecte IA",
+          "company": "Atelier Azur Fictif",
+          "location": "Rabat/Technopolis",
+          "employment_type": "CDI",
+          "work_mode": "Hybrid"
+        },
+        "actual_job": {
+          "title": "Architecte IA",
+          "company": "Atelier Azur Fictif",
+          "location": null,
+          "employment_type": null,
+          "work_mode": null
+        },
+        "differences": [
+          {
+            "kind": "missing_requirement",
+            "key": "genai_stack",
+            "expected_evidence": "AI / GenAI / LLM / OpenAI"
+          },
+          {
+            "kind": "missing_requirement",
+            "key": "azure_stack",
+            "expected_evidence": "Microsoft Azure / Azure AI / Azure OpenAI"
+          },
+          {
+            "kind": "missing_requirement",
+            "key": "agent_stack",
+            "expected_evidence": "RAG / AI Agents / AI Workflows"
+          },
+          {
+            "kind": "missing_requirement",
+            "key": "ml_stack",
+            "expected_evidence": "Machine Learning / MLOps / MLflow"
+          },
+          {
+            "kind": "missing_requirement",
+            "key": "cloud_stack",
+            "expected_evidence": "Cloud / architectures applicatives / Data / AI"
+          },
+          {
+            "kind": "missing_requirement",
+            "key": "architecture_stack",
+            "expected_evidence": "API / Microservices / HLD / LLD"
+          },
+          {
+            "kind": "metadata_evidence",
+            "field": "title",
+            "expected_source": "Architecte IA"
+          },
+          {
+            "kind": "metadata_evidence",
+            "field": "company",
+            "expected_source": "Atelier Azur Fictif"
+          },
+          {
+            "kind": "metadata",
+            "field": "location",
+            "expected": "Rabat/Technopolis",
+            "actual": null
+          },
+          {
+            "kind": "metadata_evidence",
+            "field": "location",
+            "expected_source": "Rabat/Technopolis"
+          },
+          {
+            "kind": "metadata",
+            "field": "employment_type",
+            "expected": "CDI",
+            "actual": null
+          },
+          {
+            "kind": "metadata_evidence",
+            "field": "employment_type",
+            "expected_source": "CDI"
+          },
+          {
+            "kind": "metadata",
+            "field": "work_mode",
+            "expected": "Hybrid",
+            "actual": null
+          },
+          {
+            "kind": "metadata_evidence",
+            "field": "work_mode",
+            "expected_source": "Le premier mois sera principalement réalisé en présentiel. À partir du deuxième mois, fonctionnement hybride."
+          }
+        ],
+        "passed": false
+      },
+      {
+        "id": "azure_ai_engineer_en",
+        "scenario": "Azure AI services must remain distinct from Azure and OpenAI",
+        "expected_requirements": 3,
+        "predicted_requirements": 3,
+        "matched_requirements": 2,
+        "technical_mentions": {
+          "correct": 3,
+          "predicted": 3,
+          "expected": 6
+        },
+        "expected_job": {
+          "title": "Azure AI Engineer",
+          "company": "Juniper Signal Fictional",
+          "location": "Bristol",
+          "employment_type": "Permanent",
+          "work_mode": "Hybrid"
+        },
+        "actual_job": {
+          "title": "Azure AI Engineer",
+          "company": "Juniper Signal Fictional",
+          "location": "Bristol | Contract: Permanent | Work mode: Hybrid",
+          "employment_type": null,
+          "work_mode": null
+        },
+        "differences": [
+          {
+            "kind": "missing_requirement",
+            "key": "services",
+            "expected_evidence": "Azure AI / Azure OpenAI / Azure"
+          },
+          {
+            "kind": "classification",
+            "key": "retrieval",
+            "expected": "preferred",
+            "actual": "required"
+          },
+          {
+            "kind": "unsupported_requirement",
+            "actual": "Preferred Skills"
+          },
+          {
+            "kind": "metadata_evidence",
+            "field": "title",
+            "expected_source": "Azure AI Engineer"
+          },
+          {
+            "kind": "metadata_evidence",
+            "field": "company",
+            "expected_source": "Juniper Signal Fictional"
+          },
+          {
+            "kind": "metadata",
+            "field": "location",
+            "expected": "Bristol",
+            "actual": "Bristol | Contract: Permanent | Work mode: Hybrid"
+          },
+          {
+            "kind": "metadata_evidence",
+            "field": "location",
+            "expected_source": "Bristol"
+          },
+          {
+            "kind": "metadata",
+            "field": "employment_type",
+            "expected": "Permanent",
+            "actual": null
+          },
+          {
+            "kind": "metadata_evidence",
+            "field": "employment_type",
+            "expected_source": "Permanent"
+          },
+          {
+            "kind": "metadata",
+            "field": "work_mode",
+            "expected": "Hybrid",
+            "actual": null
+          },
+          {
+            "kind": "metadata_evidence",
+            "field": "work_mode",
+            "expected_source": "Hybrid"
+          }
+        ],
+        "passed": false
+      },
+      {
+        "id": "generative_ai_engineer_en",
+        "scenario": "Generative AI aliases, uppercase acronym and preferred MLOps tools",
+        "expected_requirements": 3,
+        "predicted_requirements": 4,
+        "matched_requirements": 3,
+        "technical_mentions": {
+          "correct": 4,
+          "predicted": 4,
+          "expected": 8
+        },
+        "expected_job": {
+          "title": "Generative AI Engineer",
+          "company": "Lantern Orchard Fictional",
+          "location": null,
+          "employment_type": null,
+          "work_mode": "Remote"
+        },
+        "actual_job": {
+          "title": "Generative AI Engineer",
+          "company": "Lantern Orchard Fictional",
+          "location": null,
+          "employment_type": null,
+          "work_mode": null
+        },
+        "differences": [
+          {
+            "kind": "technical_mentions",
+            "key": "generation",
+            "missing": [
+              "Generative AI",
+              "OpenAI"
+            ],
+            "extra": []
+          },
+          {
+            "kind": "classification",
+            "key": "orchestration",
+            "expected": "unspecified",
+            "actual": "required"
+          },
+          {
+            "kind": "origin",
+            "key": "orchestration",
+            "expected": "technical_environment",
+            "actual": "qualification"
+          },
+          {
+            "kind": "technical_mentions",
+            "key": "orchestration",
+            "missing": [
+              "AI Workflows"
+            ],
+            "extra": []
+          },
+          {
+            "kind": "technical_mentions",
+            "key": "operations",
+            "missing": [
+              "MLOps"
+            ],
+            "extra": []
+          },
+          {
+            "kind": "unsupported_requirement",
+            "actual": "Tools and Technologies:"
+          },
+          {
+            "kind": "unsupported_requirement",
+            "actual": "RAG | AI Agents | AI Workflows"
+          },
+          {
+            "kind": "metadata_evidence",
+            "field": "title",
+            "expected_source": "Generative AI Engineer"
+          },
+          {
+            "kind": "metadata_evidence",
+            "field": "company",
+            "expected_source": "Lantern Orchard Fictional"
+          },
+          {
+            "kind": "metadata",
+            "field": "work_mode",
+            "expected": "Remote",
+            "actual": null
+          },
+          {
+            "kind": "metadata_evidence",
+            "field": "work_mode",
+            "expected_source": "Remote"
+          }
+        ],
+        "passed": false
+      },
+      {
+        "id": "cloud_architect_fr",
+        "scenario": "French accented headings, inline environment and explicit mandatory skills",
+        "expected_requirements": 2,
+        "predicted_requirements": 1,
+        "matched_requirements": 0,
+        "technical_mentions": {
+          "correct": 0,
+          "predicted": 0,
+          "expected": 5
+        },
+        "expected_job": {
+          "title": "Architecte Cloud",
+          "company": "Nuage Papier Fictif",
+          "location": "Nantes",
+          "employment_type": "CDI",
+          "work_mode": "On-site"
+        },
+        "actual_job": {
+          "title": "Architecte Cloud",
+          "company": "Nuage Papier Fictif",
+          "location": "Nantes",
+          "employment_type": "CDI",
+          "work_mode": null
+        },
+        "differences": [
+          {
+            "kind": "missing_requirement",
+            "key": "architecture",
+            "expected_evidence": "Cloud Computing / Microsoft Azure / Microservices"
+          },
+          {
+            "kind": "missing_requirement",
+            "key": "containers",
+            "expected_evidence": "Docker, Kubernetes"
+          },
+          {
+            "kind": "unsupported_requirement",
+            "actual": "Compétences obligatoires :"
+          },
+          {
+            "kind": "metadata_evidence",
+            "field": "title",
+            "expected_source": "Architecte Cloud"
+          },
+          {
+            "kind": "metadata_evidence",
+            "field": "company",
+            "expected_source": "Nuage Papier Fictif"
+          },
+          {
+            "kind": "metadata_evidence",
+            "field": "location",
+            "expected_source": "Nantes"
+          },
+          {
+            "kind": "metadata_evidence",
+            "field": "employment_type",
+            "expected_source": "CDI"
+          },
+          {
+            "kind": "metadata",
+            "field": "work_mode",
+            "expected": "On-site",
+            "actual": null
+          },
+          {
+            "kind": "metadata_evidence",
+            "field": "work_mode",
+            "expected_source": "Présentiel"
+          }
+        ],
+        "passed": false
+      },
+      {
+        "id": "data_engineer_en",
+        "scenario": "Pipe-separated existing vocabulary and a quantified experience criterion",
+        "expected_requirements": 3,
+        "predicted_requirements": 4,
+        "matched_requirements": 2,
+        "technical_mentions": {
+          "correct": 2,
+          "predicted": 2,
+          "expected": 5
+        },
+        "expected_job": {
+          "title": "Data Engineer",
+          "company": "Fable River Systems",
+          "location": null,
+          "employment_type": null,
+          "work_mode": null
+        },
+        "actual_job": {
+          "title": "Data Engineer",
+          "company": "Fable River Systems",
+          "location": null,
+          "employment_type": null,
+          "work_mode": null
+        },
+        "differences": [
+          {
+            "kind": "missing_requirement",
+            "key": "pipeline_stack",
+            "expected_evidence": "Python | SQL | PostgreSQL"
+          },
+          {
+            "kind": "classification",
+            "key": "distributed",
+            "expected": "preferred",
+            "actual": "unspecified"
+          },
+          {
+            "kind": "unsupported_requirement",
+            "actual": "Desired Qualifications:"
+          },
+          {
+            "kind": "unsupported_requirement",
+            "actual": "No degree is required."
+          },
+          {
+            "kind": "negative_clause_leak",
+            "actual": [
+              "No degree is required."
+            ]
+          },
+          {
+            "kind": "metadata_evidence",
+            "field": "title",
+            "expected_source": "Data Engineer"
+          },
+          {
+            "kind": "metadata_evidence",
+            "field": "company",
+            "expected_source": "Fable River Systems"
+          }
+        ],
+        "passed": false
+      },
+      {
+        "id": "machine_learning_engineer_fr",
+        "scenario": "Distinct AI and machine-learning concepts across profile and preferred sections",
+        "expected_requirements": 3,
+        "predicted_requirements": 3,
+        "matched_requirements": 2,
+        "technical_mentions": {
+          "correct": 3,
+          "predicted": 3,
+          "expected": 7
+        },
+        "expected_job": {
+          "title": "Ingénieur Machine Learning",
+          "company": "Studio Galet Fictif",
+          "location": null,
+          "employment_type": null,
+          "work_mode": null
+        },
+        "actual_job": {
+          "title": "Ingénieur Machine Learning",
+          "company": "Studio Galet Fictif",
+          "location": null,
+          "employment_type": null,
+          "work_mode": null
+        },
+        "differences": [
+          {
+            "kind": "missing_requirement",
+            "key": "profile",
+            "expected_evidence": "Python / Machine Learning"
+          },
+          {
+            "kind": "technical_mentions",
+            "key": "preferred_operations",
+            "missing": [
+              "MLOps"
+            ],
+            "extra": []
+          },
+          {
+            "kind": "classification",
+            "key": "frameworks",
+            "expected": "unspecified",
+            "actual": "preferred"
+          },
+          {
+            "kind": "origin",
+            "key": "frameworks",
+            "expected": "technical_environment",
+            "actual": "qualification"
+          },
+          {
+            "kind": "technical_mentions",
+            "key": "frameworks",
+            "missing": [
+              "AI"
+            ],
+            "extra": []
+          },
+          {
+            "kind": "unsupported_requirement",
+            "actual": "Technologies utilisées :"
+          },
+          {
+            "kind": "unsupported_requirement",
+            "actual": "AI / TensorFlow / PyTorch"
+          },
+          {
+            "kind": "metadata_evidence",
+            "field": "title",
+            "expected_source": "Ingénieur Machine Learning"
+          },
+          {
+            "kind": "metadata_evidence",
+            "field": "company",
+            "expected_source": "Studio Galet Fictif"
+          }
+        ],
+        "passed": false
+      },
+      {
+        "id": "linkedin_informal_fr",
+        "scenario": "Copied LinkedIn-style introduction, emojis, contact and hashtags",
+        "expected_requirements": 3,
+        "predicted_requirements": 1,
+        "matched_requirements": 1,
+        "technical_mentions": {
+          "correct": 1,
+          "predicted": 1,
+          "expected": 5
+        },
+        "expected_job": {
+          "title": "Ingénieur IA",
+          "company": "Feuille Rouge Fictive",
+          "location": "Casablanca",
+          "employment_type": null,
+          "work_mode": null
+        },
+        "actual_job": {
+          "title": "Ingénieur IA",
+          "company": "Feuille Rouge Fictive",
+          "location": null,
+          "employment_type": null,
+          "work_mode": null
+        },
+        "differences": [
+          {
+            "kind": "missing_requirement",
+            "key": "environment",
+            "expected_evidence": "GenAI / RAG / Azure OpenAI"
+          },
+          {
+            "kind": "missing_requirement",
+            "key": "containers",
+            "expected_evidence": "Docker"
+          },
+          {
+            "kind": "metadata_evidence",
+            "field": "title",
+            "expected_source": "Ingénieur IA"
+          },
+          {
+            "kind": "metadata_evidence",
+            "field": "company",
+            "expected_source": "Feuille Rouge Fictive"
+          },
+          {
+            "kind": "metadata",
+            "field": "location",
+            "expected": "Casablanca",
+            "actual": null
+          },
+          {
+            "kind": "metadata_evidence",
+            "field": "location",
+            "expected_source": "Casablanca"
+          }
+        ],
+        "passed": false
+      },
+      {
+        "id": "mixed_language_profile",
+        "scenario": "Mixed French and English headings without invented required status",
+        "expected_requirements": 4,
+        "predicted_requirements": 7,
+        "matched_requirements": 4,
+        "technical_mentions": {
+          "correct": 4,
+          "predicted": 5,
+          "expected": 6
+        },
+        "expected_job": {
+          "title": "Backend AI Engineer",
+          "company": "Atelier Silver Fictif",
+          "location": null,
+          "employment_type": null,
+          "work_mode": null
+        },
+        "actual_job": {
+          "title": "Backend AI Engineer",
+          "company": "Atelier Silver Fictif",
+          "location": null,
+          "employment_type": null,
+          "work_mode": null
+        },
+        "differences": [
+          {
+            "kind": "classification",
+            "key": "optional",
+            "expected": "preferred",
+            "actual": "unspecified"
+          },
+          {
+            "kind": "origin",
+            "key": "environment",
+            "expected": "technical_environment",
+            "actual": "qualification"
+          },
+          {
+            "kind": "technical_mentions",
+            "key": "environment",
+            "missing": [
+              "AI Workflows",
+              "Azure AI"
+            ],
+            "extra": [
+              "Azure"
+            ]
+          },
+          {
+            "kind": "unsupported_requirement",
+            "actual": "Preferred Skills:"
+          },
+          {
+            "kind": "unsupported_requirement",
+            "actual": "Exigences"
+          },
+          {
+            "kind": "unsupported_requirement",
+            "actual": "TECH STACK:"
+          },
+          {
+            "kind": "unsupported_requirement",
+            "actual": "Azure AI | AI Workflows"
+          },
+          {
+            "kind": "metadata_evidence",
+            "field": "title",
+            "expected_source": "Backend AI Engineer"
+          },
+          {
+            "kind": "metadata_evidence",
+            "field": "company",
+            "expected_source": "Atelier Silver Fictif"
+          }
+        ],
+        "passed": false
+      },
+      {
+        "id": "slash_boundaries_en",
+        "scenario": "Overlapping service phrases and API versus REST APIs stay distinct",
+        "expected_requirements": 3,
+        "predicted_requirements": 0,
+        "matched_requirements": 0,
+        "technical_mentions": {
+          "correct": 0,
+          "predicted": 0,
+          "expected": 13
+        },
+        "expected_job": {
+          "title": "Integration Architect",
+          "company": "Paper Kite Fictional",
+          "location": null,
+          "employment_type": null,
+          "work_mode": null
+        },
+        "actual_job": {
+          "title": "Integration Architect",
+          "company": "Paper Kite Fictional",
+          "location": null,
+          "employment_type": null,
+          "work_mode": null
+        },
+        "differences": [
+          {
+            "kind": "missing_requirement",
+            "key": "services",
+            "expected_evidence": "Azure OpenAI / OpenAI / Azure AI / Azure"
+          },
+          {
+            "kind": "missing_requirement",
+            "key": "architecture",
+            "expected_evidence": "API / Microservices / REST APIs / HLD / LLD"
+          },
+          {
+            "kind": "missing_requirement",
+            "key": "concepts",
+            "expected_evidence": "AI / Machine Learning / LLM / RAG"
+          },
+          {
+            "kind": "metadata_evidence",
+            "field": "title",
+            "expected_source": "Integration Architect"
+          },
+          {
+            "kind": "metadata_evidence",
+            "field": "company",
+            "expected_source": "Paper Kite Fictional"
+          }
+        ],
+        "passed": false
+      },
+      {
+        "id": "environment_only_en",
+        "scenario": "No explicit mandatory qualifications, technical environment only",
+        "expected_requirements": 1,
+        "predicted_requirements": 1,
+        "matched_requirements": 0,
+        "technical_mentions": {
+          "correct": 0,
+          "predicted": 0,
+          "expected": 3
+        },
+        "expected_job": {
+          "title": "Prototype Engineer",
+          "company": "Cedar Sketch Fictional",
+          "location": null,
+          "employment_type": null,
+          "work_mode": null
+        },
+        "actual_job": {
+          "title": "Prototype Engineer",
+          "company": "Cedar Sketch Fictional",
+          "location": null,
+          "employment_type": null,
+          "work_mode": null
+        },
+        "differences": [
+          {
+            "kind": "missing_requirement",
+            "key": "environment",
+            "expected_evidence": "Python, GenAI, RAG"
+          },
+          {
+            "kind": "unsupported_requirement",
+            "actual": "No education requirement applies."
+          },
+          {
+            "kind": "negative_clause_leak",
+            "actual": [
+              "No education requirement applies."
+            ]
+          },
+          {
+            "kind": "metadata_evidence",
+            "field": "title",
+            "expected_source": "Prototype Engineer"
+          },
+          {
+            "kind": "metadata_evidence",
+            "field": "company",
+            "expected_source": "Cedar Sketch Fictional"
+          }
+        ],
+        "passed": false
+      },
+      {
+        "id": "inline_hybrid_en",
+        "scenario": "Inline metadata and conflicting classification remain explicit and reviewable",
+        "expected_requirements": 2,
+        "predicted_requirements": 2,
+        "matched_requirements": 2,
+        "technical_mentions": {
+          "correct": 1,
+          "predicted": 1,
+          "expected": 3
+        },
+        "expected_job": {
+          "title": "Application Architect",
+          "company": "Birch Window Fictional",
+          "location": "Dublin",
+          "employment_type": "Fixed-term",
+          "work_mode": "Hybrid"
+        },
+        "actual_job": {
+          "title": "Application Architect",
+          "company": "Birch Window Fictional",
+          "location": "Dublin ➜ Employment type: Fixed-term ➜ Work mode: On-site for the first month, then hybrid.",
+          "employment_type": null,
+          "work_mode": null
+        },
+        "differences": [
+          {
+            "kind": "category",
+            "key": "environment",
+            "expected": "technical_skill",
+            "actual": "other"
+          },
+          {
+            "kind": "origin",
+            "key": "environment",
+            "expected": "technical_environment",
+            "actual": "qualification"
+          },
+          {
+            "kind": "technical_mentions",
+            "key": "environment",
+            "missing": [
+              "API",
+              "Microservices"
+            ],
+            "extra": []
+          },
+          {
+            "kind": "unsupported_requirement",
+            "actual": "Technology Stack: Microservices / API"
+          },
+          {
+            "kind": "metadata_evidence",
+            "field": "title",
+            "expected_source": "Application Architect"
+          },
+          {
+            "kind": "metadata_evidence",
+            "field": "company",
+            "expected_source": "Birch Window Fictional"
+          },
+          {
+            "kind": "metadata",
+            "field": "location",
+            "expected": "Dublin",
+            "actual": "Dublin ➜ Employment type: Fixed-term ➜ Work mode: On-site for the first month, then hybrid."
+          },
+          {
+            "kind": "metadata_evidence",
+            "field": "location",
+            "expected_source": "Dublin"
+          },
+          {
+            "kind": "metadata",
+            "field": "employment_type",
+            "expected": "Fixed-term",
+            "actual": null
+          },
+          {
+            "kind": "metadata_evidence",
+            "field": "employment_type",
+            "expected_source": "Fixed-term"
+          },
+          {
+            "kind": "metadata",
+            "field": "work_mode",
+            "expected": "Hybrid",
+            "actual": null
+          },
+          {
+            "kind": "metadata_evidence",
+            "field": "work_mode",
+            "expected_source": "On-site for the first month, then hybrid."
+          }
+        ],
+        "passed": false
+      },
+      {
+        "id": "contacts_hashtags_protected_fr",
+        "scenario": "Contact, hashtag and protected-language exclusions inside qualification area",
+        "expected_requirements": 1,
+        "predicted_requirements": 0,
+        "matched_requirements": 0,
+        "technical_mentions": {
+          "correct": 0,
+          "predicted": 0,
+          "expected": 1
+        },
+        "expected_job": {
+          "title": "Ingénieur Logiciel",
+          "company": "Étoile Inventée",
+          "location": null,
+          "employment_type": null,
+          "work_mode": null
+        },
+        "actual_job": {
+          "title": "Ingénieur Logiciel",
+          "company": "Étoile Inventée",
+          "location": null,
+          "employment_type": null,
+          "work_mode": null
+        },
+        "differences": [
+          {
+            "kind": "missing_requirement",
+            "key": "python",
+            "expected_evidence": "Python"
+          },
+          {
+            "kind": "metadata_evidence",
+            "field": "title",
+            "expected_source": "Ingénieur Logiciel"
+          },
+          {
+            "kind": "metadata_evidence",
+            "field": "company",
+            "expected_source": "Étoile Inventée"
+          }
+        ],
+        "passed": false
+      },
+      {
+        "id": "ordinary_prose_not_heading",
+        "scenario": "Heading words in ordinary company prose must not alter section boundaries",
+        "expected_requirements": 2,
+        "predicted_requirements": 1,
+        "matched_requirements": 1,
+        "technical_mentions": {
+          "correct": 1,
+          "predicted": 1,
+          "expected": 2
+        },
+        "expected_job": {
+          "title": "Platform Engineer",
+          "company": "Copper Leaf Fictional",
+          "location": null,
+          "employment_type": null,
+          "work_mode": null
+        },
+        "actual_job": {
+          "title": "Platform Engineer",
+          "company": "Copper Leaf Fictional",
+          "location": null,
+          "employment_type": null,
+          "work_mode": null
+        },
+        "differences": [
+          {
+            "kind": "missing_requirement",
+            "key": "preferred",
+            "expected_evidence": "Kubernetes"
+          },
+          {
+            "kind": "metadata_evidence",
+            "field": "title",
+            "expected_source": "Platform Engineer"
+          },
+          {
+            "kind": "metadata_evidence",
+            "field": "company",
+            "expected_source": "Copper Leaf Fictional"
+          }
+        ],
+        "passed": false
+      },
+      {
+        "id": "partial_unknown_and_negative_fr",
+        "scenario": "Unknown environment words, French ai verb and ambiguous work arrangement stay conservative",
+        "expected_requirements": 2,
+        "predicted_requirements": 0,
+        "matched_requirements": 0,
+        "technical_mentions": {
+          "correct": 0,
+          "predicted": 0,
+          "expected": 4
+        },
+        "expected_job": {
+          "title": "Développeur Applications",
+          "company": "Atelier Delta Imaginaire",
+          "location": "Rennes",
+          "employment_type": null,
+          "work_mode": null
+        },
+        "actual_job": {
+          "title": "Développeur Applications",
+          "company": "Atelier Delta Imaginaire",
+          "location": "Rennes",
+          "employment_type": null,
+          "work_mode": null
+        },
+        "differences": [
+          {
+            "kind": "missing_requirement",
+            "key": "environment",
+            "expected_evidence": "Azure AI / API"
+          },
+          {
+            "kind": "missing_requirement",
+            "key": "alternative",
+            "expected_evidence": "Python ou Java"
+          },
+          {
+            "kind": "metadata_evidence",
+            "field": "title",
+            "expected_source": "Développeur Applications"
+          },
+          {
+            "kind": "metadata_evidence",
+            "field": "company",
+            "expected_source": "Atelier Delta Imaginaire"
+          },
+          {
+            "kind": "metadata_evidence",
+            "field": "location",
+            "expected_source": "Rennes"
+          }
+        ],
+        "passed": false
+      }
+    ],
+    "app_fingerprint": {
+      "python_files": 20,
+      "sha256": {
+        "app/__init__.py": "c7ec0bad880f3e191bac503c69a5d06232a4e768aa096e63390ebf136388707a",
+        "app/api/__init__.py": "c5e79b75137811726e30acef2fa5cfc649514fce1c86da771535b368f43238c0",
+        "app/api/routes/__init__.py": "51bf83470168d705beb38744164cc071189699478cdb8ceebd28fd927f332148",
+        "app/api/routes/candidates.py": "7369305bef0c613db2942ef518a3223be30c4d74aa28cf28a992ebaef7c6761b",
+        "app/api/routes/health.py": "75dc67f6abee7087ee9f238c5311deda6537e8e285d44de38f90b118bf6b788f",
+        "app/api/routes/jobs.py": "8cdc581425617d65b3adbbaea2a6bc56b704a364ceb723656695a86046f8325a",
+        "app/api/upload_limits.py": "c3c72ae3a2fd0665345f81465d8399421ae78a5388f99bb23c61219a8d0a805f",
+        "app/main.py": "f71b9fb27f401e246d643cc0e17d9150963438a59cf2b95080c8fa4b32403d0c",
+        "app/models/__init__.py": "67e2d12442c40eebabe5ec1fd4bf971810be0be5f859de8a4d228a5caf38bec1",
+        "app/models/candidate.py": "d4d7095fb2e57271d7c37176a4af6ebb2fbd7607fe880a2311d660b256dde51b",
+        "app/models/job.py": "0e10137079770b51b8d727e4584104a9dfa9714982f2a3c3132b39450a37fc1a",
+        "app/services/__init__.py": "367e04f028652db23a2cfe61a0d5793f400a79635862c97c1f40df97a024819a",
+        "app/services/extraction.py": "ee93f37609badb8ec44458b83bdddbd3c6fd1cd1d46a230e6ed37cf83c04248b",
+        "app/services/jobs.py": "e0d8eee8bfb095e5c08db1e4bce982936c57a50d58f882901514f15215a13e3e",
+        "app/services/layout.py": "7f0eaa24c6a552727f94dd493996240d27a80c9177086e35f3356ceb50d8a4e6",
+        "app/services/llm.py": "ba0088975ceef360de817b2e6adbf55e813ba28331d9568d15cafaf0f4c0315d",
+        "app/services/multilingual.py": "e9a5e9b9a9dfc10d246e67be9e02538de565aca9bb7bd3f3280ac401b8ff082a",
+        "app/services/pdf.py": "ef8b67f0ed893d3a843ba7a0ea96ebc181dfb5a4d76d983b387ec1da7cfee50d",
+        "app/services/records.py": "6ce8c9910de1434be825a03280b0dedc9fd69593e35cf2ffc013c1eb756bc69d",
+        "app/services/sections.py": "b7008c7d053d285f80daa495d06428c3d3779c18ba5931def50c054d026e9b30"
+      }
+    }
+  },
+  "after": {
+    "dataset": "fictional-realistic-jobs-v1",
+    "dataset_size": 14,
+    "fixture_sha256": "67fbc89de6cf3d68278a8d2c9de3610441be8f3b6f61c5d032c45ae12e1ee492",
+    "methodology": {
+      "annotations": "Independent static clauses, canonical names, all three classifications, origins, metadata and negative examples were written before analyzer execution.",
+      "technical_mention_unit": "A unique canonical name on each independently annotated source clause. The same name on a different clause is another unit; aliases within one clause are one unit.",
+      "technical_pairing": "One-to-one canonical names anchored to independently positive source spans, independent of predicted classification/category.",
+      "classification_and_origin_denominator": "All expected clauses, including required, preferred, unspecified and extraction misses. Missing baseline origin is qualification.",
+      "metadata": "Exact title/company/location/employment_type/work_mode across all cases. Explicit-value and expected-null checks are additionally reported separately, avoiding a majority-null headline.",
+      "source_evidence": "Predicted requirements must have exact original Unicode offsets and quotes contained within their independently positive clause. Oversized quotes spanning unrelated text receive no evidence credit. Metadata evidence has its own explicit-field denominator; missing baseline evidence is incorrect.",
+      "false_positive_denominator": "All independently annotated excluded clauses, not predicted skills or requirements. A negative clause leaking into any requirement is one false positive.",
+      "unsupported_requirement": "A predicted row with no independently positive source clause, a source/category/technical-fact error, or an environment-only mention promoted to a qualification or required/preferred status.",
+      "baseline_isolation": "Frozen app imported by --app-root in a separate interpreter, with no current app model or vocabulary imports."
+    },
+    "counts": {
+      "technical_mentions_correct": 87,
+      "technical_mentions_predicted": 87,
+      "technical_mentions_expected": 87,
+      "requirements_matched": 38,
+      "requirements_predicted": 38,
+      "requirements_expected": 38,
+      "classification_correct": 38,
+      "classification_expected": 38,
+      "origin_correct": 38,
+      "origin_expected": 38,
+      "metadata_correct": 70,
+      "metadata_expected": 70,
+      "explicit_metadata_correct": 43,
+      "explicit_metadata_expected": 43,
+      "absent_metadata_correct": 27,
+      "absent_metadata_expected": 27,
+      "metadata_evidence_correct": 43,
+      "metadata_evidence_expected": 43,
+      "requirement_evidence_correct": 38,
+      "requirement_evidence_predicted": 38,
+      "negative_clauses_leaked": 0,
+      "negative_clauses_expected": 35,
+      "unsupported_requirements": 0
+    },
+    "metrics": {
+      "technical_mention_precision": 1.0,
+      "technical_mention_recall": 1.0,
+      "classification_accuracy": 1.0,
+      "origin_accuracy": 1.0,
+      "metadata_accuracy": 1.0,
+      "explicit_metadata_accuracy": 1.0,
+      "absent_metadata_accuracy": 1.0,
+      "metadata_evidence_correctness": 1.0,
+      "source_evidence_correctness": 1.0,
+      "false_positive_rate": 0.0,
+      "unsupported_requirement_rate": 0.0,
+      "requirement_recall": 1.0
+    },
+    "limitations": [
+      "Fourteen fictional posts are development regressions, not representative real-world performance, independent holdouts or employment outcome evidence.",
+      "The same expectations score before and after. New tests intentionally guide implementation; expectations must not be changed just to obtain passing metrics.",
+      "Source-bound clause grouping can penalize a valid alternative extraction grouping; inspect per-case differences.",
+      "False-positive rates apply only to the explicitly annotated negative clauses and cannot be extrapolated to arbitrary job advertisements."
+    ],
+    "cases": [
+      {
+        "id": "ai_architect_fr",
+        "scenario": "French AI Architect post with the reported six-list formatting and inline hybrid schedule",
+        "expected_requirements": 6,
+        "predicted_requirements": 6,
+        "matched_requirements": 6,
+        "technical_mentions": {
+          "correct": 19,
+          "predicted": 19,
+          "expected": 19
+        },
+        "expected_job": {
+          "title": "Architecte IA",
+          "company": "Atelier Azur Fictif",
+          "location": "Rabat/Technopolis",
+          "employment_type": "CDI",
+          "work_mode": "Hybrid"
+        },
+        "actual_job": {
+          "title": "Architecte IA",
+          "company": "Atelier Azur Fictif",
+          "location": "Rabat/Technopolis",
+          "employment_type": "CDI",
+          "work_mode": "Hybrid"
+        },
+        "differences": [],
+        "passed": true
+      },
+      {
+        "id": "azure_ai_engineer_en",
+        "scenario": "Azure AI services must remain distinct from Azure and OpenAI",
+        "expected_requirements": 3,
+        "predicted_requirements": 3,
+        "matched_requirements": 3,
+        "technical_mentions": {
+          "correct": 6,
+          "predicted": 6,
+          "expected": 6
+        },
+        "expected_job": {
+          "title": "Azure AI Engineer",
+          "company": "Juniper Signal Fictional",
+          "location": "Bristol",
+          "employment_type": "Permanent",
+          "work_mode": "Hybrid"
+        },
+        "actual_job": {
+          "title": "Azure AI Engineer",
+          "company": "Juniper Signal Fictional",
+          "location": "Bristol",
+          "employment_type": "Permanent",
+          "work_mode": "Hybrid"
+        },
+        "differences": [],
+        "passed": true
+      },
+      {
+        "id": "generative_ai_engineer_en",
+        "scenario": "Generative AI aliases, uppercase acronym and preferred MLOps tools",
+        "expected_requirements": 3,
+        "predicted_requirements": 3,
+        "matched_requirements": 3,
+        "technical_mentions": {
+          "correct": 8,
+          "predicted": 8,
+          "expected": 8
+        },
+        "expected_job": {
+          "title": "Generative AI Engineer",
+          "company": "Lantern Orchard Fictional",
+          "location": null,
+          "employment_type": null,
+          "work_mode": "Remote"
+        },
+        "actual_job": {
+          "title": "Generative AI Engineer",
+          "company": "Lantern Orchard Fictional",
+          "location": null,
+          "employment_type": null,
+          "work_mode": "Remote"
+        },
+        "differences": [],
+        "passed": true
+      },
+      {
+        "id": "cloud_architect_fr",
+        "scenario": "French accented headings, inline environment and explicit mandatory skills",
+        "expected_requirements": 2,
+        "predicted_requirements": 2,
+        "matched_requirements": 2,
+        "technical_mentions": {
+          "correct": 5,
+          "predicted": 5,
+          "expected": 5
+        },
+        "expected_job": {
+          "title": "Architecte Cloud",
+          "company": "Nuage Papier Fictif",
+          "location": "Nantes",
+          "employment_type": "CDI",
+          "work_mode": "On-site"
+        },
+        "actual_job": {
+          "title": "Architecte Cloud",
+          "company": "Nuage Papier Fictif",
+          "location": "Nantes",
+          "employment_type": "CDI",
+          "work_mode": "On-site"
+        },
+        "differences": [],
+        "passed": true
+      },
+      {
+        "id": "data_engineer_en",
+        "scenario": "Pipe-separated existing vocabulary and a quantified experience criterion",
+        "expected_requirements": 3,
+        "predicted_requirements": 3,
+        "matched_requirements": 3,
+        "technical_mentions": {
+          "correct": 5,
+          "predicted": 5,
+          "expected": 5
+        },
+        "expected_job": {
+          "title": "Data Engineer",
+          "company": "Fable River Systems",
+          "location": null,
+          "employment_type": null,
+          "work_mode": null
+        },
+        "actual_job": {
+          "title": "Data Engineer",
+          "company": "Fable River Systems",
+          "location": null,
+          "employment_type": null,
+          "work_mode": null
+        },
+        "differences": [],
+        "passed": true
+      },
+      {
+        "id": "machine_learning_engineer_fr",
+        "scenario": "Distinct AI and machine-learning concepts across profile and preferred sections",
+        "expected_requirements": 3,
+        "predicted_requirements": 3,
+        "matched_requirements": 3,
+        "technical_mentions": {
+          "correct": 7,
+          "predicted": 7,
+          "expected": 7
+        },
+        "expected_job": {
+          "title": "Ingénieur Machine Learning",
+          "company": "Studio Galet Fictif",
+          "location": null,
+          "employment_type": null,
+          "work_mode": null
+        },
+        "actual_job": {
+          "title": "Ingénieur Machine Learning",
+          "company": "Studio Galet Fictif",
+          "location": null,
+          "employment_type": null,
+          "work_mode": null
+        },
+        "differences": [],
+        "passed": true
+      },
+      {
+        "id": "linkedin_informal_fr",
+        "scenario": "Copied LinkedIn-style introduction, emojis, contact and hashtags",
+        "expected_requirements": 3,
+        "predicted_requirements": 3,
+        "matched_requirements": 3,
+        "technical_mentions": {
+          "correct": 5,
+          "predicted": 5,
+          "expected": 5
+        },
+        "expected_job": {
+          "title": "Ingénieur IA",
+          "company": "Feuille Rouge Fictive",
+          "location": "Casablanca",
+          "employment_type": null,
+          "work_mode": null
+        },
+        "actual_job": {
+          "title": "Ingénieur IA",
+          "company": "Feuille Rouge Fictive",
+          "location": "Casablanca",
+          "employment_type": null,
+          "work_mode": null
+        },
+        "differences": [],
+        "passed": true
+      },
+      {
+        "id": "mixed_language_profile",
+        "scenario": "Mixed French and English headings without invented required status",
+        "expected_requirements": 4,
+        "predicted_requirements": 4,
+        "matched_requirements": 4,
+        "technical_mentions": {
+          "correct": 6,
+          "predicted": 6,
+          "expected": 6
+        },
+        "expected_job": {
+          "title": "Backend AI Engineer",
+          "company": "Atelier Silver Fictif",
+          "location": null,
+          "employment_type": null,
+          "work_mode": null
+        },
+        "actual_job": {
+          "title": "Backend AI Engineer",
+          "company": "Atelier Silver Fictif",
+          "location": null,
+          "employment_type": null,
+          "work_mode": null
+        },
+        "differences": [],
+        "passed": true
+      },
+      {
+        "id": "slash_boundaries_en",
+        "scenario": "Overlapping service phrases and API versus REST APIs stay distinct",
+        "expected_requirements": 3,
+        "predicted_requirements": 3,
+        "matched_requirements": 3,
+        "technical_mentions": {
+          "correct": 13,
+          "predicted": 13,
+          "expected": 13
+        },
+        "expected_job": {
+          "title": "Integration Architect",
+          "company": "Paper Kite Fictional",
+          "location": null,
+          "employment_type": null,
+          "work_mode": null
+        },
+        "actual_job": {
+          "title": "Integration Architect",
+          "company": "Paper Kite Fictional",
+          "location": null,
+          "employment_type": null,
+          "work_mode": null
+        },
+        "differences": [],
+        "passed": true
+      },
+      {
+        "id": "environment_only_en",
+        "scenario": "No explicit mandatory qualifications, technical environment only",
+        "expected_requirements": 1,
+        "predicted_requirements": 1,
+        "matched_requirements": 1,
+        "technical_mentions": {
+          "correct": 3,
+          "predicted": 3,
+          "expected": 3
+        },
+        "expected_job": {
+          "title": "Prototype Engineer",
+          "company": "Cedar Sketch Fictional",
+          "location": null,
+          "employment_type": null,
+          "work_mode": null
+        },
+        "actual_job": {
+          "title": "Prototype Engineer",
+          "company": "Cedar Sketch Fictional",
+          "location": null,
+          "employment_type": null,
+          "work_mode": null
+        },
+        "differences": [],
+        "passed": true
+      },
+      {
+        "id": "inline_hybrid_en",
+        "scenario": "Inline metadata and conflicting classification remain explicit and reviewable",
+        "expected_requirements": 2,
+        "predicted_requirements": 2,
+        "matched_requirements": 2,
+        "technical_mentions": {
+          "correct": 3,
+          "predicted": 3,
+          "expected": 3
+        },
+        "expected_job": {
+          "title": "Application Architect",
+          "company": "Birch Window Fictional",
+          "location": "Dublin",
+          "employment_type": "Fixed-term",
+          "work_mode": "Hybrid"
+        },
+        "actual_job": {
+          "title": "Application Architect",
+          "company": "Birch Window Fictional",
+          "location": "Dublin",
+          "employment_type": "Fixed-term",
+          "work_mode": "Hybrid"
+        },
+        "differences": [],
+        "passed": true
+      },
+      {
+        "id": "contacts_hashtags_protected_fr",
+        "scenario": "Contact, hashtag and protected-language exclusions inside qualification area",
+        "expected_requirements": 1,
+        "predicted_requirements": 1,
+        "matched_requirements": 1,
+        "technical_mentions": {
+          "correct": 1,
+          "predicted": 1,
+          "expected": 1
+        },
+        "expected_job": {
+          "title": "Ingénieur Logiciel",
+          "company": "Étoile Inventée",
+          "location": null,
+          "employment_type": null,
+          "work_mode": null
+        },
+        "actual_job": {
+          "title": "Ingénieur Logiciel",
+          "company": "Étoile Inventée",
+          "location": null,
+          "employment_type": null,
+          "work_mode": null
+        },
+        "differences": [],
+        "passed": true
+      },
+      {
+        "id": "ordinary_prose_not_heading",
+        "scenario": "Heading words in ordinary company prose must not alter section boundaries",
+        "expected_requirements": 2,
+        "predicted_requirements": 2,
+        "matched_requirements": 2,
+        "technical_mentions": {
+          "correct": 2,
+          "predicted": 2,
+          "expected": 2
+        },
+        "expected_job": {
+          "title": "Platform Engineer",
+          "company": "Copper Leaf Fictional",
+          "location": null,
+          "employment_type": null,
+          "work_mode": null
+        },
+        "actual_job": {
+          "title": "Platform Engineer",
+          "company": "Copper Leaf Fictional",
+          "location": null,
+          "employment_type": null,
+          "work_mode": null
+        },
+        "differences": [],
+        "passed": true
+      },
+      {
+        "id": "partial_unknown_and_negative_fr",
+        "scenario": "Unknown environment words, French ai verb and ambiguous work arrangement stay conservative",
+        "expected_requirements": 2,
+        "predicted_requirements": 2,
+        "matched_requirements": 2,
+        "technical_mentions": {
+          "correct": 4,
+          "predicted": 4,
+          "expected": 4
+        },
+        "expected_job": {
+          "title": "Développeur Applications",
+          "company": "Atelier Delta Imaginaire",
+          "location": "Rennes",
+          "employment_type": null,
+          "work_mode": null
+        },
+        "actual_job": {
+          "title": "Développeur Applications",
+          "company": "Atelier Delta Imaginaire",
+          "location": "Rennes",
+          "employment_type": null,
+          "work_mode": null
+        },
+        "differences": [],
+        "passed": true
+      }
+    ],
+    "app_fingerprint": {
+      "python_files": 22,
+      "sha256": {
+        "app/__init__.py": "c7ec0bad880f3e191bac503c69a5d06232a4e768aa096e63390ebf136388707a",
+        "app/api/__init__.py": "c5e79b75137811726e30acef2fa5cfc649514fce1c86da771535b368f43238c0",
+        "app/api/routes/__init__.py": "51bf83470168d705beb38744164cc071189699478cdb8ceebd28fd927f332148",
+        "app/api/routes/candidates.py": "7369305bef0c613db2942ef518a3223be30c4d74aa28cf28a992ebaef7c6761b",
+        "app/api/routes/health.py": "75dc67f6abee7087ee9f238c5311deda6537e8e285d44de38f90b118bf6b788f",
+        "app/api/routes/jobs.py": "c689e2ffd4615cb7791904593b730c841ede26846b2188220a3bc91c0f9f3bc0",
+        "app/api/upload_limits.py": "c3c72ae3a2fd0665345f81465d8399421ae78a5388f99bb23c61219a8d0a805f",
+        "app/main.py": "f71b9fb27f401e246d643cc0e17d9150963438a59cf2b95080c8fa4b32403d0c",
+        "app/models/__init__.py": "67e2d12442c40eebabe5ec1fd4bf971810be0be5f859de8a4d228a5caf38bec1",
+        "app/models/candidate.py": "d4d7095fb2e57271d7c37176a4af6ebb2fbd7607fe880a2311d660b256dde51b",
+        "app/models/job.py": "17c61e4796611ee05465f2265d462b88acbc4049644466a9e732b08d9527342f",
+        "app/services/__init__.py": "367e04f028652db23a2cfe61a0d5793f400a79635862c97c1f40df97a024819a",
+        "app/services/extraction.py": "ee93f37609badb8ec44458b83bdddbd3c6fd1cd1d46a230e6ed37cf83c04248b",
+        "app/services/job_formatting.py": "4fdc3e891d88fa7ac53d01f395b4a7d40be0bb48bce449cdc23c438b02e3f992",
+        "app/services/job_vocabulary.py": "577155f8d09253fad1fecc37bf8bbbe25840c69e86d1cbd82a7cbea584533a75",
+        "app/services/jobs.py": "0236b62f427edd6142a7d12d4b252a75c42510ca957dbc08686a1c79e17840e1",
+        "app/services/layout.py": "7f0eaa24c6a552727f94dd493996240d27a80c9177086e35f3356ceb50d8a4e6",
+        "app/services/llm.py": "ba0088975ceef360de817b2e6adbf55e813ba28331d9568d15cafaf0f4c0315d",
+        "app/services/multilingual.py": "e9a5e9b9a9dfc10d246e67be9e02538de565aca9bb7bd3f3280ac401b8ff082a",
+        "app/services/pdf.py": "ef8b67f0ed893d3a843ba7a0ea96ebc181dfb5a4d76d983b387ec1da7cfee50d",
+        "app/services/records.py": "6ce8c9910de1434be825a03280b0dedc9fd69593e35cf2ffc013c1eb756bc69d",
+        "app/services/sections.py": "b7008c7d053d285f80daa495d06428c3d3779c18ba5931def50c054d026e9b30"
+      }
+    }
+  }
+}

@@ -19,6 +19,9 @@ RUN python -c "from app.main import app; assert app.title == 'TalentFlow AI'"
 FROM base AS test
 COPY --chown=app:app tests ./tests
 COPY --chown=app:app evaluate.py ./evaluate.py
+COPY --chown=app:app evaluate_jobs.py ./evaluate_jobs.py
+COPY --chown=app:app evaluate_jobs_realistic.py ./evaluate_jobs_realistic.py
+COPY --chown=app:app evaluate_comparison_accuracy.py ./evaluate_comparison_accuracy.py
 CMD ["python", "-m", "pytest", "-p", "no:cacheprovider"]
 
 FROM base AS runtime
