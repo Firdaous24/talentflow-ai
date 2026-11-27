@@ -6,7 +6,8 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PIP_NO_CACHE_DIR=1
 
 WORKDIR /app
-RUN groupadd --gid 10001 app && useradd --uid 10001 --gid app --no-create-home --shell /usr/sbin/nologin app
+RUN groupadd --gid 10001 app && useradd --uid 10001 --gid app --no-create-home --shell /usr/sbin/nologin app \
+    && install -d -o app -g app -m 0700 /data/cv_files
 
 COPY requirements.txt requirements.lock ./
 # /dev/null is an explicit opt-out used only when refreshing the Linux lock.

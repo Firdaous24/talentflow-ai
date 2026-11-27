@@ -1,7 +1,8 @@
 name: talentflow-ai
 
-# Phase 6: PostgreSQL is required. Every value below comes from .env (see
-# .env.example); Compose refuses to start when a required one is missing.
+# PostgreSQL is required (phase 6) and stored CVs are encrypted (phase 7). Every
+# value below comes from .env (see .env.example); Compose refuses to start when
+# a required one is missing.
 x-database-environment: &database-environment
   POSTGRES_HOST: db
   POSTGRES_DB: ${POSTGRES_DB:?Set POSTGRES_DB in .env (see .env.example)}
@@ -18,6 +19,9 @@ x-application-environment: &application-environment
   SMTP_HOST: mailpit
   SMTP_PORT: "1025"
   MAIL_FROM: ${MAIL_FROM:-TalentFlow AI <no-reply@talentflow.example>}
+  TALENTFLOW_DATA_KEY: ${TALENTFLOW_DATA_KEY:?Generate TALENTFLOW_DATA_KEY in .env (see .env.example)}
+  CV_ORIGINAL_STORAGE: ${CV_ORIGINAL_STORAGE:-disabled}
+  CV_FILES_DIR: /data/cv_files
 
 x-hardening: &hardening
   security_opt:
@@ -60,6 +64,9 @@ services:
       LLM_BASE_URL: ${LLM_BASE_URL:-}
       LLM_MODEL: ${LLM_MODEL:-}
       LLM_API_KEY: ${LLM_API_KEY:-}
+    volumes:
+      # Encrypted original PDFs, only when CV_ORIGINAL_STORAGE=enabled (off by default).
+      - cv_files:/data/cv_files
     ports:
       - "127.0.0.1:8000:8000"
     depends_on:
@@ -92,7 +99,7 @@ services:
         condition: service_healthy
     restart: "no"
 
-  # Retention housekeeping in phase 6; the import queue arrives in phase 8.
+  # Retention housekeeping (sessions, tokens, audit, orphan files); the import queue arrives in phase 8.
   worker:
     <<: *hardening
     image: talentflow-ai-backend:local
@@ -103,6 +110,8 @@ services:
     command: ["python", "-m", "app.worker"]
     environment:
       <<: *application-environment
+    volumes:
+      - cv_files:/data/cv_files
     depends_on:
       migrate:
         condition: service_completed_successfully
@@ -149,3 +158,4 @@ services:
 
 volumes:
   postgres_data:
+  cv_files:
