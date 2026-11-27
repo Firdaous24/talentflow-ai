@@ -4,4 +4,12 @@ WORKDIR /tests
 RUN npm install --no-save --package-lock=false playwright@1.58.2
 COPY smoke.mjs ./
 COPY accuracy-smoke.mjs ./
+COPY job-smoke.mjs ./
+COPY realistic-job-smoke.mjs ./
+COPY comparison-workflow-smoke.mjs ./
+COPY comparison-results-smoke.mjs ./
+COPY real-world-comparison-smoke.mjs ./
+COPY final-job-accuracy-smoke.mjs ./
+COPY agents-smoke.mjs ./
+COPY native-select.mjs ./
 CMD ["node", "smoke.mjs"]
