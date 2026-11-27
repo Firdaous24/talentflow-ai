@@ -1,7 +1,19 @@
 # Changelog
 
 Detailed delivery history and the validation recorded at each milestone. The [README](../README.md) describes the current state.
-Milestone tags: `v0.5.0` (phases 1–5) and `v0.6.0` (tooling, CI and hardening).
+Milestone tags: `v0.5.0` (phases 1–5), `v0.6.0` (tooling, CI and hardening) and `v0.7.0` (UI redesign).
+
+## UI redesign — v0.7.0
+
+- **Design system:** a single token file (colour, type scale, spacing, radii, shadows, motion), warm-paper light and deep-slate dark themes with AA contrast, self-hosted fonts, and primitives (Button, Card, Badge, StatusPill, Stepper, EmptyState, Skeleton). Legacy colour literals and pixel font sizes were mapped to tokens; the minimum text size is now 12px (mono labels), 13px for secondary text and 14–15px for body text.
+- **Guided shell:** editorial sidebar, sticky header with a six-step workflow stepper derived from session state (it never bypasses a review gate), theme toggle and Settings appearance control, soft page transitions, discreet toasts and skeletons instead of spinners.
+- **Dashboard and demo mode:** product home with session state, path shortcuts and principles. **Try with fictional data** builds a fictional CV PDF (invented name, `example.com`) and a sample job in the browser, parses it through the normal API and opens the profile for mandatory human review. Nothing is stored.
+- **Side-by-side evidence:** the job clause and the CV excerpt are shown next to each other with exact spans highlighted from code-point offsets, a mono `chars a–b` badge and a status bridge. “Not documented” is a neutral absence. Applies to Job Analysis and to AI Agents results.
+- **Living LangGraph view:** seven connected nodes driven by backend statuses; `human_review` pulses while paused and edges fill in sequence after resume. The accessible step list is kept.
+- **Refactor:** `JobAnalysis.tsx` split into sub-components (JSX moved verbatim); `App.tsx` pages already split in v0.6.0.
+- **CI:** now runs on every branch push as well as pull requests.
+
+Actual validation: **681 backend tests**, **93 frontend tests** (including demo mode), ruff, ESLint, strict TypeScript, Vite build and **all ten real-API Chromium workflows** (the nine existing ones plus `demo-smoke.mjs`) passed against the rebuilt Compose stack. No accessible name, label or tested text changed.
 
 ## Tooling, CI and hardening — v0.6.0
 

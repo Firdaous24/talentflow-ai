@@ -2,7 +2,7 @@
 
 Assistant de recrutement local-first fondé sur les preuves documentaires, la revue humaine et la traçabilité.
 React 19 / TypeScript / Vite → FastAPI / Pydantic → services déterministes (PyMuPDF, analyse d'offre FR/EN,
-comparaison par preuves) + orchestration LangGraph locale avec interrupt/resume (Phase 5). Dernier jalon : `v0.6.0` (outillage, CI, durcissement).
+comparaison par preuves) + orchestration LangGraph locale avec interrupt/resume (Phase 5). Dernier jalon : `v0.7.0` (refonte UI : design system, mode démo, vue preuve côte à côte).
 PostgreSQL est disponible en profil Compose optionnel `db` mais **pas encore utilisé** par l'application.
 
 ## Commandes validées sous Windows (Git Bash)
@@ -12,7 +12,7 @@ préfixer avec `export PATH="/c/Program Files/nodejs:$PATH" &&`. Enchaîner les 
 
 ### Backend (Python 3.11, venv `backend/.venv`)
 - Tests : `cd backend && PYTHONDONTWRITEBYTECODE=1 .venv/Scripts/python.exe -m pytest -p no:cacheprovider -q`
-  (référence `v0.6.0` : **681 passés**)
+  (référence `v0.7.0` : **681 passés**)
 - Un fichier : `... -m pytest -p no:cacheprovider -q tests/test_jobs.py`
 - Serveur local : `cd backend && .venv/Scripts/python.exe -m uvicorn app.main:app --reload --port 8000`
 - Lint : `.venv/Scripts/python.exe -m ruff check app tests *.py` (config `backend/ruff.toml`, outils dev dans
@@ -21,7 +21,9 @@ préfixer avec `export PATH="/c/Program Files/nodejs:$PATH" &&`. Enchaîner les 
 
 ### Frontend (`frontend/`)
 - Installation : `npm ci` (le `node_modules` doit être installé avec le Node Windows, pas dans Docker)
-- Tests : `npx vitest run` (référence : **90 passés**, 9 fichiers)
+- Tests : `npx vitest run` (référence : **93 passés**, 10 fichiers). À lancer **seul** (pas enchaîné après le lint) :
+  sous Windows + Node 26, vitest échoue parfois au chargement (« failed to find the current suite ») ; relancer.
+  Machine chargée : `npx vitest run --maxWorkers=2`.
 - Types : `npx tsc --noEmit` (0 erreur attendue, mode strict)
 - Build : `npm run build`
 - Lint : `npm run lint` (ESLint flat config, typescript-eslint, règles react-hooks classiques ; 0 erreur attendue).
@@ -34,7 +36,8 @@ préfixer avec `export PATH="/c/Program Files/nodejs:$PATH" &&`. Enchaîner les 
   Le volume `postgres_data` ne doit jamais être supprimé.
 - Tests backend conteneur : `docker compose -f docker-compose.yml -f compose.test.yaml run --rm backend`
 - Tests frontend conteneur : `docker build --target test -t talentflow-ai-frontend-test:local frontend && docker run --rm talentflow-ai-frontend-test:local npm test`
-- E2E Chromium (9 scripts) : voir `docs/agent_workflow_testing.md` (certains scripts exigent un montage `/fixtures`).
+- E2E Chromium (10 scripts, dont `demo-smoke.mjs`) : voir `docs/agent_workflow_testing.md` (certains scripts exigent un montage
+  `/fixtures` ; `comparison-workflow-smoke.mjs` avec `-e NATIVE_MOUSE=1`).
 - **Interdit sans accord explicite** : `docker compose down --volumes`, tout `prune`, toute suppression de volume.
 
 ## CI
@@ -46,6 +49,14 @@ préfixer avec `export PATH="/c/Program Files/nodejs:$PATH" &&`. Enchaîner les 
 - Toutes les routes `/api/v1` refusent un `Host`/`Origin` non local (403 `local_requests_only`) et limitent le
   corps JSON à 1 MiB ; l'upload CV reste à 5 MiB, les workflows agents à 512 KiB. Les tests utilisent
   `TestClient(app, base_url="http://localhost")` : ne jamais réintroduire `testserver` dans les hôtes autorisés.
+
+## Design system (frontend)
+- Toutes les valeurs (couleurs, tailles, espacements, rayons, ombres, durées) viennent de `src/theme/tokens.css` ;
+  aucune couleur en dur ailleurs. Polices via `@fontsource` uniquement, aucun CDN.
+- `not_documented` est une absence neutre (gris, marqueur en pointillés), jamais rouge ; le rouge est réservé aux erreurs système.
+- Ne jamais changer un nom accessible, label ou texte utilisé par les tests ; les E2E lisent les blockquotes de preuve
+  (le passage surligné doit rester le seul texte de la citation) et les compteurs (valeur finale toujours dans le DOM).
+- Respecter `prefers-reduced-motion` ; le stockage navigateur n'est écrit que sur action explicite (thème).
 
 ## Pièges connus
 - `core.autocrlf=true` sur ce poste ; `.gitattributes` impose LF. Des fixtures sont figées par hash SHA-256 des

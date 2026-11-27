@@ -10,13 +10,13 @@ Screening tools often reduce a person to a match score. TalentFlow AI takes the 
 
 ## Preview
 
-All screenshots use fictional documents against the local stack.
+All screenshots use fictional documents against the local stack. Light and dark themes are both supported.
 
-| Dashboard | Job Analysis — evidence checklist |
+| Dashboard with demo mode | Side-by-side evidence |
 |---|---|
-| ![Dashboard with one confirmed fictional candidate](docs/images/dashboard.png) | ![Comparison results: documented, not documented and needs-review counts with the technical evidence overview](docs/images/job-analysis-comparison.png) |
-| **AI Agents — paused for human review** | **AI Agents — final report** |
-| ![LangGraph timeline paused at the human_review interrupt](docs/images/agents-human-review.png) | ![Completed seven-step LangGraph timeline after an explicit review acknowledgment](docs/images/agents-final-report.png) |
+| ![Dashboard hero with the "Try with fictional data" demo, session state and the six-step path](docs/images/dashboard.png) | ![Job clause on the left and CV excerpt on the right, exact spans highlighted from code-point offsets with "chars" badges](docs/images/evidence-side-by-side.png) |
+| **AI Agents — paused for human review** | **AI Agents — final report (dark theme)** |
+| ![Seven-node LangGraph visualization paused at the human_review interrupt](docs/images/agents-human-review.png) | ![Completed seven-node LangGraph workflow after an explicit review acknowledgment, in the dark theme](docs/images/agents-final-report.png) |
 
 ## Architecture
 
@@ -46,7 +46,8 @@ Data flow: **PDF CV** → parsed profile with source evidence → human review a
 - **Real LangGraph interrupt/resume.** A seven-node `StateGraph` pauses at `interrupt()` and continues with `Command(resume=...)` after a human acknowledgment; evidence is verified again before the final report. No simulated progress.
 - **No scores, no automated decisions.** Three statuses only (`documented`, `not_documented`, `needs_review`), with explicit limitations attached to every result.
 - **Local-first and private by default.** Loopback-only ports, Host/Origin checks on every API route, bounded request bodies, no persistence of CVs, no external calls without consent.
-- **Tested end to end.** 681 backend tests and 90 frontend tests, 9 real-browser Chromium workflows, ruff and ESLint, strict TypeScript, and GitHub Actions CI on every push.
+- **Side-by-side evidence view.** The job clause and the CV excerpt sit next to each other, with the exact span highlighted from the API offsets and a `chars a–b` badge; “not documented” is shown as a neutral absence, never as a failure.
+- **Tested end to end.** 681 backend tests and 93 frontend tests, 10 real-browser Chromium workflows, ruff and ESLint, strict TypeScript, and GitHub Actions CI on every push.
 
 ## Quick start
 
@@ -54,13 +55,13 @@ Data flow: **PDF CV** → parsed profile with source evidence → human review a
 docker compose up -d --build --wait
 ```
 
-Open **http://localhost:5173** for the workspace and **http://127.0.0.1:8000/docs** for the API documentation. See [Docker workflow](#docker-workflow-primary) for details and [Run tests on the host](#run-tests-on-the-host-optional) for local checks.
+Open **http://localhost:5173** for the workspace and **http://127.0.0.1:8000/docs** for the API documentation. On the Dashboard, **Try with fictional data** generates a fictional CV and a sample job post in the browser and walks you through the full flow in under a minute; the demo profile still requires your review and confirmation, and nothing is stored. See [Docker workflow](#docker-workflow-primary) for details and [Run tests on the host](#run-tests-on-the-host-optional) for local checks.
 
 Release history and the validation recorded at each phase are in [docs/CHANGELOG.md](docs/CHANGELOG.md).
 
 ## Current status
 
-**Current release: v0.6.0.** **Phases 1 through 5 are implemented:** backend foundation, Docker infrastructure, React workspace, layout-aware French/English CV parsing, source evidence, human review, deterministic job analysis and document comparison, technical-environment provenance, compact evidence results, source-bound excerpts and bounded LangGraph orchestration. Optional CV model extraction requires backend configuration and per-upload consent; job analysis and the graph require no AI credentials. Validation for each phase is recorded in the [changelog](docs/CHANGELOG.md).
+**Current release: v0.7.0.** **Phases 1 through 5 are implemented:** backend foundation, Docker infrastructure, React workspace, layout-aware French/English CV parsing, source evidence, human review, deterministic job analysis and document comparison, technical-environment provenance, compact evidence results, source-bound excerpts and bounded LangGraph orchestration. Optional CV model extraction requires backend configuration and per-upload consent; job analysis and the graph require no AI credentials. Validation for each phase is recorded in the [changelog](docs/CHANGELOG.md).
 
 Implemented:
 
@@ -234,9 +235,11 @@ Review the version changes, rebuild both runtime and test images normally, run c
 
 The existing `frontend/` directory contains a React + TypeScript SPA built by Vite with Tailwind CSS and Lucide icons. `src/App.tsx` owns the shared sidebar/topbar and React Router routes; `pages/Parser.tsx` handles document selection and parsing; `components/Profile.tsx` renders the real candidate contract; `components/ErrorBoundary.tsx` provides recovery from rendering failures. `session.tsx` owns temporary profiles and periodic backend health checks. `types.ts` mirrors the Pydantic candidate and metadata models; `api.ts` handles requests, timeouts, PDF validation, and both structured document errors and FastAPI validation arrays.
 
+**Design system.** All colours, type sizes, spacing, radii, shadows and durations are tokens in `src/theme/tokens.css` (warm-paper light theme, deep-slate dark theme, WCAG AA text contrast); no colour is hard-coded elsewhere. Fonts are self-hosted through `@fontsource` (Instrument Serif, Inter, JetBrains Mono); no CDN is used. Primitives live in `src/components/ui` (Button, Card, Badge, StatusPill, Stepper, EmptyState, Skeleton). The header carries a persistent workflow stepper derived from session state and a theme toggle that follows `prefers-color-scheme` until the user chooses. `prefers-reduced-motion` disables animations.
+
 | Page | Current behavior |
 | --- | --- |
-| Dashboard | Quick actions, backend liveness, available modules, actual session count and recent parsing activity |
+| Dashboard | Product home: hero, fictional demo mode, live session state, six-step path, principles and recent activity |
 | CV Parser | Select/drop one PDF, validate extension/MIME/header and 5 MiB size, submit, show fields and warnings, retry or upload another |
 | Candidates | Successfully parsed profiles in memory, profile detail route, clear session profiles |
 | Job Analysis | Select any session profile, confirm its review, analyze FR/EN text, review source-bound requirements and compare qualification evidence |
@@ -429,7 +432,7 @@ See [agent workflow testing](docs/agent_workflow_testing.md) for actual results,
 - **Lint:** `ruff check app tests *.py` in `backend/` (rules E/F/I/B/UP, `backend/ruff.toml`; dev tools in `backend/requirements-dev.txt`) and `npm run lint` in `frontend/`.
 - **Types and tests:** `npx tsc --noEmit`, `npx vitest run` and `npm run build` in `frontend/`; `pytest` in `backend/`.
 - **CI:** `.github/workflows/ci.yml` runs on pushes and pull requests to `main`: backend (lock-constrained install, ruff, pytest), frontend (Node 22: lint, tsc, vitest, build) and Compose configuration validation. It uses no secrets and deploys nothing.
-- **End-to-end:** nine real-API Chromium scripts in `frontend/e2e/`; see [agent workflow testing](docs/agent_workflow_testing.md).
+- **End-to-end:** ten real-API Chromium scripts in `frontend/e2e/` (including the demo mode); see [agent workflow testing](docs/agent_workflow_testing.md).
 
 ## Roadmap
 
