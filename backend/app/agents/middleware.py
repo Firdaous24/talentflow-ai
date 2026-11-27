@@ -6,12 +6,14 @@ from fastapi.responses import JSONResponse
 
 from app.agents.checkpoints import MAX_BODY_BYTES
 
-LOCAL_HOSTS = {"localhost", "127.0.0.1", "::1", "host.docker.internal", "testserver"}
+# Runtime allow-list. Tests use a "localhost" base URL instead of an extra host.
+LOCAL_HOSTS = frozenset({"localhost", "127.0.0.1", "::1", "host.docker.internal"})
 
 
 class AgentBoundaryMiddleware:
-    def __init__(self, app):
+    def __init__(self, app, allowed_hosts=LOCAL_HOSTS):
         self.app = app
+        self.allowed_hosts = frozenset(allowed_hosts)
 
     async def __call__(self, scope, receive, send):
         if scope["type"] != "http" or not scope["path"].startswith("/api/v1/agents/"):
@@ -33,7 +35,7 @@ class AgentBoundaryMiddleware:
             host = urlsplit("//" + headers.get(b"host", b"").decode("ascii")).hostname
             origin = headers.get(b"origin")
             parsed = urlsplit(origin.decode("ascii")) if origin else None
-            if host not in LOCAL_HOSTS or parsed and (parsed.hostname not in LOCAL_HOSTS or parsed.scheme not in {"http", "https"} or parsed.username or parsed.password or parsed.path or parsed.query or parsed.fragment):
+            if host not in self.allowed_hosts or parsed and (parsed.hostname not in self.allowed_hosts or parsed.scheme not in {"http", "https"} or parsed.username or parsed.password or parsed.path or parsed.query or parsed.fragment):
                 await reject(403, "local_workflow_only", "Agent workflows are restricted to local development hosts and origins.")
                 return
         except (UnicodeError, ValueError):

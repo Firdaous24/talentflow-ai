@@ -27,5 +27,6 @@ def make_pdf(text: str = "", pages: int = 1, encrypted: bool = False, user_passw
 
 @pytest.fixture
 def client() -> Iterator[TestClient]:
-    with TestClient(app) as test_client:
+    # Requests use the local host the runtime allow-list accepts (no "testserver").
+    with TestClient(app, base_url="http://localhost") as test_client:
         yield test_client

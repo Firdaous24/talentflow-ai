@@ -200,3 +200,28 @@ def test_stale_client_revision_gets_clear_409_without_acknowledging_review(clien
     assert response.status_code == 409
     assert response.json()["detail"]["code"] == "workflow_stale"
     assert app.state.workflow_manager.get(waiting["workflow_id"], HEADERS["X-Workflow-Session"]).human_review_status == "required"
+
+
+def test_testserver_host_is_not_allowed_at_runtime(client):
+    response = client.post(ROOT, headers={**HEADERS, "Host": "testserver"}, json=payload(client))
+    assert response.status_code == 403
+    assert response.json()["detail"]["code"] == "local_workflow_only"
+
+
+def test_allowed_hosts_are_injectable():
+    from fastapi import FastAPI
+    from fastapi.testclient import TestClient
+
+    from app.agents.middleware import LOCAL_HOSTS, AgentBoundaryMiddleware
+
+    assert "testserver" not in LOCAL_HOSTS
+    probe = FastAPI()
+
+    @probe.get("/api/v1/agents/probe")
+    def agent_probe():
+        return {"ok": True}
+
+    probe.add_middleware(AgentBoundaryMiddleware, allowed_hosts={"testserver"})
+    with TestClient(probe) as injected:
+        assert injected.get("/api/v1/agents/probe").status_code == 200
+        assert injected.get("/api/v1/agents/probe", headers={"Host": "localhost"}).status_code == 403

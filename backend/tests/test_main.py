@@ -11,7 +11,8 @@ from app.main import app
 @pytest.fixture
 def client() -> Iterator[TestClient]:
     """Run requests within the application's lifespan."""
-    with TestClient(app) as test_client:
+    # Requests use the local host the runtime allow-list accepts (no "testserver").
+    with TestClient(app, base_url="http://localhost") as test_client:
         yield test_client
 
 
