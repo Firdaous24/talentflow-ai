@@ -3,6 +3,19 @@
 Detailed delivery history and the validation recorded at each milestone. The [README](../README.md) describes the current state.
 Milestone tags: `v0.5.0` (phases 1–5), `v0.6.0` (tooling, CI and hardening) and `v0.7.0` (UI redesign).
 
+## Accounts and roles — v0.8.0 (phase 6, branch `feat/v1-phase6`, not merged)
+
+First phase of the v1 platform described in [V1_DESIGN.md](V1_DESIGN.md). Details: [accounts_phase6.md](accounts_phase6.md).
+
+- **PostgreSQL is required:** SQLAlchemy 2 (sync, psycopg 3) and reversible Alembic migrations (`0001`: users, sessions, e-mail tokens, consents, organizations, memberships, append-only audit log). Compose runs `db`, a one-shot `migrate`, `backend`, a `worker` (retention housekeeping), `mailpit` (local e-mail, no external provider) and `frontend`.
+- **Accounts (`/api/v2`):** sign-up with a role (candidate or recruiter), e-mail verification, sign-in, sign-out, password reset, versioned and withdrawable consents, account deletion with re-authentication. argon2id passwords, server-side sessions in an `HttpOnly`/`SameSite=Lax` cookie (`__Host-` and `Secure` by default), signed double-submit CSRF tokens bound to the session, per-account and per-client rate limits, no account enumeration, pseudonymous audit log.
+- **Isolation:** role checks answer 403; another organization's resources answer 404. A generated authorization matrix covers every published `/api/v2` operation.
+- **Public pages (FR default, EN):** home with the permanent demo warning (Morocco only), role choice, sign-up, verification, sign-in, password reset, terms and privacy, and the candidate and recruiter spaces. i18next; logical CSS properties for the future RTL interface.
+- **Unchanged:** `/api/v1` and demo mode work without an account; the workbench never calls `/api/v2`.
+- **Hardening:** strict Content-Security-Policy on the frontend (the theme initializer moved to `/theme-init.js`), `X-Frame-Options`, `Permissions-Policy`, `no-store` and `no-referrer` on `/api/v2`.
+
+Actual validation: **769 backend tests** (681 existing + 88 for accounts, against PostgreSQL), **103 frontend tests** (in the Node 22 image), ruff, ESLint, strict TypeScript, migrations `upgrade`/`downgrade`/`upgrade` + `alembic check`, and **eleven real-API Chromium workflows** (the ten existing ones plus `auth-smoke.mjs`) against the rebuilt Compose stack.
+
 ## UI redesign — v0.7.0
 
 - **Design system:** a single token file (colour, type scale, spacing, radii, shadows, motion), warm-paper light and deep-slate dark themes with AA contrast, self-hosted fonts, and primitives (Button, Card, Badge, StatusPill, Stepper, EmptyState, Skeleton). Legacy colour literals and pixel font sizes were mapped to tokens; the minimum text size is now 12px (mono labels), 13px for secondary text and 14–15px for body text.
