@@ -50,7 +50,7 @@ TEST_DATA_KEY = "cHl0ZXN0LW9ubHktZGF0YS1rZXktMzItYnl0ZXMhISE"
 BACKEND_DIR = Path(__file__).resolve().parents[1]
 V2_TABLES = (
     "audit_log", "consents", "email_tokens", "memberships", "sessions", "organizations", "users",
-    "candidate_profiles", "cv_versions", "cv_data_keys", "job_offers",
+    "candidate_profiles", "cv_versions", "cv_data_keys", "job_offers", "import_batches", "import_items", "matches",
 )
 
 

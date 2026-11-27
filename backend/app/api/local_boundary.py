@@ -8,7 +8,7 @@ rebinding and cross-site use of the published loopback port. Limits are
 checked on the raw byte stream before the framework parses any JSON.
 
 Dedicated, stricter middlewares keep their own responses:
-- /api/v1/candidates/parse and /api/v2/me/cv: multipart limit in UploadLimitMiddleware (5 MiB + 64 KiB);
+- /api/v1/candidates/parse, /api/v2/me/cv and bulk-import files: multipart limit in UploadLimitMiddleware (5 MiB + 64 KiB);
 - /api/v1/agents/: AgentBoundaryMiddleware (local hosts, 512 KiB, no-store).
 """
 
@@ -17,8 +17,9 @@ from urllib.parse import urlsplit
 
 from fastapi.responses import JSONResponse
 
+from app.api.upload_limits import is_upload_path
+
 API_PREFIXES = ("/api/v1/", "/api/v2/")
-UPLOAD_PATHS = frozenset({"/api/v1/candidates/parse", "/api/v2/me/cv"})
 AGENTS_PREFIX = "/api/v1/agents/"
 # A full comparison payload for a 30,000-character job text stays far below this.
 MAX_JSON_BODY_BYTES = 1024 * 1024
@@ -64,7 +65,7 @@ class LocalBoundaryMiddleware:
         if not is_local_request(dict(scope.get("headers", [])), self.allowed_hosts):
             await reject(403, "local_requests_only", "The API only accepts requests to local hosts from local origins.")
             return
-        if scope["method"] not in BODY_METHODS or path.rstrip("/") in UPLOAD_PATHS:
+        if scope["method"] not in BODY_METHODS or is_upload_path(path):
             await self.app(scope, receive, send)
             return
         body = bytearray()

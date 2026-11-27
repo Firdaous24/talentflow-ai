@@ -41,6 +41,11 @@ TOKEN_PURPOSES = ("verify_email", "reset_password")
 ORG_ROLES = ("owner", "member")
 JOB_VISIBILITIES = ("private", "public")
 JOB_STATUSES = ("draft", "open", "closed")
+PROFILE_ORIGINS = ("self", "imported")
+IMPORT_ITEM_STATUSES = ("queued", "parsing", "parsed", "failed", "duplicate")
+MATCH_SOURCES = ("import", "application")
+MATCH_STATUSES = ("pending", "current")
+REVEAL_REASONS = ("interview_scheduled", "reference_check", "candidate_request", "other")
 
 NAMING = {
     "ix": "ix_%(table_name)s_%(column_0_N_name)s",
@@ -183,15 +188,33 @@ class AuditLog(Base):
 
 
 class CandidateProfile(Timestamped, Base):
-    """A candidate's own profile (phase 7). Imported profiles without an account arrive in phase 8."""
+    """A candidate's own profile (`self`, phase 7), or a profile imported by an
+    organization without a candidate account (`imported`, phase 8).
+
+    An imported profile belongs to exactly one organization, expires 90 days
+    after the import (decision A2) and can be claimed or deleted by the
+    candidate through a single-use invitation link (only its hash is stored)."""
 
     __tablename__ = "candidate_profiles"
+    __table_args__ = (
+        CheckConstraint(_in("origin", PROFILE_ORIGINS), name="origin"),
+        CheckConstraint(
+            "(origin = 'self' AND user_id IS NOT NULL AND organization_id IS NULL AND expires_at IS NULL)"
+            " OR (origin = 'imported' AND user_id IS NULL AND organization_id IS NOT NULL AND expires_at IS NOT NULL)",
+            name="single_owner",
+        ),
+    )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True, default=uuid7)
-    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), unique=True)
+    user_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), unique=True)
+    organization_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("organizations.id", ondelete="CASCADE"), index=True)
+    origin: Mapped[str] = mapped_column(String(16), server_default="self", default="self")
+    expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), index=True)
+    claim_token_hash: Mapped[bytes | None] = mapped_column(LargeBinary(32), unique=True)
+    claim_expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=utcnow)
 
-    user: Mapped[User] = relationship(back_populates="candidate_profile")
+    user: Mapped[User | None] = relationship(back_populates="candidate_profile")
     versions: Mapped[list["CVVersion"]] = relationship(back_populates="profile", cascade="all, delete-orphan", passive_deletes=True, order_by="CVVersion.number")
 
 
@@ -236,8 +259,9 @@ class CVDataKey(Base):
 
 
 class JobOffer(Timestamped, Base):
-    """A job post. In phase 7, only private targets pasted by a candidate exist
-    (`owner_user_id`); organization offers arrive in phase 8. Exactly one owner."""
+    """A job post with exactly one owner: a private target pasted by a candidate
+    (`owner_user_id`, phase 7) or an organization's offer (`organization_id`,
+    phase 8; `created_by` is kept only while the recruiter's account exists)."""
 
     __tablename__ = "job_offers"
     __table_args__ = (
@@ -249,6 +273,7 @@ class JobOffer(Timestamped, Base):
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True, default=uuid7)
     organization_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("organizations.id", ondelete="CASCADE"), index=True)
     owner_user_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    created_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
     visibility: Mapped[str] = mapped_column(String(16), server_default="private")
     status: Mapped[str] = mapped_column(String(16), server_default="draft")
     title: Mapped[str | None] = mapped_column(String(2000))
@@ -258,3 +283,91 @@ class JobOffer(Timestamped, Base):
     criteria_confirmed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     closed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=utcnow)
+
+
+class ImportBatch(Base):
+    """A bulk import into one of an organization's offers (phase 8).
+
+    The recruiter's attestation that the candidates were informed is mandatory,
+    timestamped and audited (decision A2); without it no batch exists."""
+
+    __tablename__ = "import_batches"
+    __table_args__ = (CheckConstraint("file_count BETWEEN 1 AND 200", name="file_count"),)
+
+    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True, default=uuid7)
+    organization_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("organizations.id", ondelete="CASCADE"), index=True)
+    job_offer_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("job_offers.id", ondelete="CASCADE"), index=True)
+    attested_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    attested_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    attestation_version: Mapped[str] = mapped_column(String(32))
+    file_count: Mapped[int] = mapped_column()
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class ImportItem(Base):
+    """One file of a batch, and the PostgreSQL work queue the worker consumes
+    with `FOR UPDATE SKIP LOCKED`. The PDF waits here encrypted (its own data
+    key, wrapped by the master key) and both are erased once parsed or failed.
+    `file_digest` is an HMAC of the file, used to flag duplicates per organization."""
+
+    __tablename__ = "import_items"
+    __table_args__ = (
+        CheckConstraint(_in("status", IMPORT_ITEM_STATUSES), name="status"),
+        UniqueConstraint("batch_id", "position"),
+        Index("ix_import_items_queue", "status", "created_at"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True, default=uuid7)
+    batch_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("import_batches.id", ondelete="CASCADE"), index=True)
+    organization_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("organizations.id", ondelete="CASCADE"), index=True)
+    position: Mapped[int] = mapped_column()
+    status: Mapped[str] = mapped_column(String(16), server_default="queued", default="queued")
+    error_code: Mapped[str | None] = mapped_column(String(64))
+    file_digest: Mapped[bytes] = mapped_column(LargeBinary(32))
+    pdf_enc: Mapped[bytes | None] = mapped_column(LargeBinary)
+    wrapped_key: Mapped[bytes | None] = mapped_column(LargeBinary)
+    candidate_profile_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("candidate_profiles.id", ondelete="CASCADE"), index=True)
+    attempts: Mapped[int] = mapped_column(SmallInteger, server_default="0", default=0)
+    locked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class Match(Base):
+    """A confirmed CV version compared with an organization's offer.
+
+    The comparison holds CV excerpts, so it is stored encrypted with the
+    version's data key. Only verifiable counts are kept in clear: the ranking
+    sorts on them lexicographically and nothing else (design §3.3). `alias_number`
+    gives the stable anonymous label; identity is revealed per match, with a
+    reason, and audited."""
+
+    __tablename__ = "matches"
+    __table_args__ = (
+        CheckConstraint(_in("source", MATCH_SOURCES), name="source"),
+        CheckConstraint(_in("status", MATCH_STATUSES), name="status"),
+        CheckConstraint("reveal_reason IS NULL OR " + _in("reveal_reason", REVEAL_REASONS), name="reveal_reason"),
+        CheckConstraint("status = 'pending' OR (comparison_enc IS NOT NULL AND required_total IS NOT NULL)", name="current_has_counts"),
+        UniqueConstraint("job_offer_id", "candidate_profile_id"),
+        UniqueConstraint("job_offer_id", "alias_number"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True, default=uuid7)
+    organization_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("organizations.id", ondelete="CASCADE"), index=True)
+    job_offer_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("job_offers.id", ondelete="CASCADE"), index=True)
+    candidate_profile_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("candidate_profiles.id", ondelete="CASCADE"), index=True)
+    cv_version_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("cv_versions.id", ondelete="CASCADE"), index=True)
+    source: Mapped[str] = mapped_column(String(16))
+    alias_number: Mapped[int] = mapped_column()
+    status: Mapped[str] = mapped_column(String(16), server_default="pending", default="pending")
+    comparison_enc: Mapped[bytes | None] = mapped_column(LargeBinary)
+    required_documented: Mapped[int | None] = mapped_column()
+    required_total: Mapped[int | None] = mapped_column()
+    preferred_documented: Mapped[int | None] = mapped_column()
+    preferred_total: Mapped[int | None] = mapped_column()
+    needs_review_count: Mapped[int | None] = mapped_column()
+    computed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    identity_revealed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    revealed_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    reveal_reason: Mapped[str | None] = mapped_column(String(32))
+    reveal_note: Mapped[str | None] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

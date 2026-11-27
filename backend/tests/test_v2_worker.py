@@ -17,7 +17,7 @@ def test_worker_purges_expired_sessions_tokens_and_old_audit_entries(v2_client, 
         session.execute(text("INSERT INTO audit_log (action, at) VALUES ('old', now() - interval '13 months')"))
         session.commit()
         before = session.scalar(select(func.count()).select_from(AuditLog))
-        assert run_once(session) == {"sessions": 0, "email_tokens": 0, "audit_log": 1, "orphan_files": 0}
+        assert run_once(session) == {"expired_imports": 0, "sessions": 0, "email_tokens": 0, "audit_log": 1, "orphan_files": 0}
         # Nothing young was touched: the signed-in session and recent audit entries remain.
         assert session.scalar(select(func.count()).select_from(AuthSession)) == 1
         assert session.scalar(select(func.count()).select_from(AuditLog)) == before - 1

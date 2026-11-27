@@ -41,16 +41,8 @@ from app.api.v2.schemas import (
 from app.auth.ratelimit import CV_UPLOADS_PER_ACCOUNT, JOB_ANALYSES_PER_ACCOUNT, limiter
 from app.core.config import Settings
 from app.db.models import CandidateProfile as ProfileRow
-from app.db.models import Consent, CVVersion, JobOffer, Membership, User, utcnow
-from app.models.job import (
-    JobAnalysisResponse,
-    JobAnalyzeRequest,
-    JobComparisonRequest,
-    JobComparisonResponse,
-    JobReviewAssertion,
-    QualificationProfile,
-    ReviewedRequirement,
-)
+from app.db.models import Consent, CVVersion, JobOffer, Match, Membership, Organization, User, utcnow
+from app.models.job import JobAnalysisResponse, JobAnalyzeRequest, JobComparisonResponse, QualificationProfile
 from app.services import coverage
 from app.services.extraction import DeterministicCandidateExtractor
 from app.services.jobs import DeterministicJobAnalyzer, JobWorkflowError, compare_job, validate_review
@@ -58,6 +50,7 @@ from app.services.pdf import MAX_UPLOAD_BYTES, CVParsingError, extract_pdf
 from app.storage import cv as store
 from app.storage import files
 from app.storage.crypto import DecryptionFailed, EncryptionNotConfigured, master_key
+from app.storage.matching import follow_version, review_request, target_requirements
 
 router = APIRouter(prefix="/me", tags=["Candidate space"])
 overview_router = APIRouter(tags=["Spaces"])
@@ -135,13 +128,6 @@ def require_current(db: Session, version: CVVersion) -> None:
         raise api_error(409, "version_superseded", "A newer CV version exists. Older versions stay readable but can no longer be reviewed.")
 
 
-def target_requirements(target: JobOffer) -> list[ReviewedRequirement]:
-    if target.reviewed_requirements is not None:
-        return [ReviewedRequirement.model_validate(item) for item in target.reviewed_requirements]
-    analysis = JobAnalysisResponse.model_validate(target.analysis)
-    return [ReviewedRequirement(id=item.id, text=item.text, category=item.category, classification=item.classification) for item in analysis.requirements]
-
-
 def target_summary(target: JobOffer) -> TargetSummary:
     return TargetSummary(id=target.id, title=target.title, created_at=target.created_at, requirement_count=len(target_requirements(target)), criteria_confirmed_at=target.criteria_confirmed_at)
 
@@ -150,13 +136,6 @@ def target_detail(target: JobOffer) -> TargetDetail:
     return TargetDetail(
         **target_summary(target).model_dump(), source_text=target.source_text, analysis=JobAnalysisResponse.model_validate(target.analysis),
         requirements=target_requirements(target), requirements_reviewed=target.reviewed_requirements is not None,
-    )
-
-
-def review_request(analysis: JobAnalysisResponse, requirements: list[ReviewedRequirement], candidate: QualificationProfile) -> JobComparisonRequest:
-    return JobComparisonRequest(
-        candidate=candidate, job_analysis=analysis, requirements=requirements,
-        review=JobReviewAssertion(candidate_confirmed=True, candidate_snapshot=candidate, requirements_reviewed=True, requirement_snapshot=requirements),
     )
 
 
@@ -248,6 +227,8 @@ def confirm_version(body: CVConfirmRequest, version_id: uuid.UUID, user: User = 
     except DecryptionFailed as error:
         raise unreadable(error) from error
     version.confirmed_at = utcnow()
+    # Applications and claimed imports now use this confirmed version (recomputed by the worker).
+    follow_version(db, version.candidate_profile_id, version.id)
     audit(db, settings, "cv.version_confirmed", user.id, "cv_version", version.id, number=version.number)
     db.commit()
     return detail(db, master, version)
@@ -438,6 +419,13 @@ def export_data(user: User = Depends(current_user), db: Session = DbDep, setting
             "title": row.title, "created_at": iso(row.created_at), "source_text": row.source_text, "analysis": row.analysis,
             "reviewed_requirements": row.reviewed_requirements, "criteria_confirmed_at": iso(row.criteria_confirmed_at),
         } for row in targets],
+        "applications": [{
+            "job_title": job.title, "organization": organization.name, "created_at": iso(match.created_at),
+            "identity_revealed_at": iso(match.identity_revealed_at), "reveal_reason": match.reveal_reason,
+        } for match, job, organization in db.execute(
+            select(Match, JobOffer, Organization).join(JobOffer, Match.job_offer_id == JobOffer.id).join(Organization, JobOffer.organization_id == Organization.id)
+            .where(Match.candidate_profile_id == profile.id).order_by(Match.created_at)
+        ).all()] if profile else [],
     }
     audit(db, settings, "account.exported", user.id, "user", user.id, cv_versions=len(exported_versions), job_posts=len(targets))
     db.commit()

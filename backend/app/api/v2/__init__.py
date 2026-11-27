@@ -3,9 +3,11 @@
 from fastapi import APIRouter
 
 from app.api.v2.account import router as account_router
+from app.api.v2.applications import router as applications_router
 from app.api.v2.auth import router as auth_router
 from app.api.v2.candidate import overview_router as candidate_overview_router
 from app.api.v2.candidate import router as candidate_router
+from app.api.v2.recruiter import router as recruiter_router
 from app.api.v2.spaces import router as spaces_router
 
 router = APIRouter(prefix="/api/v2")
@@ -14,6 +16,8 @@ router.include_router(account_router)
 router.include_router(spaces_router)
 router.include_router(candidate_router)
 router.include_router(candidate_overview_router)
+router.include_router(recruiter_router)
+router.include_router(applications_router)
 
 # Routes reachable without a session. Everything else answers 401 when signed out.
 PUBLIC_ROUTES = frozenset({
@@ -24,4 +28,7 @@ PUBLIC_ROUTES = frozenset({
     ("POST", "/api/v2/auth/login"),
     ("POST", "/api/v2/auth/password/forgot"),
     ("POST", "/api/v2/auth/password/reset"),
+    # Claim links for imported profiles (phase 8): the link itself is the credential.
+    ("POST", "/api/v2/claims/inspect"),
+    ("POST", "/api/v2/claims/delete"),
 })

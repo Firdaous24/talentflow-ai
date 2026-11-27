@@ -68,5 +68,7 @@ EMAILS_PER_ACCOUNT = (Rule(3, 3600),)
 # Candidate space (phase 7): uploads 20/min per account (design §6), plus a daily ceiling.
 CV_UPLOADS_PER_ACCOUNT = (Rule(20, 60), Rule(100, 86400))
 JOB_ANALYSES_PER_ACCOUNT = (Rule(30, 60), Rule(300, 86400))
+# Recruiter space (phase 8): bulk imports, 3 batches per hour per organization (design §6).
+IMPORT_BATCHES_PER_ORGANIZATION = (Rule(3, 3600),)
 
 limiter = RateLimiter()
